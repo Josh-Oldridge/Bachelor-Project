@@ -1,0 +1,36 @@
+#ifndef INC_ENC_SAMPLER_H_
+#define INC_ENC_SAMPLER_H_
+
+#pragma once
+#include <stdint.h>
+#include "main.h"
+#include "model_meta.h"
+#include "network_data.h"   // for AI_NETWORK_OUT_1_SIZE
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Exposed telemetry / buffers */
+extern volatile uint32_t tim7_ticks;
+extern volatile uint32_t win_ready;
+extern volatile float    feat_win[SEQ_LEN][FEAT_DIM];
+extern volatile float    last_y[AI_NETWORK_OUT_1_SIZE];
+extern volatile uint32_t inf_total;
+
+/* Init + run */
+void EncSampler_Init(void);
+void EncSampler_Start(void);
+
+/* Hook these from Cube/HAL */
+void EncSampler_TIM7_Callback(void);  // call inside HAL_TIM_PeriodElapsedCallback
+void EncSampler_Process(void);        // call from main while()
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* INC_ENC_SAMPLER_H_ */

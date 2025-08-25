@@ -1,0 +1,8 @@
+../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_ll_bus.h:1407:22:LL_AHB4_GRP1_EnableClock	1
+../Core/Src/main.c:70:5:main	6
+../Core/Src/main.c:135:6:SystemClock_Config	8
+../Core/Src/main.c:248:6:PeriphCommonClock_Config	2
+../Core/Src/main.c:267:13:MX_BSEC_Init	1
+../Core/Src/main.c:288:13:MX_XSPI2_Init	3
+../Core/Src/main.c:339:13:MX_GPIO_Init	1
+../Core/Src/main.c:414:6:Error_Handler	1

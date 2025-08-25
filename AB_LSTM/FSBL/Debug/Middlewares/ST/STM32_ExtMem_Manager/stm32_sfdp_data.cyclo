@@ -1,0 +1,13 @@
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:1078:20:SFDP_ReadHeader	5
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:1123:20:SFDP_GetHeader	7
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:1174:20:SFDP_CollectData	15
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:1243:20:SFDP_MemoryReset	21
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:1377:20:SFDP_BuildGenericDriver	88
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2010:38:driver_check_FlagBUSY	3
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2043:10:sfdp_getfrequencevalue	2
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2062:20:sfdp_get_paraminfo	27
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2198:20:sfdp_enter_octal_mode	12
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2314:20:sfdp_set_dummycycle	12
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2421:20:JEDEC_Basic_ManageQuadEnableRequirement	12
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2541:20:JEDEC_Basic_Manage4S4S4SEnableSequence	5
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_data.c:2595:20:CheckSFDP_Signature	4

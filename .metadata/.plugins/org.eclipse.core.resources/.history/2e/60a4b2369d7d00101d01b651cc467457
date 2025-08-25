@@ -1,0 +1,171 @@
+
+#include "enc_sampler.h"
+#include "model_meta.h"
+#include <string.h>
+
+/* -------- Fast pin readers from main.h symbols -------- */
+static inline uint8_t read_A(void){ return (ENC_A_GPIO_Port->IDR & ENC_A_Pin) ? 1U : 0U; }
+static inline uint8_t read_B(void){ return (ENC_B_GPIO_Port->IDR & ENC_B_Pin) ? 1U : 0U; }
+
+/* -------- Exposed state -------- */
+volatile uint32_t tim7_ticks = 0;
+volatile uint32_t win_ready  = 0;
+volatile float    feat_win[SEQ_LEN][FEAT_DIM];
+
+/* -------- Private encoder/ring state -------- */
+typedef struct {
+  int16_t  d;
+  uint8_t  z_pulse;
+  uint8_t  A, B;
+  uint16_t cnt;
+} raw_t;
+
+#define RB_LOG2 9                    /* 512 samples ring (bigger = safer) */
+#define RB_SIZE (1u << RB_LOG2)
+#define RB_MASK (RB_SIZE - 1)
+
+static volatile raw_t    rb[RB_SIZE];
+static volatile uint16_t rb_w = 0, rb_r = 0;
+
+#define MOD 2000u                    /* TIM1 period+1 */
+static uint16_t last_cnt = 0;
+
+/* These live in main-context only (never touched in ISR) */
+static uint32_t steps_since_z = 0;
+static uint32_t revolution_cnt = 0;
+static float    ema_abs_d = 0.0f;
+
+/* Scale helper using exported arrays */
+static inline float scale_feat(int j, float x) {
+  float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
+  if (y < 0.f) y = 0.f;
+  if (y > 1.f) y = 1.f;
+  return y;
+}
+
+/* -------- Public API -------- */
+void EncSampler_Init(void)
+{
+  /* nothing yet – TIMs are still CubeMX init in main.c */
+}
+
+void EncSampler_Start(void)
+{
+  /* nothing yet – start happens in main.c */
+}
+
+/* -------- ISR hook: push one compact sample to ring -------- */
+void EncSampler_TIM7_Callback(void)
+{
+  tim7_ticks++;
+
+  uint16_t cnt = __HAL_TIM_GET_COUNTER(&htim1);
+  int16_t d = (int16_t)cnt - (int16_t)last_cnt;
+  if (d >  (int16_t)(MOD/2))  d -= MOD;
+  if (d < -(int16_t)(MOD/2))  d += MOD;
+  last_cnt = cnt;
+
+  uint8_t z_pulse = 0;
+#if defined(TIM_FLAG_IDX)
+  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDX)) {
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDX);
+    z_pulse = 1;
+  }
+#elif defined(TIM_FLAG_IDXF)
+  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDXF)) {
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDXF);
+    z_pulse = 1;
+  }
+#endif
+
+  uint8_t A = read_A();
+  uint8_t B = read_B();
+
+  uint16_t w = rb_w;
+  uint16_t n = (w + 1) & RB_MASK;
+  if (n == rb_r) {                    /* overflow: drop oldest */
+    rb_r = (rb_r + 1) & RB_MASK;
+  }
+  rb[w].d = d; rb[w].z_pulse = z_pulse; rb[w].A = A; rb[w].B = B; rb[w].cnt = cnt;
+  rb_w = n;
+}
+
+/* -------- Main-context feature builder: drains ring, fills feat_win -------- */
+void EncSampler_Process(void)
+{
+  static uint8_t last_A = 0, last_B = 0;
+  static uint8_t win_fill = 0;
+
+  while (rb_r != rb_w) {
+    raw_t s = rb[rb_r];
+    rb_r = (rb_r + 1) & RB_MASK;
+
+    int16_t d = s.d;
+    uint8_t A = s.A, B = s.B;
+    uint8_t z_pulse = s.z_pulse;
+    uint16_t cnt = s.cnt;
+
+    if (z_pulse) { steps_since_z = 0; revolution_cnt++; }
+    else { steps_since_z += (uint32_t)((d >= 0) ? d : -d); }
+
+    uint8_t A_rise = (A && !last_A), A_fall = (!A && last_A);
+    uint8_t B_rise = (B && !last_B), B_fall = (!B && last_B);
+    last_A = A; last_B = B;
+
+    int dir_neg = (d < 0), dir_pos = (d > 0);
+    float ad = (float)((d >= 0) ? d : -d);
+    ema_abs_d = 0.9f * ema_abs_d + 0.1f * ad;
+    float interval_ratio    = (ema_abs_d > 1e-6f) ? (ad / ema_abs_d) : 1.0f;
+    float speed_change_rate = (interval_ratio > 1.0f) ? (interval_ratio - 1.0f) : (1.0f - interval_ratio);
+    uint8_t speed_stable    = (speed_change_rate < 0.1f) ? 1U : 0U;
+    uint8_t speed_cat       = (ema_abs_d < 1.0f) ? 0U : (ema_abs_d < 4.0f ? 1U : 2U);
+
+    const uint32_t Z_OVERDUE_MIN = MOD + MOD/2;
+    uint8_t z_expected = (steps_since_z >= MOD);
+    uint8_t z_overdue  = (steps_since_z >= Z_OVERDUE_MIN);
+
+    float   rev_prog   = (float)cnt / (float)MOD; /* 0..1 */
+    uint8_t AB         = (uint8_t)((A<<1)|B) & 3;
+    uint8_t ABnx       = dir_pos ? ((AB+1)&3) : (dir_neg ? ((AB+3)&3) : AB);
+    uint8_t phase_lag  = (uint8_t)((ABnx - AB) & 3);
+
+    uint8_t edge_rising  = (A_rise || B_rise) ? 1U : 0U;
+    uint8_t edge_falling = (A_fall || B_fall) ? 1U : 0U;
+    uint8_t chA = (A_rise || A_fall) ? 1U : 0U;
+    uint8_t chB = (B_rise || B_fall) ? 1U : 0U;
+    uint8_t chZ = z_pulse;
+
+    float *f = feat_win[win_fill];
+    int k = 0;
+#define PACK(val) do { f[k] = scale_feat(k, (val)); k++; } while(0)
+    PACK((float)A);
+    PACK((float)B);
+    PACK((float)AB);
+    PACK(1.0f);
+    PACK((float)revolution_cnt);
+    PACK(interval_ratio);
+    PACK((float)speed_stable);
+    PACK((float)speed_cat);
+    PACK(speed_change_rate);
+    PACK((float)speed_stable);
+    PACK(1.0f);
+    PACK((float)(d!=0));
+    PACK((float)steps_since_z);
+    PACK((float)z_expected);
+    PACK((float)z_overdue);
+    PACK(rev_prog);
+    PACK(0.0f);
+    PACK((float)phase_lag);
+    PACK((float)chA);
+    PACK((float)chB);
+    PACK((float)chZ);
+    PACK((float)edge_falling);
+    PACK((float)edge_rising);
+    PACK((float)dir_neg);
+    PACK((float)dir_pos);
+#undef PACK
+
+    win_fill++;
+    if (win_fill >= SEQ_LEN) { win_fill = 0; win_ready++; }
+  }
+}

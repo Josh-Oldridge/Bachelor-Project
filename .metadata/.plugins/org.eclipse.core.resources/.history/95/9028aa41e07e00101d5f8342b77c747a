@@ -1,0 +1,1 @@
+int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags);

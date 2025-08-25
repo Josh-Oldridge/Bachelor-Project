@@ -1,0 +1,171 @@
+
+/**
+  ******************************************************************************
+  * @file    app_x-cube-ai.c
+  * @author  X-CUBE-AI C code generator
+  * @brief   AI program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
+ /*
+  * Description
+  *   v1.0 - Minimum template to show how to use the Embedded Client API
+  *          model. Only one input and one output is supported. All
+  *          memory resources are allocated statically (AI_NETWORK_XX, defines
+  *          are used).
+  *          Re-target of the printf function is out-of-scope.
+  *   v2.0 - add multiple IO and/or multiple heap support
+  *
+  *   For more information, see the embeded documentation:
+  *
+  *       [1] %X_CUBE_AI_DIR%/Documentation/index.html
+  *
+  *   X_CUBE_AI_DIR indicates the location where the X-CUBE-AI pack is installed
+  *   typical : C:\Users\[user_name]\STM32Cube\Repository\STMicroelectronics\X-CUBE-AI\7.1.0
+  */
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+
+#if defined ( __ICCARM__ )
+#define AI_AXIFLEXMEM   _Pragma("location=\"AI_AXIFLEXMEM\"")
+#elif defined ( __CC_ARM ) || ( __GNUC__ )
+#define AI_AXIFLEXMEM   __attribute__((section(".AI_AXIFLEXMEM")))
+#endif
+
+/* System headers */
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+
+#include "app_x-cube-ai.h"
+#include "main.h"
+#include "ai_datatypes_defines.h"
+#include "network.h"
+#include "network_data.h"
+#include "network_1.h"
+#include "network_1_data.h"
+
+
+/* USER CODE BEGIN includes */
+/* USER CODE END includes */
+
+/* IO buffers ----------------------------------------------------------------*/
+
+
+#if !defined(AI_NETWORK_INPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_in_1[AI_NETWORK_IN_1_SIZE_BYTES];
+ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
+data_in_1
+};
+#else
+ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
+NULL
+};
+#endif
+
+#if !defined(AI_NETWORK_OUTPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_out_1[AI_NETWORK_OUT_1_SIZE_BYTES];
+ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
+data_out_1
+};
+#else
+ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
+NULL
+};
+#endif
+
+/* Activations buffers -------------------------------------------------------*/
+
+AI_ALIGNED(32)
+AI_AXIFLEXMEM
+static uint8_t flexMEM[AI_NETWORK_DATA_ACTIVATION_1_SIZE];
+
+ai_handle data_activations0[] = {flexMEM}; 
+ai_handle data_activations1[] = {FreeMarker template error (DEBUG mode; use RETHROW in production!):
+The following has evaluated to null or missing:
+==> ActivationBuffers[i]  [in template "app_x-cube-ai_c.ftl" at line 278, column 39]
+
+----
+Tip: It's the final [] step that caused this error, not those before it.
+----
+Tip: If the failing expression is known to legally refer to something that's sometimes null or missing, either specify a default value like myOptionalVar!myDefault, or use [#if myOptionalVar??]when-present[#else]when-missing[/#if]. (These only cover the last step of the expression; to cover the whole expression, use parenthesis: (myOptionalVar.foo)!myDefault, (myOptionalVar.foo)??
+----
+
+----
+FTL stack trace ("~" means nesting-related):
+	- Failed at: ${ActivationBuffers[i]}  [in template "app_x-cube-ai_c.ftl" at line 278, column 37]
+----
+
+Java stack trace (for programmers):
+----
+freemarker.core.InvalidReferenceException: [... Exception message was already printed; see it above ...]
+	at freemarker.core.InvalidReferenceException.getInstance(InvalidReferenceException.java:134)
+	at freemarker.core.EvalUtil.coerceModelToTextualCommon(EvalUtil.java:481)
+	at freemarker.core.EvalUtil.coerceModelToStringOrMarkup(EvalUtil.java:401)
+	at freemarker.core.EvalUtil.coerceModelToStringOrMarkup(EvalUtil.java:370)
+	at freemarker.core.DollarVariable.calculateInterpolatedStringOrMarkup(DollarVariable.java:100)
+	at freemarker.core.DollarVariable.accept(DollarVariable.java:63)
+	at freemarker.core.Environment.visit(Environment.java:370)
+	at freemarker.core.IteratorBlock$IterationContext.executedNestedContentForCollOrSeqListing(IteratorBlock.java:321)
+	at freemarker.core.IteratorBlock$IterationContext.executeNestedContent(IteratorBlock.java:271)
+	at freemarker.core.IteratorBlock$IterationContext.accept(IteratorBlock.java:244)
+	at freemarker.core.Environment.visitIteratorBlock(Environment.java:644)
+	at freemarker.core.IteratorBlock.acceptWithResult(IteratorBlock.java:108)
+	at freemarker.core.IteratorBlock.accept(IteratorBlock.java:94)
+	at freemarker.core.Environment.visit(Environment.java:334)
+	at freemarker.core.Environment.visit(Environment.java:340)
+	at freemarker.core.Environment.visit(Environment.java:340)
+	at freemarker.core.Environment.visit(Environment.java:376)
+	at freemarker.core.IteratorBlock$IterationContext.executedNestedContentForCollOrSeqListing(IteratorBlock.java:291)
+	at freemarker.core.IteratorBlock$IterationContext.executeNestedContent(IteratorBlock.java:271)
+	at freemarker.core.IteratorBlock$IterationContext.accept(IteratorBlock.java:244)
+	at freemarker.core.Environment.visitIteratorBlock(Environment.java:644)
+	at freemarker.core.IteratorBlock.acceptWithResult(IteratorBlock.java:108)
+	at freemarker.core.IteratorBlock.accept(IteratorBlock.java:94)
+	at freemarker.core.Environment.visit(Environment.java:334)
+	at freemarker.core.Environment.visit(Environment.java:340)
+	at freemarker.core.Environment.process(Environment.java:313)
+	at freemarker.template.Template.process(Template.java:383)
+	at com.st.microxplorer.codegenerator.CodeEngine.freemarkerDo(CodeEngine.java:420)
+	at com.st.microxplorer.codegenerator.CodeEngine.genCode(CodeEngine.java:273)
+	at com.st.microxplorer.codegenerator.CodeGenerator.generateOutputCode(CodeGenerator.java:6459)
+	at com.st.microxplorer.codegenerator.CodeGenerator.generateSpecificCode(CodeGenerator.java:5281)
+	at com.st.microxplorer.codegenerator.CodeGenerator.generateSpecificCodeFile(CodeGenerator.java:1862)
+	at com.st.microxplorer.codegenerator.CodeGenerator.generateCodeFiles(CodeGenerator.java:2188)
+	at com.st.microxplorer.codegenerator.CodeGenerator.generateCode(CodeGenerator.java:1691)
+	at com.st.microxplorer.plugins.projectmanager.engine.ProjectBuilder.generateCode(ProjectBuilder.java:3343)
+	at com.st.microxplorer.plugins.projectmanager.engine.ProjectBuilder.createCode(ProjectBuilder.java:2235)
+	at com.st.microxplorer.plugins.projectmanager.engine.ProjectBuilder.createProject(ProjectBuilder.java:819)
+	at com.st.microxplorer.plugins.projectmanager.engine.ProjectBuilder.createProject(ProjectBuilder.java:608)
+	at com.st.microxplorer.plugins.projectmanager.engine.MainProjectManager.startGenerateCode(MainProjectManager.java:1497)
+	at com.st.microxplorer.plugins.projectmanager.engine.MainProjectManager$3.onCommandEntered(MainProjectManager.java:283)
+	at com.st.components.util.CommandLineManager$3.run(CommandLineManager.java:175)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:308)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:400)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:87)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)

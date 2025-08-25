@@ -1,0 +1,12 @@
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:130:38:EXTMEM_DRIVER_NOR_SFDP_Init	9
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:258:38:EXTMEM_DRIVER_NOR_SFDP_DeInit	1
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:264:6:EXTMEM_DRIVER_NOR_SFDP_GetFlashInfo	5
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:280:38:EXTMEM_DRIVER_NOR_SFDP_Write	7
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:350:38:EXTMEM_DRIVER_NOR_SFDP_WriteInMappedMode	12
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:449:38:EXTMEM_DRIVER_NOR_SFDP_Read	3
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:470:38:EXTMEM_DRIVER_NOR_SFDP_SectorErase	9
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:549:38:EXTMEM_DRIVER_NOR_SFDP_MassErase	4
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:588:38:EXTMEM_DRIVER_NOR_SFDP_Enable_MemoryMappedMode	2
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:603:38:EXTMEM_DRIVER_NOR_SFDP_Disable_MemoryMappedMode	2
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:642:38:driver_set_FlagWEL	4
+C:/ST/AB_LSTM/AB_LSTM/Middlewares/ST/STM32_ExtMem_Manager/nor_sfdp/stm32_sfdp_driver.c:666:13:EXTMEM_MemCopy	2

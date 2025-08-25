@@ -1,0 +1,16 @@
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:138:9:BSP_GetVersion	0	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:147:16:BSP_GetBoardName	0	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:156:16:BSP_GetBoardID	0	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:169:6:BSP_SMPS_Init	56	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:195:9:BSP_LED_Init	56	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:236:9:BSP_LED_DeInit	16	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:259:9:BSP_LED_On	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:275:9:BSP_LED_Off	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:291:9:BSP_LED_Toggle	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:306:9:BSP_LED_GetState	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:334:9:BSP_PB_Init	48	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:391:9:BSP_PB_DeInit	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:408:9:BSP_PB_GetState	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:418:13:BSP_PB_Callback	0	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:654:13:BUTTON_USER_EXTI_Callback	8	static
+C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c:434:6:BSP_PB_IRQHandler	0	static
