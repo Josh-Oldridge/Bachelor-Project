@@ -129,7 +129,9 @@ void EncSampler_TIM7_Callback(void)
   }
   #else
   if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDX)) {
+	  printf("SR before: 0x%08lX\r\n", htim1.Instance->SR);
     __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDX);
+    printf("SR after: 0x%08lX\r\n", htim1.Instance->SR);
     z_pulse = 1;
   }
   #endif

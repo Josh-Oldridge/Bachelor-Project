@@ -1,10 +1,6 @@
-13:40:52 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+17:02:26 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
 make -j20 all 
-arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
 arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
-../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
-  262 | static void apply_thresholds(void)
-      |             ^~~~~~~~~~~~~~~~
 arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
 Finished building target: AB_LSTM_Appli.elf
@@ -12,13 +8,13 @@ Finished building target: AB_LSTM_Appli.elf
 arm-none-eabi-size  AB_LSTM_Appli.elf 
 arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
    text	   data	    bss	    dec	    hex	filename
-  89996	   4272	  33752	 128020	  1f414	AB_LSTM_Appli.elf
+  89372	   4272	  33728	 127372	  1f18c	AB_LSTM_Appli.elf
 arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
 Finished building: default.size.stdout
  
-Finished building: AB_LSTM_Appli.bin
- 
 Finished building: AB_LSTM_Appli.list
+ 
+Finished building: AB_LSTM_Appli.bin
  
 cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
 echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
@@ -30,7 +26,7 @@ Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
 Adding head padding bytes for payload with header v2.3
 Header version 2.3 preparation... 
 Extracting Entry point value from the input file...
-Entry point value : 0x340021a5
+Entry point value : 0x34001ff5
 The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
 
 Header description:
@@ -39,44 +35,44 @@ Header description:
     Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
                00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
-    Checksum: 0x9edc8a
+    Checksum: 0x9e0943
     Header version: 0x20300
-    Size: 0x17220
+    Size: 0x16fa0
     Load address: 0xffffffff
-    Entry point: 0x340021a5
+    Entry point: 0x34001ff5
     Image version: 0x0
     Extension: 0x80000000
 
 Pad header detected:
     Type: 0x5354ffff
     Size: 0x1a0
-    Padding values: 77 40 8a 80 42 ad 78 35 2d dd 88 f1 e3 91 a5 58 ef ee c6 77 5c 82 35 0c 7c 50 7e b1 e7 78 7c 
+    Padding values: 3c 25 b1 8b 8d b2 db a9 5d 7e 7f bc eb d2 05 48 ca 6d 7b 31 49 d3 09 a3 5e c1 4c 21 75 6f bb 
 
-                    30 79 c8 57 5c 5f 76 e8 be 7d d0 d9 97 e1 28 20 21 52 a1 95 d9 b9 9a a2 51 91 6b 34 fb 6f e9 
+                    92 70 f2 6b 19 5a 96 a5 af 58 12 e8 a9 b1 d8 68 c4 a0 a7 8a 79 0e 85 4d 22 00 4e a7 36 0a 26 
 
-                    91 ab 53 6c 45 e5 ae 4b 3c d1 ac e0 6a 46 e0 ec 7d 59 a4 4d fa a1 73 a4 ae d3 b4 0d df f7 1a 
+                    c3 2c 5f e2 36 0c c7 e3 56 68 1f a5 21 4c 10 6a 96 84 4c 8d 1e 4d 5b e9 d6 df 9e 30 6b 65 6c 
 
-                    09 63 f8 5a 22 24 fd 29 08 e1 0b 33 37 67 ee 42 25 95 03 0c 07 e7 0a cb c0 7a ec fa 51 c6 8c 
+                    6f 00 d0 5f a8 95 5c c2 5c 41 83 2d ab 48 67 e2 fb 9e 37 f4 a1 2e c8 52 39 a2 48 9a 80 33 85 
 
-                    a8 20 ce 57 12 a9 b9 54 9a 39 4b c9 34 1b 97 ca de f8 9c f5 4e 25 34 8a 8b cc b4 36 3b 54 a9 
+                    1b de c3 32 91 d3 4a d6 0c f7 4d 09 cd 63 a6 a9 62 6c 9c a7 9d 93 43 e4 97 5f ad 86 f3 e2 d7 
 
-                    3d a5 76 0f ef a8 b8 c1 88 8a 38 3f fe 4a 32 3f 2c 06 7d 8a e8 4b b7 ad 55 65 31 a8 14 de a0 
+                    d5 4c 2e 0f 1f ff 12 6a 4a 6f 5e b2 40 ad c5 66 21 a2 39 b8 f7 6d 87 47 05 08 96 f5 2c 3b 94 
 
-                    35 31 69 df df 67 b2 94 19 dd f7 4e a2 61 05 2a 64 80 7b bb 5b 33 df 00 47 47 09 97 d2 0e 8b 
+                    56 87 7c 7d 7f af d0 46 fd 31 ce c0 96 45 86 8d 33 aa 26 e4 65 15 cb d4 08 4e f5 4a ff cf 6a 
 
-                    c1 b1 58 2e 7d 68 1a 6f 2f 44 cf e5 ef 41 5a 59 35 52 88 b1 99 a4 57 5e c4 39 d7 8e d5 0e bb 
+                    6f 08 72 e4 3b 27 c4 e4 4c 01 7a 97 43 ac 3a d2 60 71 12 1e ce 63 1c a4 59 de 0d 51 e6 e5 0c 
 
-                    56 6e 7e 5d 08 e8 46 0e ad 00 a8 1e 19 61 e8 24 cc 68 52 50 63 36 5a 66 10 20 50 91 15 5c 86 
+                    81 62 fc 47 3d ca 55 31 e1 00 7f 87 56 3c 5c 0d 2e bd 77 e1 75 e3 f9 1f 81 72 ed 44 5b ad cd 
 
-                    6f d1 7f 83 e5 12 f8 61 7a 99 9b 00 f5 06 69 90 c5 87 76 b0 35 39 01 55 5b bd 95 d4 6b 3c 65 
+                    28 63 c6 27 05 e0 0c 63 9a 77 a6 48 26 71 04 1a 03 cc 35 73 a9 00 e1 91 43 23 b2 78 cf d4 e0 
 
-                    8e 88 1f 2f ff 53 3f 1c af ed 9a d6 93 fe 2a 7c 9f 05 32 d1 f8 95 3d 5c 65 75 48 c8 91 c2 6c 
+                    8b 7a 29 c9 c7 68 8a cc 6c 33 a2 28 2b 97 e6 ec 4f 7d c8 f1 77 97 a9 c7 fc 73 c2 e8 1d 23 c2 
 
-                    16 2f 15 ed 84 51 63 72 e6 dd 09 c5 f2 d3 8a b6 e3 f9 7f 84 e4 de 3a 77 5d bc bc 8a 0f 2c 6a 
+                    40 0d c7 88 73 db df 59 f7 13 ac 51 84 4a 9f ac e4 0c 8f 81 7c 0d 36 1d cc e3 21 28 1c bd 2f 
 
-                    bb e5 da 0e ce cb f1 c0 00 00 02 00 54 ed f0 95 23 b1 07 00 10 ae e5 00 00 00 00 00 f0 ce 73 
+                    89 2f 2d fe 99 86 18 26 00 00 02 00 1d 4f b1 b4 07 b4 00 00 d0 6f 6f 02 00 00 00 00 20 b6 e5 
 
-                    02 00 00 00 00 
+                    00 00 00 00 00 
 
 Post header 2.3 information :
     Binary type: 0x10
@@ -86,5 +82,5 @@ Post header 2.3 information :
 
  
 
-13:40:58 Build Finished. 0 errors, 2 warnings. (took 6s.491ms)
+17:02:31 Build Finished. 0 errors, 1 warnings. (took 4s.988ms)
 

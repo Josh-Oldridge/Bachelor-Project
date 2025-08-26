@@ -10375,3 +10375,33 @@ Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data C:\ST\AB_LSTM
 
 !ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 13:41:08.420
 !MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 15:23:39.645
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:03:18.112
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:08:35.778
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:22:28.693
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:28:11.567
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:29:53.359
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:40:42.922
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 16:43:05.380
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 17:02:10.154
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10
+
+!ENTRY com.st.stm32cube.ide.mcu.debug.swv 1 1 2025-08-26 17:02:40.837
+!MESSAGE SWV configuration; base: 192000000; minDiv: 16; maxDiv: 65535; maxSWO: 12000000; limit: 12000000 => SWO: 10105263; CPU: 100000000; div: 10

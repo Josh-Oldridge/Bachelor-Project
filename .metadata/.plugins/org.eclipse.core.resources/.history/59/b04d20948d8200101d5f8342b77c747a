@@ -439,7 +439,7 @@ static void MX_TIM1_Init(void)
   }
   sEncoderIndexConfig.Polarity = TIM_ENCODERINDEX_POLARITY_NONINVERTED;
   sEncoderIndexConfig.Prescaler = TIM_ENCODERINDEX_PRESCALER_DIV1;
-  sEncoderIndexConfig.Filter = 0;
+  sEncoderIndexConfig.Filter = 16;
   sEncoderIndexConfig.Blanking = TIM_ENCODERINDEX_BLANKING_DISABLE;
   sEncoderIndexConfig.FirstIndexEnable = DISABLE;
   sEncoderIndexConfig.Position = TIM_ENCODERINDEX_POSITION_00;

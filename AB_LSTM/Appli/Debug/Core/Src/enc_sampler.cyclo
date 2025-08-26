@@ -1,5 +1,5 @@
-../Core/Src/enc_sampler.c:98:6:EncSampler_Init	1
-../Core/Src/enc_sampler.c:104:6:EncSampler_Start	1
-../Core/Src/enc_sampler.c:107:6:EncSampler_TIM7_Callback	5
-../Core/Src/enc_sampler.c:160:6:EncSampler_Process	65
-../Core/Src/enc_sampler.c:349:5:EncSampler_CopyWindowLinear	6
+../Core/Src/enc_sampler.c:103:6:EncSampler_Init	1
+../Core/Src/enc_sampler.c:109:6:EncSampler_Start	1
+../Core/Src/enc_sampler.c:112:6:EncSampler_TIM7_Callback	5
+../Core/Src/enc_sampler.c:167:6:EncSampler_Process	53
+../Core/Src/enc_sampler.c:368:5:EncSampler_CopyWindowLinear	6

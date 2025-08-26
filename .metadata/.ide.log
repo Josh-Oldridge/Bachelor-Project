@@ -1,2 +1,5 @@
 2025-08-26 11:34:57,805 [INFO] WebApp:194 - Connection lost
 2025-08-26 11:35:15,380 [INFO] WebApp:191 - Connection restablished
+2025-08-26 16:21:10,455 [INFO] Gpio:278 - dependency for GPIO [LPUART1, TIM1, XSPI2]
+2025-08-26 16:21:14,340 [INFO] NvicIntPanel:101 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,2,27,1042x675,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]
+2025-08-26 16:21:14,349 [INFO] NvicIntPanel:101 - NVIC parent = com.st.microxplorer.plugins.ip.nvic.MultiNvicIntPanel[,2,27,1042x675,invalid,layout=javax.swing.BoxLayout,alignmentX=0.0,alignmentY=0.0,border=,flags=9,maximumSize=,minimumSize=,preferredSize=]

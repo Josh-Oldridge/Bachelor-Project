@@ -129,6 +129,7 @@ void EncSampler_TIM7_Callback(void)
   }
   #else
   if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDX)) {
+	  printf("IDX_FLAG_SET before clear\r\n");
     __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDX);
     z_pulse = 1;
   }
