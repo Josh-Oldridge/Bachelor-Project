@@ -1,2 +1,3 @@
-../X-CUBE-AI/App/app_x-cube-ai.c:329:6:MX_X_CUBE_AI_Init	56	static
-../X-CUBE-AI/App/app_x-cube-ai.c:367:6:MX_X_CUBE_AI_Process	24	static
+../X-CUBE-AI/App/app_x-cube-ai.c:179:12:ai_run.part.0	8	static
+../X-CUBE-AI/App/app_x-cube-ai.c:398:6:MX_X_CUBE_AI_Init	80	static
+../X-CUBE-AI/App/app_x-cube-ai.c:442:6:MX_X_CUBE_AI_Process	48	static

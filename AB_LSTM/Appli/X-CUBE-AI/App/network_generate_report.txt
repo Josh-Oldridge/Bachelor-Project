@@ -1,6 +1,6 @@
 ST Edge AI Core v2.2.0-20266 2adc00962
-Created date          : 2025-08-22 15:09:35
-Parameters            : generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace1022752345400003474077892168395285 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
+Created date          : 2025-08-25 15:53:25
+Parameters            : generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace36406015175030016838939613017475351 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
 
 Exec/report summary (generate)
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ compression        :   none
 options            :   allocate-inputs, allocate-outputs                                                                                                       
 optimization       :   balanced                                                                                                                                
 target/series      :   stm32n6                                                                                                                                 
-workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace1022752345400003474077892168395285                                                   
+workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace36406015175030016838939613017475351                                                  
 output dir         :   C:\Users\ZOJOLDRI\.stm32cubemx\network_output                                                                                           
 model_fmt          :   float                                                                                                                                   
 model_name         :   lstm_ab_encoder                                                                                                                         

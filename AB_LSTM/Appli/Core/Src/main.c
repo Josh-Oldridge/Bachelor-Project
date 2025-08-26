@@ -65,6 +65,16 @@ extern volatile uint32_t enc_rule_flags; // live, latest window computed
 extern volatile uint32_t win_rule_flags;
 
 static uint32_t last_inf_seen = 0;
+
+extern volatile uint32_t tim7_ticks;
+extern volatile uint32_t win_total;
+extern volatile uint32_t win_ready;
+
+/* diag rate counters */
+static uint32_t rate_t0_ms  = 0;
+static uint32_t t7_prev     = 0;
+static uint32_t win_prev    = 0;
+static uint32_t inf_prev    = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -138,6 +148,9 @@ int main(void)
 
 	printf("Init done\r\n");
 	uint32_t next_blink_ms = HAL_GetTick() + 250;
+
+	printf("SEQ_LEN=%d FEAT_DIM=%d\r\n", (int)MODEL_SEQ_LEN, (int)MODEL_FEAT_DIM);
+	rate_t0_ms = HAL_GetTick() + 1000;
   /* USER CODE END 2 */
 
   /* Initialize leds */
@@ -175,6 +188,23 @@ int main(void)
                (double)last_y[0], (double)last_y[1], (double)last_y[2], (double)last_y[3],
                (unsigned long)win_rule_flags, (unsigned long)enc_rule_flags);
       }
+
+    if ((int32_t)(HAL_GetTick() - rate_t0_ms) >= 0) {
+      uint32_t t7_now  = tim7_ticks;
+      uint32_t win_now = win_total;
+      uint32_t inf_now = inf_total;
+
+      printf("RATES: TIM7=%lu Hz  windows=%lu/s  inferences=%lu/s  fifo_ready=%lu\r\n",
+             (unsigned long)(t7_now  - t7_prev),
+             (unsigned long)(win_now - win_prev),
+             (unsigned long)(inf_now - inf_prev),
+             (unsigned long)win_ready);
+
+      t7_prev   = t7_now;
+      win_prev  = win_now;
+      inf_prev  = inf_now;
+      rate_t0_ms += 1000;
+    }
 
       __WFI();  /* sleep until next IRQ */
   }
@@ -241,7 +271,7 @@ static void MX_LPUART1_UART_Init(void)
 
   /* USER CODE END LPUART1_Init 1 */
   hlpuart1.Instance = LPUART1;
-  hlpuart1.Init.BaudRate = 115200;
+  hlpuart1.Init.BaudRate = 921600;
   hlpuart1.Init.WordLength = UART_WORDLENGTH_8B;
   hlpuart1.Init.StopBits = UART_STOPBITS_1;
   hlpuart1.Init.Parity = UART_PARITY_NONE;
@@ -346,7 +376,6 @@ static void MX_RAMCFG_Init(void)
   /* set up GPIO configuration */
   HAL_GPIO_ConfigPinAttributes(GPIOA,GPIO_PIN_11,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
   HAL_GPIO_ConfigPinAttributes(GPIOB,GPIO_PIN_12,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
-  HAL_GPIO_ConfigPinAttributes(GPIOC,GPIO_PIN_13,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
   HAL_GPIO_ConfigPinAttributes(GPIOE,GPIO_PIN_5,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
   HAL_GPIO_ConfigPinAttributes(GPIOE,GPIO_PIN_6,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
   HAL_GPIO_ConfigPinAttributes(GPIOE,GPIO_PIN_7,GPIO_PIN_SEC|GPIO_PIN_NPRIV);
@@ -392,11 +421,11 @@ static void MX_TIM1_Init(void)
   sConfig.IC1Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC1Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC1Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC1Filter = 0;
+  sConfig.IC1Filter = 4;
   sConfig.IC2Polarity = TIM_ICPOLARITY_RISING;
   sConfig.IC2Selection = TIM_ICSELECTION_DIRECTTI;
   sConfig.IC2Prescaler = TIM_ICPSC_DIV1;
-  sConfig.IC2Filter = 0;
+  sConfig.IC2Filter = 4;
   if (HAL_TIM_Encoder_Init(&htim1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -410,7 +439,7 @@ static void MX_TIM1_Init(void)
   }
   sEncoderIndexConfig.Polarity = TIM_ENCODERINDEX_POLARITY_NONINVERTED;
   sEncoderIndexConfig.Prescaler = TIM_ENCODERINDEX_PRESCALER_DIV1;
-  sEncoderIndexConfig.Filter = 0;
+  sEncoderIndexConfig.Filter = 8;
   sEncoderIndexConfig.Blanking = TIM_ENCODERINDEX_BLANKING_DISABLE;
   sEncoderIndexConfig.FirstIndexEnable = DISABLE;
   sEncoderIndexConfig.Position = TIM_ENCODERINDEX_POSITION_00;
@@ -470,7 +499,6 @@ static void MX_TIM7_Init(void)
   */
 static void MX_GPIO_Init(void)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
   /* USER CODE BEGIN MX_GPIO_Init_1 */
 
   /* USER CODE END MX_GPIO_Init_1 */
@@ -478,14 +506,7 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
-
-  /*Configure GPIO pin : PC13 */
-  GPIO_InitStruct.Pin = GPIO_PIN_13;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 

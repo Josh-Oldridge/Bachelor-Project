@@ -430,44 +430,44 @@
   ],
   "environment": {
     "generated_model": {
-      "generated_time": "2025-08-22T15:09:30+0200",
+      "generated_time": "2025-08-25T15:53:18+0200",
       "model_files": [
         {
           "name": "network_data_params.h",
-          "signature": "0xfeae8b60b0b9a0e42ffb17be28ae4783"
+          "signature": "0xab30ef0f47d7665b996060a4ff5f22de"
         },
         {
           "name": "network_data_params.c",
-          "signature": "0x976e296ce0a4bb5f6cc62edc24bce221"
+          "signature": "0x90d543d5f5f9db0b9fe8577d7d977ab5"
         },
         {
           "name": "network_data.h",
-          "signature": "0x6c86e39d83f625bc53443f5c14ea00d3"
+          "signature": "0xc0d65f13c1bc10a4b7b821cf4043cfa0"
         },
         {
           "name": "network_data.c",
-          "signature": "0xa563939e9a0d9940ed4e6a4c9726687a"
+          "signature": "0x9669998678f694e68b02104494c76c3f"
         },
         {
           "name": "network_config.h",
-          "signature": "0x3f14dd1859023e96e291718c0d7475c5"
+          "signature": "0x48767f197ef20cf0f2d0c71a95a724e5"
         },
         {
           "name": "network.h",
-          "signature": "0x7cd79c58d34360335b2403c8e8c1492d"
+          "signature": "0x2b529370ba5df0f2f7cce9ee4da85e17"
         },
         {
           "name": "network.c",
-          "signature": "0x5092d96c6a771152ea14a73d3b063edd"
+          "signature": "0x2ca040989fe7d9e4ddb5a30c75c4cf57"
         }
       ],
       "name": "network"
     },
-    "network_signature": "0xb730c50e26c595a1",
+    "network_signature": "0x2a5bb43ac33f9b62",
     "test_name": "",
     "tools": [
       {
-        "arguments": "generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace1022752345400003474077892168395285 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output",
+        "arguments": "generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace36406015175030016838939613017475351 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output",
         "environment": [
           "STATS_TYPE=X-CUBE-AI"
         ],

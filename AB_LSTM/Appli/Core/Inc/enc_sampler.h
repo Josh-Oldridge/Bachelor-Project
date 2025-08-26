@@ -44,7 +44,6 @@ void EncSampler_Start(void);
 /* Hook these from Cube/HAL */
 void EncSampler_TIM7_Callback(void);  // call inside HAL_TIM_PeriodElapsedCallback
 void EncSampler_Process(void);        // call from main while() OR rely on lazy drain
-
 /* Copy window into linear buffer (oldest->newest). Returns 0 on success.
    Flags for this same window are published to win_rule_flags. */
 int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags);

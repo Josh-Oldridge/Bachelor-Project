@@ -6,6 +6,6 @@
 ../Core/Src/stm32n6xx_hal_msp.c:225:6:HAL_RAMCFG_MspInit	8	static
 ../Core/Src/stm32n6xx_hal_msp.c:244:6:HAL_RAMCFG_MspDeInit	0	static
 ../Core/Src/stm32n6xx_hal_msp.c:263:6:HAL_TIM_Encoder_MspInit	56	static
-../Core/Src/stm32n6xx_hal_msp.c:301:6:HAL_TIM_Base_MspInit	16	static
-../Core/Src/stm32n6xx_hal_msp.c:327:6:HAL_TIM_Encoder_MspDeInit	0	static
-../Core/Src/stm32n6xx_hal_msp.c:357:6:HAL_TIM_Base_MspDeInit	0	static
+../Core/Src/stm32n6xx_hal_msp.c:304:6:HAL_TIM_Base_MspInit	16	static
+../Core/Src/stm32n6xx_hal_msp.c:330:6:HAL_TIM_Encoder_MspDeInit	8	static
+../Core/Src/stm32n6xx_hal_msp.c:362:6:HAL_TIM_Base_MspDeInit	0	static

@@ -8,7 +8,7 @@ extern "C" {
 /**
   ******************************************************************************
   * @file    app_x-cube-ai.h
-  * @author  X-CUBE-AI C code generator
+  *   * @author  X-CUBE-AI C code generator
   * @brief   AI entry function definitions
   ******************************************************************************
   * @attention

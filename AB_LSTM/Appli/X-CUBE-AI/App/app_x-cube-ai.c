@@ -62,11 +62,22 @@
 /* USER CODE BEGIN includes */
 #include "model_meta.h"
 #include "enc_sampler.h"
+#include <math.h>
 
 #define SEQ_LEN   (MODEL_SEQ_LEN)
 #define FEAT_DIM  (MODEL_FEAT_DIM)
 #if (SEQ_LEN * FEAT_DIM) != AI_NETWORK_IN_1_SIZE
 #error "Input size mismatch: regenerate model_meta.h or re-export network"
+#endif
+
+#define MODEL_OUTPUT_IS_LOGITS 0
+#define DIAG_VERBOSE 1
+
+#if DIAG_VERBOSE
+static void diag_dump_scalers(void);
+static void diag_softmax_sum_check(volatile const float* y, const char* tag);
+static void diag_dump_window_stats(const float* w);
+static void diag_run_synthetic_normal(void);
 #endif
 /* USER CODE END includes */
 
@@ -270,52 +281,110 @@ static int post_process(void)
 {
   const float* out = (const float*)ai_output[0].data;
 
-  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
+  /* Always capture raw network output */
+  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
     last_y_raw[i] = out[i];
-    last_y[i]     = out[i];
-  }
 
-#if MODEL_HAS_THRESHOLDS
-  /* ---- Z-priority: if p_z >= tau_z, force Z and return ---- */
-  const float pz    = last_y_raw[C_ZINDEX];
-  const float tau_z = OP_THRESH[C_ZINDEX];
-  if (pz >= tau_z) {
-    for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) last_y[i] = 0.f;
-    last_y[C_ZINDEX] = 1.f;
-    renorm();
-    inf_total++;
-    return 0;
-  }
+#if DIAG_VERBOSE
+  /* Check whether the model already outputs a softmax (sum≈1). */
+  diag_softmax_sum_check(last_y_raw, "raw");
 #endif
 
-  /* Gate error classes that were calibrated (not Z here) */
-  apply_thresholds();
+#if MODEL_OUTPUT_IS_LOGITS
+  /* ... your logits->softmax path ... */
+  float maxv = last_y_raw[0];
+  for (int i = 1; i < AI_NETWORK_OUT_1_SIZE; ++i)
+    if (last_y_raw[i] > maxv) maxv = last_y_raw[i];
 
-  /* Flags for THIS window (snapshot captured at acquire) */
-  const uint32_t rf = rf_snapshot;
-
-  const float z_raw  = last_y_raw[C_ZINDEX];
-  const float bo_raw = last_y_raw[C_BOUNCE];
-
-  if (rf & (RS_A_STUCK | RS_B_STUCK)) {
-    if (last_y[C_MISSINGSTEP] < 0.85f && bo_raw < 0.80f && z_raw < 0.80f) {
-      floor_class(C_MISSINGSTEP, 0.85f);
-    }
+  float sum = 0.f;
+  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
+    last_y[i] = expf(last_y_raw[i] - maxv);
+    sum += last_y[i];
   }
-  if (rf & RS_Z_MISSED) {
-    if (last_y[C_ZINDEX] < 0.65f) floor_class(C_ZINDEX, 0.65f);
+  if (sum > 0.f) {
+    float inv = 1.0f / sum;
+    for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
+      last_y[i] *= inv;
   }
-  if (rf & RS_QUAD_BAD) {
-    if (last_y[C_ZINDEX] < 0.60f && last_y[C_BOUNCE] < 0.75f)
-      floor_class(C_BOUNCE, 0.75f);
-  }
+#else
+  /* Model already outputs probabilities; mirror raw->final. */
+  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
+    last_y[i] = last_y_raw[i];
+#endif
 
-  renorm();
+  /* No thresholds or guardrails in this diagnostic build */
   inf_total++;
   return 0;
 }
 
 
+#if DIAG_VERBOSE
+static void diag_dump_scalers(void) {
+  printf("=== FEAT SCALES (min, scale) ===\r\n");
+  for (int j = 0; j < FEAT_DIM; ++j)
+    printf("%2d: %.6f, %.6f\r\n",
+           j, (double)MODEL_FEAT_MIN[j], (double)MODEL_FEAT_SCALE[j]);
+}
+
+static void diag_softmax_sum_check(volatile const float* y, const char* tag) {
+  float s = 0.f;
+  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) s += y[i];
+  printf("SUM(%s)=%.6f\r\n", tag, (double)s);
+}
+
+/* dump min/max/mean per feature of the last window fed to the NN */
+static void diag_dump_window_stats(const float* w) {
+  printf("--- window stats (scaled 0..1) ---\r\n");
+  for (int f = 0; f < FEAT_DIM; ++f) {
+    float mn=1e9f, mx=-1e9f, avg=0.f;
+    for (int t = 0; t < SEQ_LEN; ++t) {
+      float v = w[t*FEAT_DIM + f];
+      if (v < mn) mn = v;
+      if (v > mx) mx = v;
+      avg += v;
+    }
+    avg /= (float)SEQ_LEN;
+    printf("f[%02d]: min=%.3f max=%.3f mean=%.3f\r\n",
+           f, (double)mn, (double)mx, (double)avg);
+  }
+}
+
+/* build & run a clean forward Gray sequence to sanity-check model */
+static void diag_run_synthetic_normal(void) {
+  float* X = (float*)ai_input[0].data;
+
+  int idx = 0, ab = 0; int ssz = 0;
+  for (int t = 0; t < SEQ_LEN; ++t) {
+    /* unscaled raw features in the SAME order as firmware packs */
+    float AB   = (float)ab;        // 0..3 (Gray index order 00,01,11,10)
+    float dchg = 1.f;              // one state change per step in this toy
+    float dirF = 1.f, dirB = 0.f;
+    float SCR  = 0.f;              // steady timing
+    float A    = ((ab==0)||(ab==1)) ? 0.f : 1.f;    // A from 00,01,11,10
+    float B    = ((ab==0)||(ab==3)) ? 0.f : 1.f;    // B from 00,01,11,10
+    float Z    = 0.f;
+    float ER   = 1.f;              // rising edge present regularly
+    float SSZ  = (float)ssz++;
+
+    float raw[FEAT_DIM] = {AB,dchg,dirF,dirB,SCR,A,B,Z,ER,SSZ};
+    for (int f = 0; f < FEAT_DIM; ++f) {
+      float y = (raw[f] - MODEL_FEAT_MIN[f]) * MODEL_FEAT_SCALE[f];
+      if (y < 0.f) y = 0.f;
+      if (y > 1.f) y = 1.f;
+      X[idx++] = y;
+    }
+    ab = (ab + 1) & 3;
+  }
+
+  if (ai_run() == 0) {
+    const float* out = (const float*)ai_output[0].data;
+    printf("SYNTH(norm) RAW = [%.3f %.3f %.3f %.3f]\r\n",
+           (double)out[0], (double)out[1], (double)out[2], (double)out[3]);
+    diag_softmax_sum_check(out, "synth_raw");
+  }
+}
+
+#endif
 
 
 
@@ -361,6 +430,12 @@ void MX_X_CUBE_AI_Init(void)
     printf("AI: I/O fmt OK (in: type=%lu bits=%lu, out: type=%lu bits=%lu)\r\n",
            (unsigned long)in_type, (unsigned long)in_bits,
            (unsigned long)out_type,(unsigned long)out_bits);
+
+#if DIAG_VERBOSE
+    diag_dump_scalers();
+    /* optional: one-shot sanity on a clean synthetic window */
+    diag_run_synthetic_normal();
+#endif
     /* USER CODE END 5 */
 }
 
@@ -375,6 +450,11 @@ void MX_X_CUBE_AI_Process(void)
 	if (acquire_and_process_data() == 0) {
 	    if (ai_run() == 0) {
 	      post_process();
+#if DIAG_VERBOSE
+    if ((inf_total % 100) == 0) {
+      diag_dump_window_stats((const float*)ai_input[0].data);
+    }
+#endif
 	    }
 	  }
     /* USER CODE END 6 */

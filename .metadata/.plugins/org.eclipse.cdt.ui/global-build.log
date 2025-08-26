@@ -39017,3 +39017,1432 @@ Post header 2.3 information :
 
 
  
+09:39:48 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:309:3: warning: data definition has no type or storage class
+  309 |   apply_thresholds();
+      |   ^~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:309:3: warning: type defaults to 'int' in declaration of 'apply_thresholds' [-Wimplicit-int]
+../X-CUBE-AI/App/app_x-cube-ai.c:309:3: error: conflicting types for 'apply_thresholds'; have 'int()'
+../X-CUBE-AI/App/app_x-cube-ai.c:253:13: note: previous definition of 'apply_thresholds' with type 'void(void)'
+  253 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:312:23: error: initializer element is not constant
+  312 |   const uint32_t rf = rf_snapshot;
+      |                       ^~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:314:24: error: initializer element is not constant
+  314 |   const float z_raw  = last_y_raw[C_ZINDEX];
+      |                        ^~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:315:24: error: initializer element is not constant
+  315 |   const float bo_raw = last_y_raw[C_BOUNCE];
+      |                        ^~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:317:3: error: expected identifier or '(' before 'if'
+  317 |   if (rf & (RS_A_STUCK | RS_B_STUCK)) {
+      |   ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:322:3: error: expected identifier or '(' before 'if'
+  322 |   if (rf & RS_Z_MISSED) {
+      |   ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:325:3: error: expected identifier or '(' before 'if'
+  325 |   if (rf & RS_QUAD_BAD) {
+      |   ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:330:3: warning: data definition has no type or storage class
+  330 |   renorm();
+      |   ^~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:330:3: warning: type defaults to 'int' in declaration of 'renorm' [-Wimplicit-int]
+../X-CUBE-AI/App/app_x-cube-ai.c:330:3: error: conflicting types for 'renorm'; have 'int()'
+../X-CUBE-AI/App/app_x-cube-ai.c:208:20: note: previous definition of 'renorm' with type 'void(void)'
+  208 | static inline void renorm(void) {
+      |                    ^~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:331:12: error: expected '=', ',', ';', 'asm' or '__attribute__' before '++' token
+  331 |   inf_total++;
+      |            ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:332:3: error: expected identifier or '(' before 'return'
+  332 |   return 0;
+      |   ^~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:333:1: error: expected identifier or '(' before '}' token
+  333 | }
+      | ^
+../X-CUBE-AI/App/app_x-cube-ai.c:253:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  253 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+make[1]: *** [X-CUBE-AI/App/subdir.mk:28: X-CUBE-AI/App/app_x-cube-ai.o] Error 1
+make: *** [makefile:63: all] Error 2
+"make -j20 all" terminated with exit code 2. Build might be incomplete.
+09:40:30 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:253:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  253 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  88180	   4272	  25520	 117972	  1ccd4	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34001fc1
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9b9385
+    Header version: 0x20300
+    Size: 0x16b00
+    Load address: 0xffffffff
+    Entry point: 0x34001fc1
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 3d 58 16 37 cb b0 5f 2b b7 57 41 69 e3 b3 22 6b 87 14 04 e9 fe a6 27 d4 2e 15 bf 6f 7c 00 cd 
+
+                    c2 e8 24 98 d8 a7 7c a1 6a af a0 ad 59 31 6a 3a 91 ae 9d ff b6 c9 30 8f 64 ed b6 b3 f6 5c f3 
+
+                    8c 34 7a 98 2c b0 4e e0 e0 29 ad 78 e8 3c 9b 27 5a 56 fd 36 aa 09 fd d8 93 0e 2a 9b 7f 30 07 
+
+                    c3 64 f8 b2 4d 52 b0 44 2e a6 ba d5 ca f5 76 37 6b 4d 43 e2 df 56 6f b9 44 61 51 42 39 73 7d 
+
+                    fa 38 0c 99 de 17 19 28 81 c7 b0 6a de 53 4d b5 09 fd 15 b6 89 62 00 5f e2 b4 77 c6 86 35 e0 
+
+                    94 98 5e 6b 85 5b 2d b4 84 6f 17 48 7d 9c ca 9d d5 16 8f fa 68 83 1a 94 28 cb f3 35 a1 68 6d 
+
+                    af d6 37 d6 e1 52 52 dc 11 72 03 a1 e5 32 0d ec c1 d8 de 8d 80 29 ad b9 a7 56 c7 c1 a3 73 c2 
+
+                    d4 f7 dd 36 01 6a 8a 37 cb 3a 45 c2 78 bb cc e2 a1 b2 55 31 a2 b1 3f 80 1e db 31 2e 80 50 48 
+
+                    39 4f a0 a8 47 3c 9c e6 da d8 2b 66 05 22 d5 25 37 2b 50 78 a5 0b 10 70 1c f2 28 55 48 46 8a 
+
+                    84 fe 6b 86 32 ff e6 b5 c1 67 df 77 f9 4e c9 12 72 bd 00 bd f8 c0 0e d9 1e 80 5e f0 19 67 5b 
+
+                    6d 89 79 1e 18 d6 f6 7b 9e 7e 24 45 6b 74 44 e2 02 e9 22 30 23 59 15 f4 01 ee 75 08 20 43 8b 
+
+                    9a cd ab 0f 9f 4f d3 0c 4d 64 d4 a4 74 f8 06 2e c7 ee ac b7 c2 97 33 f5 7e 68 38 ff de d6 11 
+
+                    75 d7 78 22 5c c5 7b b5 00 00 02 00 84 18 91 61 70 0a 07 00 30 be eb 00 00 00 00 00 90 b9 79 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+14:01:14 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'post_process':
+../X-CUBE-AI/App/app_x-cube-ai.c:282:3: warning: implicit declaration of function 'diag_softmax_sum_check' [-Wimplicit-function-declaration]
+  282 |   diag_softmax_sum_check(last_y_raw, "raw");
+      |   ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:321:13: warning: conflicting types for 'diag_softmax_sum_check'; have 'void(const float *, const char *)'
+  321 | static void diag_softmax_sum_check(const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:321:13: error: static declaration of 'diag_softmax_sum_check' follows non-static declaration
+../X-CUBE-AI/App/app_x-cube-ai.c:282:3: note: previous implicit declaration of 'diag_softmax_sum_check' with type 'void(const float *, const char *)'
+  282 |   diag_softmax_sum_check(last_y_raw, "raw");
+      |   ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'diag_run_synthetic_normal':
+../X-CUBE-AI/App/app_x-cube-ai.c:364:7: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  364 |       if (y < 0.f) y = 0.f; if (y > 1.f) y = 1.f;
+      |       ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:364:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  364 |       if (y < 0.f) y = 0.f; if (y > 1.f) y = 1.f;
+      |                             ^~
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:313: error: unterminated #if
+  313 | #if DIAG_VERBOSE
+      | 
+../X-CUBE-AI/App/app_x-cube-ai.c:328:13: warning: 'diag_dump_window_stats' defined but not used [-Wunused-function]
+  328 | static void diag_dump_window_stats(const float* w) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:254:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  254 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+make[1]: *** [X-CUBE-AI/App/subdir.mk:28: X-CUBE-AI/App/app_x-cube-ai.o] Error 1
+make[1]: *** Waiting for unfinished jobs....
+make: *** [makefile:63: all] Error 2
+"make -j20 all" terminated with exit code 2. Build might be incomplete.
+14:01:50 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'post_process':
+../X-CUBE-AI/App/app_x-cube-ai.c:282:3: warning: implicit declaration of function 'diag_softmax_sum_check' [-Wimplicit-function-declaration]
+  282 |   diag_softmax_sum_check(last_y_raw, "raw");
+      |   ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:321:13: warning: conflicting types for 'diag_softmax_sum_check'; have 'void(const float *, const char *)'
+  321 | static void diag_softmax_sum_check(const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:321:13: error: static declaration of 'diag_softmax_sum_check' follows non-static declaration
+../X-CUBE-AI/App/app_x-cube-ai.c:282:3: note: previous implicit declaration of 'diag_softmax_sum_check' with type 'void(const float *, const char *)'
+  282 |   diag_softmax_sum_check(last_y_raw, "raw");
+      |   ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'diag_run_synthetic_normal':
+../X-CUBE-AI/App/app_x-cube-ai.c:364:7: warning: this 'if' clause does not guard... [-Wmisleading-indentation]
+  364 |       if (y < 0.f) y = 0.f; if (y > 1.f) y = 1.f;
+      |       ^~
+../X-CUBE-AI/App/app_x-cube-ai.c:364:29: note: ...this statement, but the latter is misleadingly indented as if it were guarded by the 'if'
+  364 |       if (y < 0.f) y = 0.f; if (y > 1.f) y = 1.f;
+      |                             ^~
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:328:13: warning: 'diag_dump_window_stats' defined but not used [-Wunused-function]
+  328 | static void diag_dump_window_stats(const float* w) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:254:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  254 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+make[1]: *** [X-CUBE-AI/App/subdir.mk:28: X-CUBE-AI/App/app_x-cube-ai.o] Error 1
+make: *** [makefile:63: all] Error 2
+"make -j20 all" terminated with exit code 2. Build might be incomplete.
+14:21:21 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'post_process':
+../X-CUBE-AI/App/app_x-cube-ai.c:290:26: warning: passing argument 1 of 'diag_softmax_sum_check' discards 'volatile' qualifier from pointer target type [-Wdiscarded-qualifiers]
+  290 |   diag_softmax_sum_check(last_y_raw, "raw");
+      |                          ^~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:78:49: note: expected 'const float *' but argument is of type 'volatile float *'
+   78 | static void diag_softmax_sum_check(const float* y, const char* tag);
+      |                                    ~~~~~~~~~~~~~^
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:336:13: warning: 'diag_dump_window_stats' defined but not used [-Wunused-function]
+  336 | static void diag_dump_window_stats(const float* w) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89564	   4272	  25560	 119396	  1d264	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34002109
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9e590f
+    Header version: 0x20300
+    Size: 0x17060
+    Load address: 0xffffffff
+    Entry point: 0x34002109
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 1b b4 b6 45 3e bb c6 77 a3 c4 c3 ca 69 6f ac 8d c4 41 7c 19 07 a6 c1 99 91 31 f2 55 7f a0 db 
+
+                    2c 51 d2 44 ad 89 d3 71 e5 a6 40 8f 61 8f 21 b9 6b 40 02 29 d6 57 a4 a5 fa 5d 16 81 96 c5 bc 
+
+                    c2 39 8e 51 a6 34 94 b0 71 0c 9a 3f ea 86 84 f0 7b 71 70 be 30 38 23 4b 88 28 c5 0c 2d 2e 7f 
+
+                    74 19 5d a3 60 6f 63 f5 fd 2b 06 6d 98 14 45 a1 6d 81 51 b8 df 51 14 ef 46 4e 26 2e 0c b8 6e 
+
+                    7e 5d 6e 97 26 2a f9 31 c7 87 e7 9c 58 ec d5 31 b6 82 eb 93 1e 62 58 0a 6f dd 10 f0 6e 3b 6f 
+
+                    6e a4 9a a6 53 e9 48 c8 5c 24 db 28 7d c2 ee 89 7a 3e cf 31 2c 85 1d 94 9a a7 c9 54 81 78 25 
+
+                    eb f3 3c f6 43 08 43 d2 00 b6 16 3b d7 7b d6 83 51 d0 f2 48 04 c6 2e 45 6f 37 67 13 3c 33 9d 
+
+                    c4 c4 88 e7 e2 45 73 08 8e 57 65 7a df 03 92 07 d2 8a b2 4f e8 bf 5f da c3 86 34 27 f5 f8 d3 
+
+                    58 f0 91 66 82 a1 bb f5 fc 69 3b 06 00 00 23 db ca 81 cd a6 9a cb d4 f6 1b 79 64 9c b8 65 dc 
+
+                    4d 87 5d 60 52 f7 92 3c 6f 98 91 bb 37 b5 ae 6a 64 e9 72 97 e8 b1 5c 44 58 4e ca 6f ac 59 b3 
+
+                    d6 c6 e1 88 98 53 48 6b f0 e8 3b 6f 33 81 e3 72 b9 ef c3 22 5c 9f a2 49 ba 3a 5b e3 73 21 d8 
+
+                    6c 36 0d b8 41 00 9c 1b c1 c9 44 fd 01 5d fe ac a4 d2 e2 a7 0f 6e 88 35 19 82 2d 54 c1 39 d3 
+
+                    cb 31 04 39 62 3b b1 e4 00 00 02 00 c3 23 52 5b 7f 08 07 00 30 be 03 01 00 00 00 00 b0 c9 84 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+14:38:19 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:329:13: error: conflicting types for 'diag_softmax_sum_check'; have 'void(const float *, const char *)'
+  329 | static void diag_softmax_sum_check(const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:78:13: note: previous declaration of 'diag_softmax_sum_check' with type 'void(const volatile float *, const char *)'
+   78 | static void diag_softmax_sum_check(volatile const float* y, const char* tag);
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:336:13: error: conflicting types for 'diag_softmax_sum_check'; have 'void(const volatile float *, const char *)'
+  336 | static void diag_softmax_sum_check(volatile const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:329:13: note: previous definition of 'diag_softmax_sum_check' with type 'void(const float *, const char *)'
+  329 | static void diag_softmax_sum_check(const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c: In function 'diag_softmax_sum_check':
+../X-CUBE-AI/App/app_x-cube-ai.c:341:17: error: 'w' undeclared (first use in this function)
+  341 |       float v = w[t*FEAT_DIM + f];
+      |                 ^
+../X-CUBE-AI/App/app_x-cube-ai.c:341:17: note: each undeclared identifier is reported only once for each function it appears in
+../X-CUBE-AI/App/app_x-cube-ai.c: At top level:
+../X-CUBE-AI/App/app_x-cube-ai.c:78:13: warning: 'diag_softmax_sum_check' used but never defined
+   78 | static void diag_softmax_sum_check(volatile const float* y, const char* tag);
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:79:13: warning: 'diag_dump_window_stats' used but never defined
+   79 | static void diag_dump_window_stats(const float* w);
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:329:13: warning: 'diag_softmax_sum_check' defined but not used [-Wunused-function]
+  329 | static void diag_softmax_sum_check(const float* y, const char* tag) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+make[1]: *** [X-CUBE-AI/App/subdir.mk:28: X-CUBE-AI/App/app_x-cube-ai.o] Error 1
+make: *** [makefile:63: all] Error 2
+"make -j20 all" terminated with exit code 2. Build might be incomplete.
+14:39:07 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89844	   4272	  25560	 119676	  1d37c	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34002109
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9edaba
+    Header version: 0x20300
+    Size: 0x17180
+    Load address: 0xffffffff
+    Entry point: 0x34002109
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 2c f5 f8 79 19 15 4f 97 67 5f 42 08 0e 13 36 3c 4a 3f 3e ba 0d b2 9a 94 77 32 c7 30 b7 d1 46 
+
+                    b1 e3 c9 07 73 c3 2f 70 2a 21 2d 05 59 51 96 21 5f ff f9 16 9c b0 40 44 5a 87 aa 15 07 49 12 
+
+                    0c 67 e4 ac a2 62 3c f9 f9 fc d3 67 ed 5f 30 51 c6 11 eb a8 00 a8 80 a1 34 38 e8 fd b5 85 c9 
+
+                    20 fc c0 62 74 b6 c3 fa 10 eb a4 37 d2 c6 1d 93 d6 15 c1 4c bc ab f1 58 13 a3 7f cf ed 43 e5 
+
+                    93 d7 2c e3 89 4f de ac 82 35 d7 37 fc fb a1 2c 6d 4e 89 04 14 76 7c d2 ba 7b 2e 92 9f 0f 97 
+
+                    02 34 7a 55 ae 40 99 a5 f1 a7 9a 93 89 ac a4 3f 88 05 e0 eb b6 b9 23 d2 c1 7d 60 d5 9e 2f 13 
+
+                    49 cf 88 97 ea 01 1d 1f 70 15 ea 99 39 a2 6d bb fa 00 4f 8b 72 30 48 b7 67 0d 14 f0 01 e8 b5 
+
+                    8f 9f 10 63 ee bb 45 0f 24 87 7b fe 30 77 71 1d ba e6 2f 8c b9 b5 d9 0f 68 ba 19 7e fc ec 96 
+
+                    ef b3 6a 40 5c 90 ab 4e 61 a0 2e ba a3 ac 99 d1 24 23 20 61 36 df 3b bb 57 7a e9 75 46 85 ea 
+
+                    dd 29 d8 d1 86 e6 b0 4c c3 0e f3 1f dc b6 0d 47 7c 63 fe f4 d2 e1 29 14 de b9 2b 97 20 82 01 
+
+                    00 d8 99 71 66 e2 47 79 7c 9d 85 19 07 a5 4c 68 f1 b0 76 65 cc fc 31 a7 51 c7 c0 26 5e 7e cf 
+
+                    5e 2d 27 52 9a 94 41 b3 da 3b 00 62 cb 22 08 78 8d d9 a4 7b e4 d6 5c 98 a2 42 08 82 8f 5f b0 
+
+                    ab dd 05 5a 37 34 ee 71 00 00 02 34 5d 04 b1 ae d3 b4 00 00 d0 6f 74 02 00 00 00 00 40 3d 7a 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+14:41:10 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89804	   4272	  25560	 119636	  1d354	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+Finished building: AB_LSTM_Appli.list
+ 
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340020e1
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9e8ac1
+    Header version: 0x20300
+    Size: 0x17160
+    Load address: 0xffffffff
+    Entry point: 0x340020e1
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 6d 3d 58 02 65 b7 6d 92 13 1b 46 a9 dc 54 8e 08 be 66 d8 1f 22 72 db 62 aa 9d ee d2 c0 cf ca 
+
+                    6a 4e b5 36 25 9a 61 2e fb 53 16 44 6e 64 00 a8 3d 74 5d cb a9 28 c3 88 5a 02 28 be 10 83 da 
+
+                    63 a1 65 54 56 04 a4 36 77 72 26 e0 26 30 dd e2 32 6c d0 b3 d0 e6 9e ad e2 a6 50 90 d8 13 37 
+
+                    2a 64 95 f5 65 eb 7a f1 74 a3 e0 7b d8 c9 5c b9 f6 81 68 fc 85 e3 79 25 01 4e 3d a0 93 79 91 
+
+                    91 22 73 d7 e4 c2 7a 9f f0 40 bb 2b b4 51 a8 8a 46 7f d6 a0 4b 0d 31 72 8c 74 48 d8 95 bc 9f 
+
+                    71 8d 4d 65 02 10 ae c8 2d 42 ce 1f 1c 57 91 e5 61 93 41 c4 f2 29 d5 34 8b 16 b4 5a d8 22 f9 
+
+                    ac d6 68 75 a5 66 46 19 34 50 51 a9 f1 66 8c 22 d4 4f 9b 57 cf db 34 14 51 3b c4 41 ee be b0 
+
+                    9e 44 bf 50 0b b3 00 8b 60 03 05 af bb 37 28 4e 19 e1 7a 65 95 b5 a6 5d 04 72 94 82 3c 3e fb 
+
+                    53 de d3 37 7d 80 0e d0 df 8f fc 49 5a a2 07 1e 5c 48 b4 ca b5 8c 41 da 35 58 a2 63 ce dd 56 
+
+                    95 ff 01 4a ca f2 c1 5d ac 5a 58 ab 1c 9e 5d b9 65 d0 d2 e4 ba 99 7a 1e e6 2d 10 bc ea 7c ad 
+
+                    a5 bc 9e 9e ca 31 b7 07 28 ab 26 7d 99 54 0f 94 5e 83 2d 29 8e 54 02 14 ec d7 2a b3 ad 14 bb 
+
+                    73 54 49 13 88 70 97 ad ab dc 7f 47 cf b7 ce 5e 53 a9 d5 c9 8c 05 35 01 71 d4 de 44 76 af 86 
+
+                    a2 32 75 f2 c0 9e ae b6 00 00 00 00 2e 6b b1 37 46 91 09 00 60 c0 ed 00 00 00 00 00 10 ae ed 
+
+                    00 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+16:34:00 **** Clean-only build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 clean 
+rm -rf ./X-CUBE-AI/App/app_x-cube-ai.cyclo ./X-CUBE-AI/App/app_x-cube-ai.d ./X-CUBE-AI/App/app_x-cube-ai.o ./X-CUBE-AI/App/app_x-cube-ai.su ./X-CUBE-AI/App/network.cyclo ./X-CUBE-AI/App/network.d ./X-CUBE-AI/App/network.o ./X-CUBE-AI/App/network.su ./X-CUBE-AI/App/network_data.cyclo ./X-CUBE-AI/App/network_data.d ./X-CUBE-AI/App/network_data.o ./X-CUBE-AI/App/network_data.su ./X-CUBE-AI/App/network_data_params.cyclo ./X-CUBE-AI/App/network_data_params.d ./X-CUBE-AI/App/network_data_params.o ./X-CUBE-AI/App/network_data_params.su
+rm -rf ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.su ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.cyclo ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.d ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.o ./Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.su
+rm -rf ./Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.cyclo ./Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.d ./Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.o ./Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.su
+rm -rf ./Core/Startup/startup_stm32n657x0hxq.d ./Core/Startup/startup_stm32n657x0hxq.o
+rm -rf ./Core/Src/enc_sampler.cyclo ./Core/Src/enc_sampler.d ./Core/Src/enc_sampler.o ./Core/Src/enc_sampler.su ./Core/Src/main.cyclo ./Core/Src/main.d ./Core/Src/main.o ./Core/Src/main.su ./Core/Src/secure_nsc.cyclo ./Core/Src/secure_nsc.d ./Core/Src/secure_nsc.o ./Core/Src/secure_nsc.su ./Core/Src/stm32n6xx_hal_msp.cyclo ./Core/Src/stm32n6xx_hal_msp.d ./Core/Src/stm32n6xx_hal_msp.o ./Core/Src/stm32n6xx_hal_msp.su ./Core/Src/stm32n6xx_it.cyclo ./Core/Src/stm32n6xx_it.d ./Core/Src/stm32n6xx_it.o ./Core/Src/stm32n6xx_it.su ./Core/Src/syscalls.cyclo ./Core/Src/syscalls.d ./Core/Src/syscalls.o ./Core/Src/syscalls.su ./Core/Src/sysmem.cyclo ./Core/Src/sysmem.d ./Core/Src/sysmem.o ./Core/Src/sysmem.su ./Core/Src/system_stm32n6xx_s.cyclo ./Core/Src/system_stm32n6xx_s.d ./Core/Src/system_stm32n6xx_s.o ./Core/Src/system_stm32n6xx_s.su
+rm -rf AB_LSTM_Appli.bin AB_LSTM_Appli.elf AB_LSTM_Appli.list AB_LSTM_Appli.map default.size.stdout
+rm: can't remove 'AB_LSTM_Appli.elf': Permission denied
+make: [makefile:91: clean] Error 1 (ignored)
+ 
+16:34:02 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+arm-none-eabi-gcc "../X-CUBE-AI/App/network.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/network.d" -MT"X-CUBE-AI/App/network.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/network.o"
+arm-none-eabi-gcc "../X-CUBE-AI/App/network_data.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/network_data.d" -MT"X-CUBE-AI/App/network_data.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/network_data.o"
+arm-none-eabi-gcc "../X-CUBE-AI/App/network_data_params.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/network_data_params.d" -MT"X-CUBE-AI/App/network_data_params.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/network_data_params.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cacheaxi.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cacheaxi.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_cortex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_cortex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_dma_ex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_exti.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_exti.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_gpio.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_gpio.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_pwr_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_pwr_ex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_ramcfg.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_ramcfg.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc_ex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rif.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rif.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_tim_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_tim_ex.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_uart_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_uart_ex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_usart.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart.o"
+C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c: In function 'HAL_DMAEx_List_ConvertQToDynamic':
+C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c:3000:77: warning: 'node_info.currentnode_addr' may be used uninitialized [-Wmaybe-uninitialized]
+ 3000 |     if (((uint32_t)pQList->FirstCircularNode != 0U)                         &&
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
+ 3001 |         ((uint32_t)pQList->FirstCircularNode != node_info.currentnode_addr) &&
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~  
+C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_dma_ex.c:2947:26: note: 'node_info.currentnode_addr' was declared here
+ 2947 |   DMA_NodeInQInfoTypeDef node_info;
+      |                          ^~~~~~~~~
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_usart_ex.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.d" -MT"Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_usart_ex.o"
+arm-none-eabi-gcc "C:/ST/AB_LSTM/AB_LSTM/Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.d" -MT"Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.o"
+arm-none-eabi-gcc -mcpu=cortex-m55 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32n657x0hxq.d" -MT"Core/Startup/startup_stm32n657x0hxq.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Startup/startup_stm32n657x0hxq.o" "../Core/Startup/startup_stm32n657x0hxq.s"
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/secure_nsc.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/secure_nsc.d" -MT"Core/Src/secure_nsc.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/secure_nsc.o"
+arm-none-eabi-gcc "../Core/Src/stm32n6xx_hal_msp.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/stm32n6xx_hal_msp.d" -MT"Core/Src/stm32n6xx_hal_msp.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32n6xx_hal_msp.o"
+arm-none-eabi-gcc "../Core/Src/stm32n6xx_it.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/stm32n6xx_it.d" -MT"Core/Src/stm32n6xx_it.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32n6xx_it.o"
+arm-none-eabi-gcc "../Core/Src/sysmem.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/sysmem.d" -MT"Core/Src/sysmem.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/sysmem.o"
+arm-none-eabi-gcc "../Core/Src/system_stm32n6xx_s.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/system_stm32n6xx_s.d" -MT"Core/Src/system_stm32n6xx_s.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/system_stm32n6xx_s.o"
+../Core/Src/enc_sampler.c: In function 'EncSampler_Process':
+../Core/Src/enc_sampler.c:161:20: warning: unused variable 'cnt' [-Wunused-variable]
+  161 |     const uint16_t cnt  = s.cnt;
+      |                    ^~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-closer.o): in function `_close_r':
+(.text._close_r+0xc): warning: _close is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-closer.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-fstatr.o): in function `_fstat_r':
+(.text._fstat_r+0xe): warning: _fstat is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-signalr.o): in function `_getpid_r':
+(.text._getpid_r+0x0): warning: _getpid is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-fstatr.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-signalr.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-isattyr.o): in function `_isatty_r':
+(.text._isatty_r+0xc): warning: _isatty is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-isattyr.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-signalr.o): in function `_kill_r':
+(.text._kill_r+0xe): warning: _kill is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-signalr.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-lseekr.o): note: the message above does not take linker garbage collection into account
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-lseekr.o): in function `_lseek_r':
+(.text._lseek_r+0x10): warning: _lseek is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-readr.o): in function `_read_r':
+(.text._read_r+0x10): warning: _read is not implemented and will always fail
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-readr.o): note: the message above does not take linker garbage collection into account
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89896	   4272	  25560	 119728	  1d3b0	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+Finished building: AB_LSTM_Appli.list
+ 
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340020d1
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9e94eb
+    Header version: 0x20300
+    Size: 0x171c0
+    Load address: 0xffffffff
+    Entry point: 0x340020d1
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: d7 3f dd 5f 52 e6 4b b5 bd 66 90 dc cb f7 2e 27 92 f3 7c 3e b5 ef 53 b9 ca 42 07 88 4a 5b 32 
+
+                    c6 7e c7 78 bd 43 73 0d 0e ae a2 2e 5d 6e 5c ad cf 2c 04 06 d5 88 3b 05 a9 e7 11 d3 d5 55 f3 
+
+                    9e eb 50 37 cb 4d 92 30 66 c1 e3 fe a4 c9 64 7c 2a 58 f1 9d 6f 91 0b 57 9f 15 fd 8a ca 75 76 
+
+                    cd ac 8a fe 45 5c a3 05 88 82 63 85 53 87 2f bf eb f8 8a 4e af 4f f2 d0 08 74 b8 a3 3f 54 ba 
+
+                    45 0e 86 9c 15 d3 fb 99 6c 3d c1 a2 7f 75 32 06 28 70 10 da 25 65 79 71 b5 cb a4 50 79 62 9f 
+
+                    68 57 62 ff 4f 2c 66 55 97 03 52 3e 5d 18 b9 5b a8 6f 50 34 ff bc d1 40 7b 89 9f 57 83 b4 26 
+
+                    ba f2 12 84 f0 05 f8 02 0e 3e e2 66 87 73 0d 2a b5 e1 aa 1e 40 2f 8b 99 da cb c4 e3 05 b2 9d 
+
+                    f7 d4 88 b9 7d b4 bc 83 73 15 b0 36 ab 9b 71 71 c8 43 ad 56 60 c4 13 c8 b5 28 29 e4 b9 40 b4 
+
+                    1a aa 3d 45 77 40 73 bc aa 90 42 ef 75 00 f2 8d b5 af 6c fe 90 ae 5d 41 5b 2e 5a b7 06 8e 0c 
+
+                    55 f0 08 b8 bc 42 18 0e 96 da 50 04 45 36 2f 11 d0 3d f9 9e 73 21 61 c3 7d 90 6a 4d 59 72 91 
+
+                    87 51 46 b2 8e 63 d0 86 25 fc 90 d5 0b 04 27 27 14 5d 96 9d 0e 3a 4d 22 55 e1 35 e5 87 06 6c 
+
+                    35 5a 1c dd b2 e3 7d 80 14 f3 ab 71 af 43 0c 6a 79 cd 62 5b 8c c5 ec 99 da e9 96 bf f8 db 0f 
+
+                    b9 6b 8f e2 76 83 36 cf 00 00 02 00 bf 66 1c 42 86 f8 07 00 10 ae f7 00 00 00 00 00 d0 cd 78 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+16:36:46 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/secure_nsc.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/secure_nsc.d" -MT"Core/Src/secure_nsc.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/secure_nsc.o"
+arm-none-eabi-gcc "../Core/Src/stm32n6xx_hal_msp.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/stm32n6xx_hal_msp.d" -MT"Core/Src/stm32n6xx_hal_msp.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32n6xx_hal_msp.o"
+arm-none-eabi-gcc "../Core/Src/stm32n6xx_it.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/stm32n6xx_it.d" -MT"Core/Src/stm32n6xx_it.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32n6xx_it.o"
+arm-none-eabi-gcc "../Core/Src/syscalls.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/syscalls.d" -MT"Core/Src/syscalls.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/syscalls.o"
+arm-none-eabi-gcc "../Core/Src/sysmem.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/sysmem.d" -MT"Core/Src/sysmem.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/sysmem.o"
+arm-none-eabi-gcc "../Core/Src/system_stm32n6xx_s.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/system_stm32n6xx_s.d" -MT"Core/Src/system_stm32n6xx_s.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/system_stm32n6xx_s.o"
+../Core/Src/enc_sampler.c: In function 'EncSampler_Process':
+../Core/Src/enc_sampler.c:161:20: warning: unused variable 'cnt' [-Wunused-variable]
+  161 |     const uint16_t cnt  = s.cnt;
+      |                    ^~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89868	   4272	  25560	 119700	  1d394	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+Finished building: AB_LSTM_Appli.list
+ 
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x3400212d
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9eeb29
+    Header version: 0x20300
+    Size: 0x171a0
+    Load address: 0xffffffff
+    Entry point: 0x3400212d
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: c3 7a 03 8f 00 60 e5 d2 9d f2 d9 31 d4 24 2a e8 1f ef d1 86 38 f5 c9 d0 02 90 76 cf 6b 85 1e 
+
+                    b6 8c 95 1c da 15 a8 9b 9b c2 32 66 5d b5 a9 36 ae fd d8 e1 73 a1 e9 0b 64 a3 ae 38 b7 07 62 
+
+                    ac 7f 95 28 06 58 fd f7 d1 ff 99 c4 55 3a 8c 9c 49 98 b5 48 40 82 2f 4b 07 53 48 07 4f a0 6f 
+
+                    cc e3 58 0e 99 07 f8 82 55 fa 1e b2 82 1e 80 75 a6 d7 a5 ca fd 76 bb 28 eb 76 71 a7 a5 61 18 
+
+                    0e 71 5d 60 ad 91 ce f4 b2 de 5a 3c a7 bc 44 dc 0c 64 ac ff b6 02 68 31 e0 68 4d 80 9e 42 31 
+
+                    7e 77 44 9d 06 44 0e f6 61 b2 a4 56 b7 44 82 64 10 bf e7 12 f6 b7 06 4f 62 16 ab bf bf b2 2f 
+
+                    5b ea b7 3b fb 20 f9 c4 df cc 54 0d ba 21 d4 d2 ff 61 54 f3 85 77 5e eb 45 15 07 01 dc d3 84 
+
+                    a7 a6 ce 12 d3 d2 da 1c ff 14 c0 03 95 60 ec 4a 6b cc 9f 7d 54 6a 08 a6 af bc 0f b1 64 ca c5 
+
+                    b0 6b 61 e1 05 ec 67 ca d7 9e a0 29 96 0d 1b 9c 65 85 e7 34 3d 62 33 92 b3 f2 a1 88 b4 f1 b6 
+
+                    45 e8 1b 4f 9a 4f 55 21 37 c9 f6 ba e0 d8 2b 40 2e 97 70 be 9f 6b d3 d2 b2 59 66 31 9e 6e 3d 
+
+                    a4 69 38 85 6c ff 42 4f 00 e1 84 be b2 6a ce ff 70 02 62 6d 8a 0a a6 ad 84 b8 d9 4b 15 f5 f6 
+
+                    54 0d 84 38 78 cb b6 00 9d 6e a2 15 ca 61 7d 20 69 8f 90 46 18 b9 58 1d ba 12 57 32 dc cf f4 
+
+                    a9 ba c1 4c 8f 40 76 94 00 00 02 34 c0 35 3a f9 82 a4 00 00 d0 6f 72 02 00 00 00 00 80 3d 78 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+16:37:24 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89868	   4272	  25560	 119700	  1d394	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.list
+Finished building: AB_LSTM_Appli.bin
+ 
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x3400212d
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9eea84
+    Header version: 0x20300
+    Size: 0x171a0
+    Load address: 0xffffffff
+    Entry point: 0x3400212d
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 1b 6f ad 63 c5 85 8b 99 9e 1d 2f 94 a7 cf d2 f5 5f ad 9f d1 51 91 81 ff 26 87 3f 40 79 98 da 
+
+                    65 b2 1c 37 2a 84 91 b8 5f c8 b1 77 22 ec 32 1e 2d f2 44 fb eb e1 6e a0 1a d3 be be 2e 54 25 
+
+                    ed 8f 13 bd 48 c5 aa f9 38 10 c9 46 94 93 ff 68 78 74 da 2c c7 20 76 5b 38 e2 80 b9 ba 2d 61 
+
+                    38 cd 54 e3 3d a6 99 c2 2c 88 19 e6 6a c3 97 00 de b9 ce 3b f3 96 df d7 0d f9 81 4e 7e 4a 64 
+
+                    2f ce 51 ac e0 1a ed 94 25 35 92 02 60 07 37 dd c8 10 46 3e e8 fb 18 88 53 56 be 38 f5 59 2c 
+
+                    4e ce 83 dc 8c 2c 5e b3 c4 21 21 d3 b8 15 ea f1 47 0b d2 c8 4a 05 da 87 f7 9d 78 30 41 c9 33 
+
+                    ed 8f c1 60 55 04 66 34 30 2c e4 dc c4 46 77 1f 91 f0 75 4b d8 db 9f 54 a1 55 ea 67 93 e6 5a 
+
+                    57 c1 6c 54 12 59 ce 82 7f 07 c0 9f 65 68 34 34 ba 75 ab a7 ab 18 9d c5 5d f8 f0 c7 3c 0d a9 
+
+                    be ee c5 b9 3f cf ba 64 70 e2 e2 b3 14 17 75 84 f1 7b 88 11 f0 49 d8 40 a7 ab a5 11 5b 8b 22 
+
+                    50 2c 63 f9 8a e0 d6 9b 16 d8 90 8a 52 6e 36 8d 0f e0 5f cb 06 2f 2e e7 14 64 4a 1f 23 33 31 
+
+                    7b 40 77 46 9d 6d f6 0b 02 0f 92 8b cd b5 97 d0 07 29 8c 35 d9 2f cd e7 c6 43 00 45 74 03 a5 
+
+                    11 53 21 a8 5e 69 5a 0c 36 ea 8e 24 dc cf 3d a0 e6 57 35 6f 10 c8 0b b7 9c 4b 4a 5b 7f 06 af 
+
+                    49 1b 19 cd 3c 1d 6f de 00 00 02 34 c9 fa 92 22 ac c7 00 00 d0 6f 76 02 00 00 00 00 80 3d 7c 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+17:01:28 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89876	   4272	  25560	 119708	  1d39c	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34002135
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9ef6df
+    Header version: 0x20300
+    Size: 0x171a0
+    Load address: 0xffffffff
+    Entry point: 0x34002135
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 1d cd 9b b6 c4 ce 87 c4 82 87 28 51 39 c9 3c f1 54 75 39 b5 fa 86 2e ec 05 cb 8f fe 89 4b 8e 
+
+                    c1 58 5c 1d 8f 4b e3 d5 0e 15 4e 4c bf 49 03 b7 36 74 ad 2d f7 63 ff 71 8b 54 ba 3c 9a c0 9b 
+
+                    df 3d 75 38 1e 3c 4b 87 b2 e2 7f 66 5b dc ae aa f1 28 0b f2 a3 3f f8 67 1c 3d 97 c9 5d ab c7 
+
+                    bf 1c 47 54 fc 02 df 7a e9 24 b5 0a 19 fa b1 ec 80 49 99 9a 32 15 e4 1b c6 a9 a6 30 3e 4b 36 
+
+                    8c e2 a9 08 55 2a e9 74 d0 bc 7f 8b 9c a2 51 db 37 a2 82 95 f7 98 ab fc ef 77 01 bf d8 49 89 
+
+                    54 c9 d0 0a 13 24 05 0b c8 2b a9 d4 61 95 34 23 be 56 e6 c2 33 b7 58 0c b1 73 3b 64 14 54 9b 
+
+                    d7 dc 0a 55 56 d0 7b 04 59 7a 63 bd d0 1c cd 22 f0 2f eb e7 b7 9b e3 89 a0 94 fc 1e e8 36 06 
+
+                    5e 9f db 33 c7 9f e5 13 68 f5 b4 16 6d 9d 87 bc f5 06 dc 2b a1 60 d9 ad c7 01 11 b9 ef 3b f2 
+
+                    fe 9e ab 41 ac 28 16 1f 57 fb 8c 48 bf 86 4c 33 2f 3d 9b e7 df ad cd 2e f8 89 c2 84 ae 8b 25 
+
+                    58 37 f0 ec 76 40 ca 44 dd 79 89 0d fa c6 37 64 96 a7 51 ae a3 e1 85 af 18 d8 60 c1 33 1f e9 
+
+                    ac 64 f5 0d a3 45 ee b2 78 e2 8e 0c d6 f2 ff f1 2d dd 80 6f 46 0e 72 a7 6d cc 65 b7 a0 4d 17 
+
+                    ab 07 cc 6c 98 19 e6 be 67 ad ac 7a 45 d9 4c 14 b0 25 ff b2 2c 6c 12 63 07 9b 57 0a 7c d7 05 
+
+                    c6 ac b8 d5 3a 4b 05 45 00 00 02 34 fe 62 9b af 61 d3 00 00 d0 6f 7d 02 00 00 00 00 80 3d 83 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+11:43:27 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89876	   4272	  25560	 119708	  1d39c	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34002135
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9ef945
+    Header version: 0x20300
+    Size: 0x171a0
+    Load address: 0xffffffff
+    Entry point: 0x34002135
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 53 52 37 c7 fe 8d 82 e9 bc 2c 47 85 98 dc a3 14 91 e2 6c bc d5 8f 36 1a 36 15 94 f3 88 75 8b 
+
+                    65 81 e6 e4 69 ad ee 1c 15 bd 64 f4 24 2e 4a c7 09 a5 af d6 1f 82 20 2b 2f 43 d6 30 bb 15 21 
+
+                    16 db 6c 8a db 1a 9c 46 0a 44 3c cd 35 91 68 97 86 fd f0 8a ab a3 39 f6 56 e5 c1 95 8b e1 b6 
+
+                    fb e0 84 ef 77 cb a7 7e e3 df 18 63 08 12 25 ff c0 0d ec 80 e6 4b ed bb 91 de 4b bc ad 5c b8 
+
+                    ad 17 98 c2 77 11 77 4f 8d c1 0e 9d ba 52 16 6f 62 bb 6a 6d e3 22 66 e2 13 d7 46 4d a3 87 4f 
+
+                    13 83 5e 9f 70 a2 26 6e de 0f 26 7e cb 5f b9 4e ec 4c 40 18 b8 4f 3c 14 7b b2 28 8f d7 05 fb 
+
+                    2c ba 6f 91 b9 4e ab 53 27 66 a3 3f 3f f9 97 ca 2b bc 19 d9 89 4c 75 d4 29 2e b7 e1 0b 84 aa 
+
+                    af e6 9c c5 18 e4 c4 d9 d1 cb b1 cc 80 d0 45 24 c1 89 8e 08 12 91 75 fc 8f 26 5c 97 a9 32 7b 
+
+                    0d f6 5b 16 54 80 b7 d5 36 7e 18 dd eb eb 83 4f a4 98 d8 c8 00 e9 60 fe c3 e6 56 ae be 77 56 
+
+                    26 d8 01 a2 4f c0 8a 3d e8 22 e8 d2 52 5c 50 cc a0 d7 2b 8c ee 67 c6 4d 9b 2f 1a 50 aa 16 a3 
+
+                    cc 91 fb 10 37 b6 6b 18 94 60 11 1d f8 1a 2e b6 ee fc a1 fc 0a 7d 3d 52 cb 41 e5 ac 7b 6e 24 
+
+                    d1 a2 4b 7d 06 62 e3 34 64 f7 96 ad b3 c6 10 52 86 cf 45 81 69 09 6c 3d f2 59 fb af e4 b8 78 
+
+                    49 cc 54 e0 f2 34 b4 12 00 00 02 34 eb 4b b8 78 d7 5f 00 00 d0 6f 6a 02 00 00 00 00 80 3d 70 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+11:44:27 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+   text	   data	    bss	    dec	    hex	filename
+  89876	   4272	  25560	 119708	  1d39c	AB_LSTM_Appli.elf
+Finished building: default.size.stdout
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x34002135
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9ef945
+    Header version: 0x20300
+    Size: 0x171a0
+    Load address: 0xffffffff
+    Entry point: 0x34002135
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 47 14 43 fd bb 21 95 8e 76 51 3a d0 79 5a 5e 36 39 21 12 4e 7d 95 cd c7 2c ed 86 56 d3 58 fe 
+
+                    d1 c5 34 ce f3 32 12 31 7c 47 f1 1a 34 a3 e1 85 ca 6f 91 6d 49 2c a8 6c 43 de 5a a3 28 b1 d1 
+
+                    8e 8f dd 4c b9 b7 7e 40 74 7a de f1 dc 66 1a 30 a7 bf d9 01 52 7a c8 6d 86 16 44 c2 fc 91 c9 
+
+                    1e 54 0c 78 43 a0 74 ee 50 08 87 d8 f8 e7 ee 81 c9 21 70 5e b6 e0 86 97 6c 12 1b 65 db d8 0f 
+
+                    cb b6 54 33 5d ca 0e 41 84 e6 bc ff 50 9f 4c 3d 8d c6 ae 38 9e c0 69 4b 2d 88 1b 53 74 48 fb 
+
+                    32 7d bc 7d d7 91 5c c8 a5 e6 ea d1 a9 2c 6b 84 dd 16 a7 62 fc 56 0f 5c cc a3 f7 0f 24 e9 96 
+
+                    53 7f bc 4e 09 97 bb f7 48 5b 13 50 24 b9 66 4c d5 4d 62 8c 03 e1 c9 8e 28 ee a3 3c f7 f5 43 
+
+                    11 2b 00 40 d4 ca 0d cf 53 ac e1 6b 62 60 d9 3b 92 1f 68 6b ad 7c 69 53 fc 27 68 6f ff 58 85 
+
+                    8d 67 2f aa 7a a6 29 65 fb 00 76 22 d3 0e d1 b4 86 b8 54 48 ce 35 ae be 3b 1e 98 94 4d 84 12 
+
+                    12 81 40 97 2e 92 2b 2b dc 90 22 9b 48 b8 1a 7e 12 c4 ff b9 9d 81 b7 14 84 22 d4 75 35 c1 87 
+
+                    92 d5 a6 0c f7 36 1a a2 28 16 b6 51 9b ea 5e 95 b1 dd 99 ad c5 b2 15 a5 ff 72 fc 4e 2f 70 35 
+
+                    f9 1f c8 dd 2d 0d a6 c2 39 7f 80 f4 83 db 04 2e 9d fd 0c 00 3c 31 58 7a 89 24 1f 05 e6 19 3e 
+
+                    26 ff 33 1d ef 85 f1 29 00 00 02 34 11 a4 5a b5 d2 6a 00 00 d0 6f 7b 02 00 00 00 00 80 3d 81 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+11:46:43 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89820	   4272	  25560	 119652	  1d364	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340020f5
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9ea5bf
+    Header version: 0x20300
+    Size: 0x17160
+    Load address: 0xffffffff
+    Entry point: 0x340020f5
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 6a d2 7f d1 6c 52 8a c0 78 f2 5c 3d b4 9b d5 11 d0 00 46 0f 96 bf 12 3a 9b af 1e ca a7 b9 64 
+
+                    87 b9 79 7f 82 92 15 a4 6b 5b 0c 99 3f 2e 7d 91 a6 fe bd 5c e5 d3 63 01 c3 ea 3b 6f 8f 66 23 
+
+                    ce 9a d2 ea 56 ca f2 59 84 21 d3 21 71 8b fb 89 19 cc 54 66 21 c3 5b cf 39 36 ad f5 ed 0d 07 
+
+                    c7 f0 a3 22 79 0a e5 de e6 e8 2e 99 f0 b8 22 56 00 01 0f 11 66 c3 3c 89 8f c0 c3 9b df 58 c2 
+
+                    61 03 94 9a 40 93 83 cc e8 1a 7c 13 82 d7 b6 a8 97 c5 ad 97 a5 b9 3b f7 a0 6b 1a df 60 e5 ab 
+
+                    91 30 8b 0c 28 4b c5 eb df 93 62 d9 5c ca 29 35 e0 20 8c 45 55 d0 f7 a9 58 df 18 1a 8e c9 2b 
+
+                    08 fd 65 c5 01 39 56 d4 a9 f1 50 32 f8 1a 59 1e 50 07 35 dd 30 72 b6 53 e7 30 a7 08 47 e8 bd 
+
+                    34 d9 4c 22 71 e8 95 7c 6c 25 6a 23 cf c9 43 3e 91 d4 78 06 1f e2 61 fd 08 27 71 85 1b 5d 36 
+
+                    9d 3f d7 9d c3 19 1f 2a 50 55 7b e3 c7 44 a3 32 bb 1a 4f 0a 12 9c 97 c0 c9 59 aa 7d 7a 6c de 
+
+                    9a 9b 10 26 6b 9e ea 54 37 f2 6c 9a 27 fa 4d b6 3b fc 13 68 18 8c 0a e0 34 30 e4 cb d6 6c 7f 
+
+                    51 14 93 da 5f 55 d2 83 03 44 92 e4 35 20 75 66 7c 9e d3 11 7a bc 14 b4 11 5a 76 aa 18 f3 2e 
+
+                    c1 5b ce dc 34 d0 e2 82 0c cf 6f c0 a2 74 cb 24 c2 07 74 fc bd 97 6f c3 2d be ca 08 0f 48 c2 
+
+                    6b b0 3d 4d 33 d0 3d 77 00 00 00 00 68 2d 7a 67 4a c6 09 00 60 c0 62 00 00 00 00 00 10 ae 62 
+
+                    00 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+11:57:42 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89820	   4272	  25560	 119652	  1d364	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340020f5
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9ea51a
+    Header version: 0x20300
+    Size: 0x17160
+    Load address: 0xffffffff
+    Entry point: 0x340020f5
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: c2 e4 82 ed a2 12 5e 1d 9d 40 da d7 bb aa 4d 3c 11 45 5e 83 90 ff 46 77 6c 85 b6 45 bf 53 4c 
+
+                    a7 35 95 5c 05 5f 59 d3 98 de 2f 69 d1 29 4b 9a 31 b9 09 b6 1a 75 f6 71 32 6f 3c 2e fe 6f 35 
+
+                    a0 01 4a 8c d9 9e 60 24 a1 9a 7f 7b 31 59 90 2d 51 25 a6 57 43 19 95 10 f9 a8 f3 02 70 d3 ff 
+
+                    92 bc a7 3d e7 3d ce 1a a0 35 ac 0d e9 6b 89 f2 3d 41 1c 42 08 26 23 3a 86 8f 46 16 0e 7c b4 
+
+                    dc 5f 33 51 7d bc 8c 24 cb 4e 37 ab 27 ef ef af 56 ed e0 17 c4 71 d2 8f c8 62 cb 43 11 59 b5 
+
+                    8f 93 13 d7 83 a7 25 45 28 57 c0 d4 98 a6 a2 db 5c f8 d3 d2 2a 11 ef ec 86 cf 77 a9 3f 48 28 
+
+                    63 5d f6 ae ae 0b 40 e3 68 c2 f7 54 9e ff 66 20 00 a5 1d 09 da c4 04 64 dc 5e 45 e3 12 d3 80 
+
+                    ef 44 02 75 f2 12 cf b2 2b 2b 12 11 51 6d da ba 0e 7d b2 28 48 65 9c f2 27 c6 1a a5 10 bd 80 
+
+                    13 49 5b e5 78 f8 8a be 67 34 67 84 6d 9b fe e7 6c 25 26 63 3c 60 4b 6e 40 a7 02 44 76 f9 d9 
+
+                    1b 68 23 30 9b e5 8a ba 8d 43 06 3a fd f1 ab 9c b2 9e 37 17 01 3c 31 b8 c6 03 e7 1a 12 16 9c 
+
+                    8a 8f bc b0 b2 3b 79 a7 7e a4 84 3d 06 e5 e1 73 b8 98 e6 c6 01 35 d1 ff 33 57 c6 56 8c 75 06 
+
+                    31 75 7a b3 c0 40 59 ba eb 26 c4 c2 be 9e 5d 70 9a 4c b0 9f 6d 1f 19 96 2b af 9a 94 8a 86 7a 
+
+                    e0 0f 25 de 32 72 56 59 00 00 00 00 28 34 9d d7 7b 3b 09 00 60 c0 65 00 00 00 00 00 10 ae 65 
+
+                    00 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+13:17:17 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+arm-none-eabi-gcc "../Core/Src/enc_sampler.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/enc_sampler.d" -MT"Core/Src/enc_sampler.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/enc_sampler.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89996	   4272	  33752	 128020	  1f414	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340021a5
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9edc8a
+    Header version: 0x20300
+    Size: 0x17220
+    Load address: 0xffffffff
+    Entry point: 0x340021a5
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 28 49 64 33 44 91 04 bf 1f 8d 1b 3f 11 bd 56 5d bd 94 71 03 4c 61 92 f7 b3 b7 24 9d df ad 0d 
+
+                    5c 02 85 ef d9 d0 77 6d ae e9 ea 69 be aa cf 68 91 e2 af f8 44 d3 3c c5 41 a5 7c ae f3 6f 87 
+
+                    2d 8a d9 09 97 c4 03 49 be 23 bf a8 80 b7 69 02 d2 70 e1 27 dd 3d 82 53 d9 f0 58 d2 5a 8b 6e 
+
+                    08 0b 6f 63 2c c2 5c 5a 69 30 71 05 f9 5a bf 5d 8e aa bb cb b9 82 70 1d 63 61 c2 ef 8e 35 35 
+
+                    81 dd 0e 49 49 b7 c3 aa da b1 95 2e 2a a4 cc 8d fc d8 b0 0d 4a b5 48 da 27 e2 23 c4 72 90 c6 
+
+                    56 f0 aa b6 66 f7 5d 50 88 08 a9 46 71 73 25 72 bc 10 fa fc 24 92 1b 82 0c 44 e6 37 1d 1c 69 
+
+                    42 b8 57 01 8f e7 af a8 fb 1f 8b a9 f4 b2 65 ce 65 c3 70 ca 4e b6 30 9d 50 5b bf fe 5e 59 6e 
+
+                    a2 0d 0d 9e 08 8d f1 1f 7c 5b ac 3c 76 d8 57 55 f8 8f 4a 47 2d d1 3f 91 8a 3f fb a6 29 41 3a 
+
+                    ad 08 cb 0d 2e 7c 58 53 42 83 48 c9 0d 98 1d 37 85 63 81 50 8a 84 ee 9e 14 36 94 1c 76 93 60 
+
+                    a6 67 bc 28 14 1a 7b 7c 4e f8 8f 76 cb 2b 3c 3b 8d 07 0a e3 4a 65 77 bb d3 b4 d8 84 68 9a d5 
+
+                    ea 07 98 68 d1 3d 71 34 74 d6 cf 0c b8 cf c2 42 04 50 36 d5 7f 06 b1 a8 21 82 e1 37 26 d1 d3 
+
+                    f9 02 0a 46 0f eb fd 7b cb 8b 5f 35 5a 7e c9 6d 2d b2 ff 08 e1 67 f9 21 ad 83 da d5 1e c9 d6 
+
+                    48 b0 ea da cc 03 ee 50 00 00 02 00 1a ed b6 f2 a7 c0 07 00 10 ae f4 00 00 00 00 00 f0 ce 75 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 
+13:40:52 **** Incremental Build of configuration Debug for project AB_LSTM_Appli ****
+make -j20 all 
+arm-none-eabi-gcc "../X-CUBE-AI/App/app_x-cube-ai.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"X-CUBE-AI/App/app_x-cube-ai.d" -MT"X-CUBE-AI/App/app_x-cube-ai.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "X-CUBE-AI/App/app_x-cube-ai.o"
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m55 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32N657xx -DUSE_NUCLEO_64 -c -I../Core/Inc -I../../Secure_nsclib -I../../Drivers/STM32N6xx_HAL_Driver/Inc -I../../Drivers/CMSIS/Device/ST/STM32N6xx/Include -I../../Drivers/STM32N6xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Include -I"C:/ST/AB_LSTM/AB_LSTM/Appli/X-CUBE-AI/App" -I../../Middlewares/ST/AI/Inc -I../X-CUBE-AI/App -I../X-CUBE-AI -I../../Drivers/BSP/STM32N6xx_Nucleo -O3 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -mcmse -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../X-CUBE-AI/App/app_x-cube-ai.c:262:13: warning: 'apply_thresholds' defined but not used [-Wunused-function]
+  262 | static void apply_thresholds(void)
+      |             ^~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "AB_LSTM_Appli.elf" @"objects.list"  -l:NetworkRuntime1020_CM55_GCC.a -mcpu=cortex-m55 -T"C:\ST\AB_LSTM\AB_LSTM\Appli\STM32N657X0HXQ_LRUN.ld" --specs=nosys.specs -Wl,-Map="AB_LSTM_Appli.map" -Wl,--gc-sections -static -Wl,--cmse-implib -Wl,--out-implib=./secure_nsclib.o -L../../Middlewares/ST/AI/Lib --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -u _printf_float -Wl,--start-group -lc -lm -Wl,--end-group
+C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/bin/ld.exe: warning: AB_LSTM_Appli.elf has a LOAD segment with RWX permissions
+Finished building target: AB_LSTM_Appli.elf
+ 
+arm-none-eabi-size  AB_LSTM_Appli.elf 
+arm-none-eabi-objdump -h -S AB_LSTM_Appli.elf  > "AB_LSTM_Appli.list"
+   text	   data	    bss	    dec	    hex	filename
+  89996	   4272	  33752	 128020	  1f414	AB_LSTM_Appli.elf
+arm-none-eabi-objcopy  -O binary AB_LSTM_Appli.elf  "AB_LSTM_Appli.bin"
+Finished building: default.size.stdout
+ 
+Finished building: AB_LSTM_Appli.bin
+ 
+Finished building: AB_LSTM_Appli.list
+ 
+cd "C:/ST/AB_LSTM/AB_LSTM/Appli/Debug"
+echo y | "C:\Program Files\STMicroelectronics\STM32Cube\STM32CubeProgrammer\bin\STM32_SigningTool_CLI.exe" -bin "AB_LSTM_Appli.bin" -nk -of 0x80000000 -t fsbl -o "AB_LSTM_Appli-Trusted.bin" -hv 2.3 -dump "AB_LSTM_Appli-Trusted.bin"
+      -------------------------------------------------------------------
+                          STM32 Signing Tool v2.19.0                   
+      -------------------------------------------------------------------
+
+Do you want to replace this file: AB_LSTM_Appli-Trusted.bin ? (y/n)
+Adding head padding bytes for payload with header v2.3
+Header version 2.3 preparation... 
+Extracting Entry point value from the input file...
+Entry point value : 0x340021a5
+The headred image file generated successfully: AB_LSTM_Appli-Trusted.bin
+
+Header description:
+
+    Magic: 0x53544d32
+    Signature: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+               00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+    Checksum: 0x9edc8a
+    Header version: 0x20300
+    Size: 0x17220
+    Load address: 0xffffffff
+    Entry point: 0x340021a5
+    Image version: 0x0
+    Extension: 0x80000000
+
+Pad header detected:
+    Type: 0x5354ffff
+    Size: 0x1a0
+    Padding values: 77 40 8a 80 42 ad 78 35 2d dd 88 f1 e3 91 a5 58 ef ee c6 77 5c 82 35 0c 7c 50 7e b1 e7 78 7c 
+
+                    30 79 c8 57 5c 5f 76 e8 be 7d d0 d9 97 e1 28 20 21 52 a1 95 d9 b9 9a a2 51 91 6b 34 fb 6f e9 
+
+                    91 ab 53 6c 45 e5 ae 4b 3c d1 ac e0 6a 46 e0 ec 7d 59 a4 4d fa a1 73 a4 ae d3 b4 0d df f7 1a 
+
+                    09 63 f8 5a 22 24 fd 29 08 e1 0b 33 37 67 ee 42 25 95 03 0c 07 e7 0a cb c0 7a ec fa 51 c6 8c 
+
+                    a8 20 ce 57 12 a9 b9 54 9a 39 4b c9 34 1b 97 ca de f8 9c f5 4e 25 34 8a 8b cc b4 36 3b 54 a9 
+
+                    3d a5 76 0f ef a8 b8 c1 88 8a 38 3f fe 4a 32 3f 2c 06 7d 8a e8 4b b7 ad 55 65 31 a8 14 de a0 
+
+                    35 31 69 df df 67 b2 94 19 dd f7 4e a2 61 05 2a 64 80 7b bb 5b 33 df 00 47 47 09 97 d2 0e 8b 
+
+                    c1 b1 58 2e 7d 68 1a 6f 2f 44 cf e5 ef 41 5a 59 35 52 88 b1 99 a4 57 5e c4 39 d7 8e d5 0e bb 
+
+                    56 6e 7e 5d 08 e8 46 0e ad 00 a8 1e 19 61 e8 24 cc 68 52 50 63 36 5a 66 10 20 50 91 15 5c 86 
+
+                    6f d1 7f 83 e5 12 f8 61 7a 99 9b 00 f5 06 69 90 c5 87 76 b0 35 39 01 55 5b bd 95 d4 6b 3c 65 
+
+                    8e 88 1f 2f ff 53 3f 1c af ed 9a d6 93 fe 2a 7c 9f 05 32 d1 f8 95 3d 5c 65 75 48 c8 91 c2 6c 
+
+                    16 2f 15 ed 84 51 63 72 e6 dd 09 c5 f2 d3 8a b6 e3 f9 7f 84 e4 de 3a 77 5d bc bc 8a 0f 2c 6a 
+
+                    bb e5 da 0e ce cb f1 c0 00 00 02 00 54 ed f0 95 23 b1 07 00 10 ae e5 00 00 00 00 00 f0 ce 73 
+
+                    02 00 00 00 00 
+
+Post header 2.3 information :
+    Binary type: 0x10
+    Non authenticated payload length: 0x0
+    Non authenticated payload hash: 0x0
+
+
+ 

@@ -1,0 +1,361 @@
+#include "enc_sampler.h"
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
+#include "model_meta.h"  // for MODEL_FEAT_* arrays
+
+/* TIM1 handle comes from main.c */
+extern TIM_HandleTypeDef htim1;
+
+#ifndef DIAG_VERBOSE
+#define DIAG_VERBOSE 1   /* set to 0 to silence enc-sampler diagnostics */
+#endif
+
+/* --- Fast pin reads from main.h symbols (kept for optional debugging) --- */
+static inline uint8_t read_A_hw(void) { return (ENC_A_GPIO_Port->IDR & ENC_A_Pin) ? 1U : 0U; }
+static inline uint8_t read_B_hw(void) { return (ENC_B_GPIO_Port->IDR & ENC_B_Pin) ? 1U : 0U; }
+
+/* --- Public/live flags --- */
+volatile uint32_t enc_rule_flags = 0;   // live telemetry (most recent computed)
+volatile uint32_t win_rule_flags = 0;   // flags aligned to the last window given to NN
+
+/* --- Per-window accumulators (for rule checks) --- */
+static uint16_t edges_A = 0, edges_B = 0, quad_bad = 0;
+static uint8_t  z_seen_in_window = 0;
+static uint8_t  win_fill = 0;
+static uint32_t ad_sum_win = 0;
+
+/* --- Exposed state --- */
+volatile uint32_t tim7_ticks = 0;
+volatile uint32_t win_ready  = 0;
+volatile uint32_t win_total  = 0;
+volatile float    feat_win[SEQ_LEN][FEAT_DIM];
+
+/* --- Ring buffer fed by TIM7 ISR --- */
+typedef struct {
+  int16_t  d;        /* signed delta TIM1 between samples (wrap-fixed) */
+  uint8_t  z_pulse;  /* index pulse seen this tick */
+  uint8_t  A, B;     /* RAW GPIO samples (not used for features) */
+  uint16_t cnt;      /* raw TIM1 count (0..MOD-1) */
+} raw_t;
+
+#define RB_LOG2 11
+#define RB_SIZE (1u << RB_LOG2)
+#define RB_MASK (RB_SIZE - 1)
+
+static volatile raw_t    rb[RB_SIZE];
+static volatile uint16_t rb_w = 0, rb_r = 0;
+static volatile uint8_t z_latch = 0;   // set by TIM1 TRG/COM IRQ, read/clear by TIM7
+
+
+/* --- Completed-window FIFO (snapshotted, flattened) --- */
+#define WINFIFO_LOG2 2              /* 4 entries */
+#define WINFIFO      (1u << WINFIFO_LOG2)
+static float    win_fifo[WINFIFO][SEQ_LEN*FEAT_DIM];
+static uint32_t flags_fifo[WINFIFO];
+static uint8_t  wf_w = 0, wf_r = 0, wf_count = 0;
+
+/* --- Constants / state --- */
+#define MOD 2000u
+static uint16_t last_cnt = 0;
+
+/* mapped/synth state history (for feature building) */
+static uint8_t  last_A = 0, last_B = 0;
+static uint8_t  last_AB = 0;
+static uint32_t steps_since_z = 0;
+
+/* Speed_Change_Rate (interval-based) */
+static uint32_t samps_since_ab_change = 0;  /* samples since last AB state change */
+static float    ema_interval          = 0.0f;
+static float    scr_hold              = 0.0f;
+
+/* --- scaling helper (0..1 clamp) --- */
+static inline float scale_feat(int j, float x) {
+  float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
+  if (y < 0.f) y = 0.f;
+  if (y > 1.f) y = 1.f;
+  return y;
+}
+
+/* --- Gray helpers --- */
+static const uint8_t gray2idx[4] = {0,1,3,2};          /* Gray->index (self-inverse for 2-bit) */
+static inline uint8_t idx2gray(uint8_t idx) {
+  static const uint8_t lut[4] = {0,1,3,2};             /* index->Gray: 00,01,11,10 */
+  return lut[idx & 3];
+}
+
+#if DIAG_VERBOSE
+static uint16_t ab_hist[4];           /* counts of AB states 0..3 within the window */
+static uint16_t state_changes_cnt = 0;
+static uint16_t dirF_cnt = 0, dirB_cnt = 0;
+static uint16_t z_cnt = 0;
+static uint16_t rising_cnt = 0;
+#endif
+
+
+/* --- Public API --- */
+void EncSampler_Init(void) {
+  /* nothing to init; we derive clean A/B from TIM1 phase */
+}
+void EncSampler_Start(void) {}
+
+void EncSampler_Z_Event(void)
+{
+  z_latch = 1;   // one-shot edge; at most once per rev, so a byte latch is enough
+}
+
+/* --- ISR: sample encoder quickly, push into ring --- */
+void EncSampler_TIM7_Callback(void)
+{
+  tim7_ticks++;
+
+  uint16_t cnt = __HAL_TIM_GET_COUNTER(&htim1);
+  int16_t d = (int16_t)cnt - (int16_t)last_cnt;
+  if (d >  (int16_t)(MOD/2))  d -= MOD;
+  if (d < -(int16_t)(MOD/2))  d += MOD;
+  last_cnt = cnt;
+
+  /* Consume Z pulse latched by TIM1_TRG_COM IRQ */
+  uint8_t z_pulse = z_latch;
+  z_latch = 0;
+
+  /* Optional raw pin reads (kept only for debugging) */
+  uint8_t A = read_A_hw();
+  uint8_t B = read_B_hw();
+
+  /* Push one sample into the ring */
+  uint16_t w = rb_w;
+  uint16_t n = (w + 1) & RB_MASK;
+  if (n == rb_r) rb_r = (rb_r + 1) & RB_MASK;  // drop oldest on overflow
+
+  rb[w].d       = d;
+  rb[w].z_pulse = z_pulse;
+  rb[w].A       = A;
+  rb[w].B       = B;
+  rb[w].cnt     = cnt;
+  rb_w = n;
+}
+
+
+/*
+MODEL_FEATURES order (must match model_meta.h):
+  0 AB_State
+  1 State_Change
+  2 Direction_forward
+  3 Direction_backward
+  4 Speed_Change_Rate           <-- |interval/EMA - 1|
+  5 Channel_A
+  6 Channel_B
+  7 Channel_Z
+  8 Edge_RISING
+  9 Steps_Since_Z               <-- +1 per tick since last Z
+*/
+void EncSampler_Process(void)
+{
+  while (rb_r != rb_w) {
+    raw_t s = rb[rb_r];
+    rb_r = (rb_r + 1) & RB_MASK;
+
+    const int16_t d        = s.d;
+#if 1  /* TEMP: force Z off to test */
+uint8_t z_pulse = 0;
+#else
+uint8_t z_pulse = s.z_pulse;
+#endif
+    const uint16_t cnt     = s.cnt; (void)cnt;
+
+    /* absolute movement this tick (for rule guards only) */
+    const uint32_t ad = (uint32_t)((d >= 0) ? d : -d);
+    ad_sum_win += ad;
+
+    /* Steps_Since_Z must match training: +1 per sample, NOT +ad */
+    if (z_pulse) { steps_since_z = 0; }
+    else         { steps_since_z += 1; }
+
+    /* -------- Synthesize clean A/B from TIM1 phase (cnt & 3) --------
+       This uses the same filtered edges that update TIM1->CNT, so A/B,
+       State_Change, Direction, etc. are consistent with 'd'.           */
+    const uint8_t idx_curr = (uint8_t)(s.cnt & 3);     /* 0..3 phase */
+    const uint8_t AB       = idx2gray(idx_curr);       /* 00,01,11,10 */
+    uint8_t A = (AB >> 1) & 1U;
+    uint8_t B =  AB       & 1U;
+
+    /* AB state + prev */
+    uint8_t AB_prev = last_AB;
+    if (win_fill == 0) { AB_prev = AB; last_AB = AB; }   // avoid stale first compare
+
+    /* Edges on synthesized A/B */
+    const uint8_t A_rise = (A && !last_A), A_fall = (!A && last_A);
+    const uint8_t B_rise = (B && !last_B), B_fall = (!B && last_B);
+    const uint8_t chAchg = (uint8_t)(A_rise | A_fall);
+    const uint8_t chBchg = (uint8_t)(B_rise | B_fall);
+
+    if (chAchg) edges_A++;
+    if (chBchg) edges_B++;
+
+    /* Direction from Gray-code step */
+    const uint8_t idx_prev = gray2idx[AB_prev];
+    const uint8_t step     = (uint8_t)((gray2idx[AB] - idx_prev) & 3);
+    const uint8_t dir_fwd  = (step == 1);
+    const uint8_t dir_bwd  = (step == 3);
+
+    /* Quadrature sanity: with phase-derived A/B this should not trigger,
+       but keep it as a guard. Only when exactly one channel changed and |d|<=1. */
+    if ((chAchg ^ chBchg) && ad <= 1) {
+      if (step != 1 && step != 3) quad_bad++;
+    }
+
+    /* Edge_RISING includes Z too (as in training) */
+    const uint8_t edge_rising = (A_rise || B_rise || z_pulse) ? 1U : 0U;
+
+    /* State_Change bit (mapped AB) */
+    const uint8_t state_change = (AB != AB_prev);
+
+#if DIAG_VERBOSE
+    ab_hist[gray2idx[AB] & 3]++;      /* histogram by phase index 0..3 */
+    if (state_change) state_changes_cnt++;
+    if (dir_fwd)      dirF_cnt++;
+    if (dir_bwd)      dirB_cnt++;
+    if (z_pulse)      z_cnt++;
+    if (edge_rising)  rising_cnt++;
+#endif
+
+    /* -------- Speed_Change_Rate = |interval/EMA(interval) - 1| -------- */
+    samps_since_ab_change += 1;
+    if (state_change) {
+      uint32_t interval = samps_since_ab_change;
+      if (interval == 0) interval = 1;
+      if (ema_interval <= 0.0f) ema_interval = (float)interval;
+      float ratio = ((float)interval) / ema_interval;     /* can exceed 1.0 */
+      float scr   = ratio - 1.0f; if (scr < 0.f) scr = -scr;
+      scr_hold    = scr;                                   /* hold until next change */
+      /* slow EMA to mimic ‘Interval_Ratio’ baseline adaptation */
+      ema_interval = 0.9f * ema_interval + 0.1f * (float)interval;
+      samps_since_ab_change = 0;
+    }
+    const float scr_out = scr_hold;
+
+    if (z_pulse) z_seen_in_window = 1;
+
+    last_AB = AB;
+    last_A  = A;
+    last_B  = B;
+
+    /* --- pack the 10 trained features in the exact order --- */
+    volatile float *f = feat_win[win_fill];
+    int k = 0;
+#define PACK(v) do { f[k] = scale_feat(k, (v)); k++; } while(0)
+    PACK((float)AB);                         // 0 AB_State (0..3)
+    PACK((float)state_change);               // 1 State_Change
+    PACK((float)dir_fwd);                    // 2 Direction_forward
+    PACK((float)dir_bwd);                    // 3 Direction_backward
+    PACK(scr_out);                           // 4 Speed_Change_Rate
+    PACK((float)A);                          // 5 Channel_A
+    PACK((float)B);                          // 6 Channel_B
+    PACK((float)z_pulse);                    // 7 Channel_Z
+    PACK((float)edge_rising);                // 8 Edge_RISING (A|B|Z)
+    PACK((float)steps_since_z);              // 9 Steps_Since_Z
+#undef PACK
+
+    /* advance; when full, publish flags, reset accumulators */
+    win_fill++;
+    if (win_fill >= SEQ_LEN) {
+      uint32_t flags = 0;
+
+      const uint16_t MIN_MOVING_EDGES  = 1;
+      const uint32_t MIN_MOVING_COUNTS = 2;
+      const uint32_t Z_OVERDUE_MIN     = MOD + (MOD/2);   // ~1.5 revs
+
+      if (ad_sum_win >= MIN_MOVING_COUNTS) {
+        if (edges_B >= MIN_MOVING_EDGES && edges_A == 0) flags |= RS_A_STUCK;
+        if (edges_A >= MIN_MOVING_EDGES && edges_B == 0) flags |= RS_B_STUCK;
+        if ((edges_A + edges_B) >= 6 && quad_bad >= 2)   flags |= RS_QUAD_BAD;
+        if (!z_seen_in_window && steps_since_z >= Z_OVERDUE_MIN) flags |= RS_Z_MISSED;
+      }
+
+      enc_rule_flags = flags;               /* live telemetry */
+      win_rule_flags = flags;               /* last-window aligned */
+
+      /* ---- snapshot the completed window into a FIFO ---- */
+      int idx = 0;
+      for (int t = 0; t < SEQ_LEN; ++t) {
+        volatile float* src = feat_win[t];  /* finished window in [0..SEQ_LEN-1] */
+        for (int f = 0; f < FEAT_DIM; ++f) win_fifo[wf_w][idx++] = src[f];
+      }
+      flags_fifo[wf_w] = flags;
+      wf_w = (wf_w + 1) & (WINFIFO - 1);
+      if (wf_count < WINFIFO) { wf_count++; }
+      else { wf_r = (wf_r + 1) & (WINFIFO - 1); }   /* overwrite oldest if full */
+
+#if DIAG_VERBOSE
+      {
+        /* last written slot (after increment above) */
+        uint8_t last_idx = (wf_w + (WINFIFO - 1)) & (WINFIFO - 1);
+
+        printf("[WIN #%lu] flags=0x%08lX  edgesA=%u edgesB=%u quad_bad=%u  "
+               "ad_sum=%lu  z_seen=%u  ssz_end=%lu  "
+               "AB_hist=[%u,%u,%u,%u]  dirF=%u dirB=%u  SC=%u  Z=%u  rise=%u\r\n",
+               (unsigned long)win_total + 1,  /* +1 because we increment later */
+               (unsigned long)flags,
+               (unsigned)edges_A, (unsigned)edges_B, (unsigned)quad_bad,
+               (unsigned long)ad_sum_win,
+               (unsigned)z_seen_in_window,
+               (unsigned long)steps_since_z,
+               (unsigned)ab_hist[0], (unsigned)ab_hist[1],
+               (unsigned)ab_hist[2], (unsigned)ab_hist[3],
+               (unsigned)dirF_cnt, (unsigned)dirB_cnt,
+               (unsigned)state_changes_cnt,
+               (unsigned)z_cnt, (unsigned)rising_cnt);
+
+        /* quick saturation check on scaled features */
+        int zeros = 0, ones = 0;
+        const float* W = win_fifo[last_idx];
+        for (int i = 0; i < SEQ_LEN*FEAT_DIM; ++i) {
+          if (W[i] <= 0.0005f) zeros++;
+          else if (W[i] >= 0.9995f) ones++;
+        }
+        printf("   scaled saturation: zeros=%d ones=%d / %d\r\n",
+               zeros, ones, SEQ_LEN*FEAT_DIM);
+      }
+#endif
+
+      /* reset per-window */
+      edges_A = edges_B = quad_bad = 0;
+      z_seen_in_window = 0;
+      ad_sum_win = 0;
+      win_fill = 0;
+
+#if DIAG_VERBOSE
+      ab_hist[0] = ab_hist[1] = ab_hist[2] = ab_hist[3] = 0;
+      state_changes_cnt = dirF_cnt = dirB_cnt = z_cnt = rising_cnt = 0;
+#endif
+
+      win_ready = wf_count;    /* external counter */
+      win_total++;
+    }
+  }
+}
+
+/* --- Copy current circular window into linear buffer and return its flags --- */
+int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags)
+{
+  /* Lazy drain: ensure ring is processed so we have a chance to pop a window */
+  EncSampler_Process();
+
+  __disable_irq();
+  if (wf_count == 0) { __enable_irq(); return -1; }
+
+  uint8_t r = wf_r;
+  wf_r = (wf_r + 1) & (WINFIFO - 1);
+  wf_count--;
+  win_ready = wf_count;           /* external view */
+  uint32_t flags = flags_fifo[r];
+  __enable_irq();
+
+  /* memcpy is fine; SEQ_LEN*FEAT_DIM is small */
+  for (int i = 0; i < SEQ_LEN*FEAT_DIM; ++i) dst[i] = win_fifo[r][i];
+
+  win_rule_flags = flags;         /* aligned flags for telemetry */
+  if (out_flags) *out_flags = flags;
+  return 0;
+}
