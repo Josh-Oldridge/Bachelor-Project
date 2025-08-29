@@ -8,5 +8,4 @@
 ../Core/Src/stm32n6xx_it.c:179:6:DebugMon_Handler	0	static
 ../Core/Src/stm32n6xx_it.c:192:6:PendSV_Handler	0	static
 ../Core/Src/stm32n6xx_it.c:205:6:SysTick_Handler	0	static
-../Core/Src/stm32n6xx_it.c:226:6:TIM1_TRG_COM_IRQHandler	0	static
-../Core/Src/stm32n6xx_it.c:240:6:TIM7_IRQHandler	0	static
+../Core/Src/stm32n6xx_it.c:226:6:TIM1_CC_IRQHandler	0	static

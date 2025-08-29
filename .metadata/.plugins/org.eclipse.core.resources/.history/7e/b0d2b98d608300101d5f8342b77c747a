@@ -1,0 +1,28 @@
+#ifndef SYNTHETIC_H
+#define SYNTHETIC_H
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Generate one T×F window already scaled to [0,1] in model feature order.
+   rising_falling: 1=both edges, 0=rising-only
+   start_state   : 0..3 Gray start (00,01,11,10)
+   steps0        : initial Steps_Since_Z value
+   forward       : 1=forward, 0=backward
+*/
+void EncSynth_MakePerfectWindow(int rising_falling, int start_state,
+                                int steps0, int forward);
+
+/* Pointer to internal flat buffer of size MODEL_SEQ_LEN*MODEL_FEAT_DIM (float). */
+const float* EncSynth_GetFlat(void);
+
+/* Debug: print WIN AB / WIN SRC / WIN Z for the last synthetic window. */
+void EncSynth_DebugPrint(void);
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* SYNTHETIC_H */

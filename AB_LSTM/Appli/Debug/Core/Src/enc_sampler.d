@@ -36,7 +36,7 @@ Core/Src/enc_sampler.o: ../Core/Src/enc_sampler.c \
  ../../Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo.h \
  ../Core/Inc/stm32n6xx_nucleo_conf.h \
  ../../Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo_errno.h \
- ../Core/Inc/model_meta.h
+ ../Core/Inc/model_meta.h ../Core/Inc/main.h ../Core/Inc/synthetic.h
 ../Core/Inc/enc_sampler.h:
 ../Core/Inc/main.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
@@ -76,3 +76,5 @@ Core/Src/enc_sampler.o: ../Core/Src/enc_sampler.c \
 ../Core/Inc/stm32n6xx_nucleo_conf.h:
 ../../Drivers/BSP/STM32N6xx_Nucleo/stm32n6xx_nucleo_errno.h:
 ../Core/Inc/model_meta.h:
+../Core/Inc/main.h:
+../Core/Inc/synthetic.h:

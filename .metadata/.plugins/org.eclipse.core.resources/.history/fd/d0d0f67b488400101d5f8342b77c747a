@@ -1,0 +1,14 @@
+#ifndef SYNTHETIC_H
+#define SYNTHETIC_H
+
+/* Global toggle: 1 = use synthetic window, 0 = live encoder */
+#ifndef INJECT_SYNTH
+#define INJECT_SYNTH 1
+#endif
+
+/* existing prototypes */
+void EncSynth_MakePerfectWindow(int rising_falling, int start_state, int steps0, int forward);
+const float* EncSynth_GetFlat(void);
+void EncSynth_DebugPrint(void);
+
+#endif /* SYNTHETIC_H */

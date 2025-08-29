@@ -1,5 +1,6 @@
-../Core/Src/enc_sampler.c:103:6:EncSampler_Init	8	static
-../Core/Src/enc_sampler.c:109:6:EncSampler_Start	0	static
-../Core/Src/enc_sampler.c:112:6:EncSampler_TIM7_Callback	24	static
-../Core/Src/enc_sampler.c:167:6:EncSampler_Process	88	static
-../Core/Src/enc_sampler.c:368:5:EncSampler_CopyWindowLinear	16	static,ignoring_inline_asm
+../Core/Src/enc_sampler.c:157:6:EncSampler_Init	8	static
+../Core/Src/enc_sampler.c:164:6:EncSampler_TIM7_Callback	0	static
+../Core/Src/enc_sampler.c:288:5:EncSampler_CopyWindowLinear	32	static,ignoring_inline_asm
+../Core/Src/enc_sampler.c:312:6:EncSampler_DebugGetLastTrace	20	static
+../Core/Src/enc_sampler.c:320:6:EncSampler_StopHardware	0	static,ignoring_inline_asm
+../Core/Src/enc_sampler.c:358:6:EncSampler_FlushWindows	12	static,ignoring_inline_asm

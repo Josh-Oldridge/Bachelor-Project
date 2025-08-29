@@ -2,388 +2,380 @@
 #include <string.h>
 #include <math.h>
 #include <stdio.h>
-#include "model_meta.h" // for MODEL_FEAT_* arrays
+#include <stdbool.h>
+#include <stdlib.h>
+#include "model_meta.h"
+#include "main.h"
+#include "synthetic.h"
 
-/* TIM1 handle comes from main.c */
+#include "stm32n6xx_hal.h"   // for registers/macros
+
 extern TIM_HandleTypeDef htim1;
 
-/* Enable full diagnostics (window stats, hist) - set to 0 for production */
-#ifndef ENABLE_DIAGNOSTICS
-#define ENABLE_DIAGNOSTICS 0
-#endif
-
-/* Enable raw signal logging (d, z_pulse, tick_ms per window) - set to 0 to silence */
 #ifndef ENABLE_RAW_LOG
-#define ENABLE_RAW_LOG 1
+#define ENABLE_RAW_LOG 0
 #endif
 
-/* --- Fast pin reads (kept for optional debugging) --- */
-static inline uint8_t read_A_hw(void) { return (ENC_A_GPIO_Port->IDR & ENC_A_Pin) ? 1U : 0U; }
-static inline uint8_t read_B_hw(void) { return (ENC_B_GPIO_Port->IDR & ENC_B_Pin) ? 1U : 0U; }
 
+volatile uint32_t cc1_overruns = 0, cc2_overruns = 0;
 /* --- Public/live flags --- */
-volatile uint32_t enc_rule_flags = 0; // live telemetry (most recent computed)
-volatile uint32_t win_rule_flags = 0; // flags aligned to the last window given to NN
-
-/* --- Per-window accumulators (for rule checks) --- */
-static uint16_t edges_A = 0, edges_B = 0, quad_bad = 0;
-static uint8_t z_seen_in_window = 0;
-static uint8_t win_fill = 0;
-static uint32_t ad_sum_win = 0;
+volatile uint32_t enc_rule_flags = 0;
+volatile uint32_t win_rule_flags = 0;
 
 /* --- Exposed state --- */
-volatile uint32_t tim7_ticks = 0;
+volatile uint32_t tim7_ticks = 0; // compatibility counter only
 volatile uint32_t win_ready = 0;
 volatile uint32_t win_total = 0;
-volatile float feat_win[SEQ_LEN][FEAT_DIM];
+static float feat_win[MODEL_SEQ_LEN][MODEL_FEAT_DIM];
 
-/* --- Ring buffer fed by TIM7 ISR --- */
+#define SEQ_LEN  (MODEL_SEQ_LEN)
+#define FEAT_DIM (MODEL_FEAT_DIM)
+
+/* --- Encoder state tracking --- */
 typedef struct {
-  int16_t d; /* signed delta TIM1 between samples (wrap-fixed) */
-  uint8_t z_pulse; /* index pulse seen this tick */
-  uint8_t A, B; /* RAW GPIO samples (not used for features) */
-  uint16_t cnt; /* raw TIM1 count (0..1999) */
-  uint32_t tick_ms; /* HAL_GetTick() timestamp for Speed_Change_Rate */
-} raw_t;
+	int32_t last_position;
+	int32_t current_position;
+	uint8_t last_AB_state;
+	uint32_t z_count;
+	float speed_change_rate;   // |interval_ratio - 1|
+	uint32_t last_update_ms;      // ms at last packed feature
+	float baseline_interval;   // EWMA baseline step interval (ms)
+} encoder_state_t;
 
-#define RB_LOG2 11
-#define RB_SIZE (1u << RB_LOG2)
-#define RB_MASK (RB_SIZE - 1)
+static encoder_state_t enc_state = { 0 };
 
-static volatile raw_t rb[RB_SIZE];
-static volatile uint16_t rb_w = 0, rb_r = 0;
-
-/* --- Completed-window FIFO (snapshotted, flattened) --- */
-#define WINFIFO_LOG2 2 /* 4 entries */
-#define WINFIFO (1u << WINFIFO_LOG2)
-static float win_fifo[WINFIFO][SEQ_LEN*FEAT_DIM];
+/* --- Window FIFO (producer: EncSampler_Process, consumer: CopyWindow) --- */
+#define WINFIFO_LOG2 2
+#define WINFIFO      (1u << WINFIFO_LOG2)
+static float win_fifo[WINFIFO][SEQ_LEN * FEAT_DIM];
 static uint32_t flags_fifo[WINFIFO];
 static uint8_t wf_w = 0, wf_r = 0, wf_count = 0;
 
-/* --- Constants / state --- */
-#define TIM1_PERIOD 2000u /* 0-1999 = 2000 counts per revolution */
-static uint16_t last_cnt = 0;
+/* --- Event ring from IRQ -> main --- */
+typedef struct {
+  int8_t   delta;           // +1 / -1 per edge, 0 for Z-only
+  uint8_t  z_pulse;         // 1 if IDXF
+  uint8_t  src;             // 1=CC1(A), 2=CC2(B), 3=IDX
+  uint32_t timestamp_ms;    // coarse
+  uint16_t ccr;             // fine
+} encoder_event_t;
+#define EVENT_BUF_BITS     11                    // 2^11 = 2048
+#define EVENT_BUFFER_SIZE  (1u << EVENT_BUF_BITS)
+#define EVENT_IDX_MASK     (EVENT_BUFFER_SIZE - 1u)
 
-/* mapped/synth state history (for feature building) */
-static uint8_t last_A = 0, last_B = 0;
-static uint8_t last_AB = 0;
+#ifndef ENC_TIM_TICK_HZ
+#define ENC_TIM_TICK_HZ 1000000u  // e.g., 1 MHz = 1 tick per µs
+#endif
 
-/* CORRECTED: Steps_Since_Z counts actual encoder steps, not samples */
-static uint32_t steps_since_z_encoder = 0; /* encoder steps since Z */
+static const float TICK_US = 1000000.0f / (float)ENC_TIM_TICK_HZ;
 
-/* CORRECTED: Speed_Change_Rate using actual time intervals like training */
-static uint32_t last_change_tick_ms = 0; /* timestamp of last AB change */
-static float baseline_interval_ms = 0.0f; /* EMA of intervals like training */
-static float current_speed_change_rate = 0.0f; /* held until next change */
+static encoder_event_t event_buffer[EVENT_BUFFER_SIZE];
+static volatile uint32_t event_write = 0;
+static volatile uint32_t event_read = 0;
+volatile uint32_t event_drops = 0;   // for diagnostics
 
-/* --- scaling helper (0..1 clamp) --- */
+#if ENABLE_TRACE_WIN
+static uint8_t trace_ab [WINFIFO][SEQ_LEN];
+static uint8_t trace_src[WINFIFO][SEQ_LEN];
+static uint8_t trace_z  [WINFIFO][SEQ_LEN];
+static uint8_t last_pop_ab[SEQ_LEN], last_pop_src[SEQ_LEN], last_pop_z[SEQ_LEN];
+#endif
+
+static inline void push_event_isr(int delta, int z, uint16_t ccr_sample, uint8_t src) {
+  uint32_t next = (event_write + 1u) & EVENT_IDX_MASK;
+  if (next == event_read) { event_drops++; return; }
+  encoder_event_t *e = &event_buffer[event_write];
+  e->timestamp_ms = HAL_GetTick();
+  e->ccr          = ccr_sample;
+  e->delta        = (int8_t)delta;
+  e->z_pulse      = (uint8_t)z;
+  e->src          = src;
+  event_write = next;
+}
+
+/* --- Gray code helpers: 00,01,11,10 encoded as 0,1,3,2 --- */
+static inline uint8_t position_to_AB_state(int32_t pos) {
+	static const uint8_t gray_lut[4] = { 0, 1, 3, 2 };
+	return gray_lut[(uint8_t) (pos & 3)];
+}
+
+/* --- Scaling helper --- */
 static inline float scale_feat(int j, float x) {
-  float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
-  if (y < 0.f) y = 0.f;
-  if (y > 1.f) y = 1.f;
-  return y;
+	float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
+	if (y < 0.f)
+		y = 0.f;
+	if (y > 1.f)
+		y = 1.f;
+	return y;
 }
 
-/* --- Gray helpers --- */
-static const uint8_t gray2idx[4] = {0,1,3,2}; /* Gray->index (self-inverse for 2-bit) */
-static inline uint8_t idx2gray(uint8_t idx) {
-  static const uint8_t lut[4] = {0,1,3,2}; /* index->Gray: 00,01,11,10 */
-  return lut[idx & 3];
+#if ENC_IS_LIVE
+
+/* Drain CC1/CC2/IDX flags: one queued event per set flag, with CCRx read
+ to *really* clear CCxIF/CCxOF in input-capture/encoder mode. */
+void EncSampler_EncoderIRQ_Drain(void) {
+  for (int guard = 0; guard < 64; ++guard) {
+    uint32_t sr = TIM1->SR;
+    uint32_t pending = sr & (TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_IDXF |
+                             TIM_SR_CC1OF | TIM_SR_CC2OF);
+    if (!pending) break;
+
+    int dir = (TIM1->CR1 & TIM_CR1_DIR) ? -1 : 1;
+
+    /* Count overruns first (means at least one capture value was lost) */
+    if (sr & TIM_SR_CC1OF) { cc1_overruns++; __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC1OF); }
+    if (sr & TIM_SR_CC2OF) { cc2_overruns++; __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC2OF); }
+
+    if (sr & TIM_SR_CC1IF) {
+      uint16_t ccr1 = (uint16_t)TIM1->CCR1;      // mandatory read to clear CC1IF in IC mode
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_CC1);
+      __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC1OF);
+      push_event_isr(dir, 0, ccr1, 1);           // src=1 => A
+    }
+
+    if (sr & TIM_SR_CC2IF) {
+      uint16_t ccr2 = (uint16_t)TIM1->CCR2;      // mandatory read to clear CC2IF in IC mode
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_CC2);
+      __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC2OF);
+      push_event_isr(dir, 0, ccr2, 2);           // src=2 => B
+    }
+
+    if (sr & TIM_SR_IDXF) {
+      uint16_t ccrz = (uint16_t)TIM1->CNT;       // if you have an index capture reg, use that
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_IDX);
+      push_event_isr(0, 1, ccrz, 3);             // src=3 => Z
+    }
+
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_TERRF | TIM_SR_IERRF);
+  }
+  __DSB();
 }
+#endif /* ENC_IS_LIVE */
 
-#if ENABLE_DIAGNOSTICS
-static uint16_t ab_hist[4]; /* counts of AB states 0..3 within the window */
-static uint16_t state_changes_cnt = 0;
-static uint16_t dirF_cnt = 0, dirB_cnt = 0;
-static uint16_t z_cnt = 0;
-static uint16_t rising_cnt = 0;
-#endif
+/* ============================ Public API ================================= */
 
-/* --- Public API --- */
 void EncSampler_Init(void) {
-  /* Initialize timing baseline */
-  baseline_interval_ms = 50.0f; /* reasonable default for encoder timing */
-  last_change_tick_ms = HAL_GetTick();
+	memset(&enc_state, 0, sizeof(enc_state));
+	enc_state.last_update_ms = HAL_GetTick();
+	enc_state.baseline_interval = 10.0f;   // starting guess in ms (tuned)
 }
 
-void EncSampler_Start(void) {}
-
-/* --- ISR: sample encoder quickly, push into ring --- */
-void EncSampler_TIM7_Callback(void)
-{
-  tim7_ticks++;
-  uint32_t tick_ms = HAL_GetTick();
-
-  uint16_t cnt = __HAL_TIM_GET_COUNTER(&htim1);
-  int16_t d = (int16_t)cnt - (int16_t)last_cnt;
-  if (d > (int16_t)(TIM1_PERIOD/2)) d -= TIM1_PERIOD;
-  if (d < -(int16_t)(TIM1_PERIOD/2)) d += TIM1_PERIOD;
-  last_cnt = cnt;
-
-  uint8_t z_pulse = 0;
-
-  #if defined(TIM_FLAG_IDXF)  // For G4, etc.
-  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDXF)) {
-    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDXF);
-    z_pulse = 1;
-  }
-  #else
-  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDX)) {
-    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDX);
-    z_pulse = 1;
-  }
-  #endif
-
-
-  /* Store RAW pins for debugging; features won't use them */
-  uint8_t A = read_A_hw();
-  uint8_t B = read_B_hw();
-
-  uint16_t w = rb_w;
-  uint16_t n = (w + 1) & RB_MASK;
-  if (n == rb_r) rb_r = (rb_r + 1) & RB_MASK; // drop oldest on overflow
-  rb[w].d = d;
-  rb[w].z_pulse = z_pulse;
-  rb[w].A = A;
-  rb[w].B = B;
-  rb[w].cnt = cnt;
-  rb[w].tick_ms = tick_ms;
-  rb_w = n;
+/* Keep only for your rate print compatibility */
+void EncSampler_TIM7_Callback(void) {
+	tim7_ticks++;
 }
 
-/*
-MODEL_FEATURES order (must match model_meta.h):
-  0 AB_State
-  1 State_Change
-  2 Direction_forward
-  3 Direction_backward
-  4 Speed_Change_Rate <-- CORRECTED: time-based intervals
-  5 Channel_A
-  6 Channel_B
-  7 Channel_Z
-  8 Edge_RISING
-  9 Steps_Since_Z <-- CORRECTED: encoder steps, not samples
-*/
-void EncSampler_Process(void)
-{
-  while (rb_r != rb_w) {
-    raw_t s = rb[rb_r];
-    rb_r = (rb_r + 1) & RB_MASK;
+/* ============================ Main-side processing ======================= */
 
-    const int16_t d = s.d;
-    const uint8_t z_pulse = s.z_pulse;
-    const uint16_t cnt = s.cnt;
-    const uint32_t tick_ms = s.tick_ms;
+#if ENC_IS_LIVE
+void EncSampler_Process(void) {
+  static uint8_t  win_fill = 0;
+  static uint32_t last_ms = 0;
+  static uint16_t last_ccr = 0;
 
-    /* absolute movement this tick (for rule guards only) */
-    const uint32_t ad = (uint32_t)((d >= 0) ? d : -d);
-    ad_sum_win += ad;
+  static uint8_t  z_latch = 0;
+  static uint32_t steps_since_z = 0;
 
-    /* CORRECTED: Steps_Since_Z counts encoder steps (TIM1 movement), not samples */
-    if (z_pulse) {
-      steps_since_z_encoder = 0;
-    } else {
-      steps_since_z_encoder += ad; /* add actual encoder steps moved */
+  static uint32_t gray_skip2 = 0;
+  static uint8_t  last_src = 0;             // remember last channel (A/B) that fired
+
+  while (event_read != event_write) {
+    encoder_event_t evt = event_buffer[event_read];
+    event_read = (event_read + 1u) & EVENT_IDX_MASK;
+
+    // keep for other stats if you want
+    enc_state.current_position += evt.delta;
+
+    if (evt.z_pulse) {
+      enc_state.z_count++;
+      z_latch = 1u;                           // Z applies to the *next* AB edge row
     }
 
-    /* -------- Synthesize clean A/B from TIM1 phase (cnt & 3) -------- */
-    const uint8_t idx_curr = (uint8_t)(cnt & 3); /* 0..3 phase */
-    const uint8_t AB = idx2gray(idx_curr); /* 00,01,11,10 */
-    uint8_t A = (AB >> 1) & 1U;
-    uint8_t B = AB & 1U;
+    const uint8_t is_ab_edge = (evt.src == 1u) || (evt.src == 2u);
+    if (!is_ab_edge) continue;
 
-    /* AB state + prev */
-    uint8_t AB_prev = last_AB;
-    if (win_fill == 0) { AB_prev = AB; last_AB = AB; } // avoid stale first compare
+    /* --- Build next AB by toggling the channel bit that fired
+           bit1 = A, bit0 = B  (your packing expects this) */
+    const uint8_t prev_ab    = enc_state.last_AB_state;
+    const uint8_t toggleMask = (evt.src == 1u) ? 0x2u : 0x1u;  // A->bit1, B->bit0
+    const uint8_t current_AB = prev_ab ^ toggleMask;
 
-    /* Edges on synthesized A/B */
-    const uint8_t A_rise = (A && !last_A), A_fall = (!A && last_A);
-    const uint8_t B_rise = (B && !last_B), B_fall = (!B && last_B);
-    const uint8_t chAchg = (uint8_t)(A_rise | A_fall);
-    const uint8_t chBchg = (uint8_t)(B_rise | B_fall);
-
-    if (chAchg) edges_A++;
-    if (chBchg) edges_B++;
-
-    /* Direction from Gray-code step */
-    const uint8_t idx_prev = gray2idx[AB_prev];
-    const uint8_t step = (uint8_t)((gray2idx[AB] - idx_prev) & 3);
-    const uint8_t dir_fwd = (step == 1);
-    const uint8_t dir_bwd = (step == 3);
-
-    /* Quadrature sanity check */
-    if ((chAchg ^ chBchg) && ad <= 1) {
-      if (step != 1 && step != 3) quad_bad++;
+    /* Missed-edge heuristic: same channel twice => other edge likely missed */
+    if (last_src == evt.src) {
+      gray_skip2++;
     }
+    last_src = evt.src;
 
-    /* Edge_RISING includes Z too (as in training) */
-    const uint8_t edge_rising = (A_rise || B_rise || z_pulse) ? 1U : 0U;
+    /* Direction flags from evt.delta (still useful) */
+    const uint8_t dir_fwd = (evt.delta > 0);
+    const uint8_t dir_bwd = (evt.delta < 0);
 
-    /* State_Change bit (mapped AB) */
-    const uint8_t state_change = (AB != AB_prev);
+    /* Channels */
+    const uint8_t A = (current_AB >> 1) & 1u;
+    const uint8_t B =  current_AB        & 1u;
+    const uint8_t chanZ = z_latch;      // Z is latched onto *this* edge row
+    z_latch = 0u;
 
-#if ENABLE_DIAGNOSTICS
-    ab_hist[gray2idx[AB] & 3]++; /* histogram by phase index 0..3 */
-    if (state_change) state_changes_cnt++;
-    if (dir_fwd) dirF_cnt++;
-    if (dir_bwd) dirB_cnt++;
-    if (z_pulse) z_cnt++;
-    if (edge_rising) rising_cnt++;
+    /* Timing → speed_change_rate */
+    const uint32_t now_ms  = evt.timestamp_ms;
+    const uint16_t now_ccr = evt.ccr;
+    const int16_t  dccr    = (int16_t)(now_ccr - last_ccr);
+    const int32_t  dms     = (int32_t)(now_ms  - last_ms);
+
+    float dt_us = (float)(dms * 1000) + (float)dccr * TICK_US;
+    if (dt_us <= 0.0f) dt_us = 1.0f;
+
+    float base_us = enc_state.baseline_interval * 1000.0f;
+    if (base_us < 1.0f) base_us = dt_us;
+
+    const float ratio = dt_us / base_us;
+    enc_state.speed_change_rate = fabsf(ratio - 1.0f);
+
+    const float dt_ms = dt_us / 1000.0f;
+    enc_state.baseline_interval = 0.9f * enc_state.baseline_interval + 0.1f * dt_ms;
+
+    last_ccr = now_ccr;
+    last_ms  = now_ms;
+
+    /* --- Pack features (match model_meta order) --- */
+    float *f = feat_win[win_fill];
+    f[0] = scale_feat(0, (float)current_AB);
+    f[1] = scale_feat(1, 1.0f);
+    f[2] = scale_feat(2, (float)dir_fwd);
+    f[3] = scale_feat(3, (float)dir_bwd);
+    f[4] = scale_feat(4, enc_state.speed_change_rate);
+    f[5] = scale_feat(5, (float)A);
+    f[6] = scale_feat(6, (float)B);
+    f[7] = scale_feat(7, (float)chanZ);
+    f[8] = scale_feat(8, 1.0f);                  // edge_present=1
+    f[9] = scale_feat(9, (float)steps_since_z);
+
+    // advance SSZ after packing
+    if (chanZ) steps_since_z = 0; else steps_since_z++;
+
+    /* --- Trace capture for this row --- */
+#if ENABLE_TRACE_WIN
+    trace_ab [wf_w][win_fill] = current_AB;       // 0/1/3/2 values
+    trace_src[wf_w][win_fill] = evt.src;          // 1='A', 2='B'
+    trace_z  [wf_w][win_fill] = chanZ;            // 0/1
 #endif
 
-    /* CORRECTED: Speed_Change_Rate = |interval/baseline - 1| like training */
-    if (state_change) {
-      uint32_t interval_ms = tick_ms - last_change_tick_ms;
-      if (interval_ms == 0) interval_ms = 1; /* avoid divide by zero */
-
-      /* Initialize baseline on first change */
-      if (baseline_interval_ms <= 0.0f) {
-        baseline_interval_ms = (float)interval_ms;
-      }
-
-      /* Calculate speed change rate like training data */
-      float ratio = ((float)interval_ms) / baseline_interval_ms;
-      current_speed_change_rate = fabsf(ratio - 1.0f);
-
-      /* Update baseline with EMA (like training's rolling median approximation) */
-      baseline_interval_ms = 0.9f * baseline_interval_ms + 0.1f * (float)interval_ms;
-
-      last_change_tick_ms = tick_ms;
-    }
-
-    if (z_pulse) z_seen_in_window = 1;
-
-    last_AB = AB;
-    last_A = A;
-    last_B = B;
-
-    /* --- pack the 10 trained features in the exact order --- */
-    volatile float *f = feat_win[win_fill];
-    int k = 0;
-#define PACK(v) do { f[k] = scale_feat(k, (v)); k++; } while(0)
-    PACK((float)AB); // 0 AB_State (0..3)
-    PACK((float)state_change); // 1 State_Change
-    PACK((float)dir_fwd); // 2 Direction_forward
-    PACK((float)dir_bwd); // 3 Direction_backward
-    PACK(current_speed_change_rate); // 4 Speed_Change_Rate (CORRECTED)
-    PACK((float)A); // 5 Channel_A
-    PACK((float)B); // 6 Channel_B
-    PACK((float)z_pulse); // 7 Channel_Z
-    PACK((float)edge_rising); // 8 Edge_RISING (A|B|Z)
-    PACK((float)steps_since_z_encoder); // 9 Steps_Since_Z (CORRECTED)
-#undef PACK
-
-    /* advance; when full, publish flags, reset accumulators */
+    /* Commit row */
     win_fill++;
+    enc_state.last_AB_state = current_AB;
+    enc_state.last_update_ms = now_ms;
+
     if (win_fill >= SEQ_LEN) {
-      uint32_t flags = 0;
+      /* Window complete → push into FIFO */
+      memcpy(win_fifo[wf_w], &feat_win[0][0], sizeof(win_fifo[0]));
+      flags_fifo[wf_w] = (gray_skip2 ? 0x00000001u : 0u);
 
-      const uint16_t MIN_MOVING_EDGES = 1;
-      const uint32_t MIN_MOVING_COUNTS = 2;
-      const uint32_t Z_OVERDUE_MIN = TIM1_PERIOD + (TIM1_PERIOD/2); // ~1.5 revs in encoder steps
+      wf_w = (wf_w + 1u) & (WINFIFO - 1u);
+      if (wf_count < WINFIFO) wf_count++;
+      else                    wf_r = (wf_r + 1u) & (WINFIFO - 1u);
 
-      if (ad_sum_win >= MIN_MOVING_COUNTS) {
-        if (edges_B >= MIN_MOVING_EDGES && edges_A == 0) flags |= RS_A_STUCK;
-        if (edges_A >= MIN_MOVING_EDGES && edges_B == 0) flags |= RS_B_STUCK;
-        if ((edges_A + edges_B) >= 6 && quad_bad >= 2) flags |= RS_QUAD_BAD;
-        if (!z_seen_in_window && steps_since_z_encoder >= Z_OVERDUE_MIN) flags |= RS_Z_MISSED;
-      }
-
-      enc_rule_flags = flags; /* live telemetry */
-      win_rule_flags = flags; /* last-window aligned */
-
-      /* ---- snapshot the completed window into a FIFO ---- */
-      int idx = 0;
-      for (int t = 0; t < SEQ_LEN; ++t) {
-        volatile float* src = feat_win[t]; /* finished window in [0..SEQ_LEN-1] */
-        for (int f = 0; f < FEAT_DIM; ++f) win_fifo[wf_w][idx++] = src[f];
-      }
-      flags_fifo[wf_w] = flags;
-      wf_w = (wf_w + 1) & (WINFIFO - 1);
-      if (wf_count < WINFIFO) { wf_count++; }
-      else { wf_r = (wf_r + 1) & (WINFIFO - 1); } /* overwrite oldest if full */
-
-#if ENABLE_DIAGNOSTICS
-      {
-        /* last written slot (after increment above) */
-        uint8_t last_idx = (wf_w + (WINFIFO - 1)) & (WINFIFO - 1);
-
-        printf("[WIN #%lu] flags=0x%08lX edgesA=%u edgesB=%u quad_bad=%u "
-               "ad_sum=%lu z_seen=%u ssz_end=%lu "
-               "AB_hist=[%u,%u,%u,%u] dirF=%u dirB=%u SC=%u Z=%u rise=%u\r\n",
-               (unsigned long)win_total + 1, /* +1 because we increment later */
-               (unsigned long)flags,
-               (unsigned)edges_A, (unsigned)edges_B, (unsigned)quad_bad,
-               (unsigned long)ad_sum_win,
-               (unsigned)z_seen_in_window,
-               (unsigned long)steps_since_z_encoder, /* CORRECTED: encoder steps */
-               (unsigned)ab_hist[0], (unsigned)ab_hist[1],
-               (unsigned)ab_hist[2], (unsigned)ab_hist[3],
-               (unsigned)dirF_cnt, (unsigned)dirB_cnt,
-               (unsigned)state_changes_cnt,
-               (unsigned)z_cnt, (unsigned)rising_cnt);
-
-        /* quick saturation check on scaled features */
-        int zeros = 0, ones = 0;
-        const float* W = win_fifo[last_idx];
-        for (int i = 0; i < SEQ_LEN*FEAT_DIM; ++i) {
-          if (W[i] <= 0.0005f) zeros++;
-          else if (W[i] >= 0.9995f) ones++;
-        }
-        printf(" scaled saturation: zeros=%d ones=%d / %d\r\n",
-               zeros, ones, SEQ_LEN*FEAT_DIM);
-      }
-#endif
-
-#if ENABLE_RAW_LOG
-      /* Log raw signals for the just-completed window (most recent SEQ_LEN entries) */
-      printf("RAW_SIGNALS [WIN #%lu]: ", (unsigned long)win_total + 1);
-      // Start from rb_r (oldest in window) forward to capture the processed sequence
-      uint16_t start = (rb_r - SEQ_LEN + RB_SIZE) & RB_MASK; // wrap-around safe, oldest first
-      for (int i = 0; i < SEQ_LEN; i++) {
-        volatile raw_t r = rb[(start + i) & RB_MASK];
-        printf("%d,%u,%lu ", r.d, r.z_pulse, r.tick_ms);
-      }
-      printf("\r\n");
-#endif
-
-      /* reset per-window */
-      edges_A = edges_B = quad_bad = 0;
-      z_seen_in_window = 0;
-      ad_sum_win = 0;
-      win_fill = 0;
-
-#if ENABLE_DIAGNOSTICS
-      ab_hist[0] = ab_hist[1] = ab_hist[2] = ab_hist[3] = 0;
-      state_changes_cnt = dirF_cnt = dirB_cnt = z_cnt = rising_cnt = 0;
-#endif
-
-      win_ready = wf_count; /* external counter */
+      win_ready = wf_count;
       win_total++;
+      win_fill   = 0;
+      gray_skip2 = 0;
     }
   }
 }
 
-/* --- Copy current circular window into linear buffer and return its flags --- */
-int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags)
-{
-  /* Lazy drain: ensure ring is processed so we have a chance to pop a window */
-  EncSampler_Process();
+#endif /* ENC_IS_LIVE */
 
+
+int EncSampler_CopyWindowLinear(float *dst, uint32_t *out_flags) {
   __disable_irq();
   if (wf_count == 0) { __enable_irq(); return -1; }
-
   uint8_t r = wf_r;
-  wf_r = (wf_r + 1) & (WINFIFO - 1);
+  wf_r = (wf_r + 1u) & (WINFIFO - 1u);
   wf_count--;
-  win_ready = wf_count; /* external view */
+  win_ready = wf_count;
   uint32_t flags = flags_fifo[r];
+#if ENABLE_TRACE_WIN
+  memcpy(last_pop_ab , trace_ab [r], SEQ_LEN);
+  memcpy(last_pop_src, trace_src[r], SEQ_LEN);
+  memcpy(last_pop_z  , trace_z  [r], SEQ_LEN);
+#endif
   __enable_irq();
 
-  /* memcpy is fine; SEQ_LEN*FEAT_DIM is small */
-  for (int i = 0; i < SEQ_LEN*FEAT_DIM; ++i) dst[i] = win_fifo[r][i];
+  /* copy features */
+  for (int i = 0; i < (SEQ_LEN * FEAT_DIM); ++i) dst[i] = win_fifo[r][i];
 
-  win_rule_flags = flags; /* aligned flags for telemetry */
+  win_rule_flags = flags;
   if (out_flags) *out_flags = flags;
   return 0;
 }
+
+#if ENABLE_TRACE_WIN
+void EncSampler_DebugGetLastTrace(uint8_t* ab, uint8_t* src, uint8_t* z) {
+  memcpy(ab , last_pop_ab , SEQ_LEN);
+  memcpy(src, last_pop_src, SEQ_LEN);
+  memcpy(z  , last_pop_z  , SEQ_LEN);
+}
+#endif
+
+
+void EncSampler_StopHardware(void) {
+  __disable_irq();
+
+  /* Disable TIM1 IRQ sources and the timer itself */
+  if (htim1.Instance) {
+    /* Mask interrupts */
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_UPDATE | TIM_IT_TRIGGER);
+#ifdef TIM_IT_IDX
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_IDX);
+#endif
+
+    /* Stop counter */
+    __HAL_TIM_DISABLE(&htim1);
+
+    /* Clear pending flags */
+    __HAL_TIM_CLEAR_FLAG(&htim1,
+        TIM_SR_CC1IF | TIM_SR_CC1OF |
+        TIM_SR_CC2IF | TIM_SR_CC2OF |
+        TIM_SR_UIF   | TIM_SR_TIF);
+#ifdef TIM_SR_IDXF
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_IDXF);
+#endif
+  }
+
+  /* Also mask NVIC lines that could wake it */
+#ifdef TIM1_CC_IRQn
+  NVIC_DisableIRQ(TIM1_CC_IRQn);
+#endif
+#ifdef TIM1_UP_IRQn
+  NVIC_DisableIRQ(TIM1_UP_IRQn);
+#endif
+#ifdef TIM1_TRG_COM_IRQn
+  NVIC_DisableIRQ(TIM1_TRG_COM_IRQn);
+#endif
+
+  __enable_irq();
+}
+
+void EncSampler_FlushWindows(void) {
+  __disable_irq();
+
+  /* Reset window FIFO */
+  wf_w = 0;
+  wf_r = 0;
+  wf_count = 0;
+  win_ready = 0;
+  win_total = 0;
+
+  /* Reset event ring */
+  event_read = 0;
+  event_write = 0;
+  event_drops = 0;
+
+#if ENABLE_TRACE_WIN
+  memset(last_pop_ab,  0, sizeof(last_pop_ab));
+  memset(last_pop_src, 0, sizeof(last_pop_src));
+  memset(last_pop_z,   0, sizeof(last_pop_z));
+#endif
+
+  __enable_irq();
+}
+

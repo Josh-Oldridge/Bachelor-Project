@@ -81,8 +81,8 @@ void Error_Handler(void);
 #define ENC_A_GPIO_Port GPIOE
 #define ENC_Z_Pin GPIO_PIN_7
 #define ENC_Z_GPIO_Port GPIOE
-#define ENC_B_Pin GPIO_PIN_11
-#define ENC_B_GPIO_Port GPIOE
+#define ENC_B_Pin GPIO_PIN_7
+#define ENC_B_GPIO_Port GPIOD
 #define TRACED1_Pin GPIO_PIN_0
 #define TRACED1_GPIO_Port GPIOB
 #define TRACED3_Pin GPIO_PIN_7

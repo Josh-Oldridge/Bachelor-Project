@@ -1,0 +1,264 @@
+#include "enc_sampler.h"
+#include <string.h>
+#include <math.h>
+#include <stdio.h>
+#include "model_meta.h"
+
+extern TIM_HandleTypeDef htim1;
+
+#ifndef ENABLE_DIAGNOSTICS
+#define ENABLE_DIAGNOSTICS 0
+#endif
+
+#ifndef ENABLE_RAW_LOG
+#define ENABLE_RAW_LOG 1
+#endif
+
+/* --- Public/live flags --- */
+volatile uint32_t enc_rule_flags = 0;
+volatile uint32_t win_rule_flags = 0;
+
+/* --- Per-window accumulators --- */
+static uint16_t edges_A = 0, edges_B = 0, quad_bad = 0;
+static uint8_t z_seen_in_window = 0;
+static uint8_t win_fill = 0;
+static uint32_t ad_sum_win = 0;
+
+/* --- Exposed state --- */
+volatile uint32_t tim7_ticks = 0; // Keep for compatibility, but not used
+volatile uint32_t win_ready = 0;
+volatile uint32_t win_total = 0;
+volatile float feat_win[SEQ_LEN][FEAT_DIM];
+
+/* --- Ring buffer for edge events --- */
+typedef struct {
+  uint8_t AB_state;     /* Current AB state (0-3) */
+  uint8_t z_pulse;      /* Z pulse on this edge */
+  uint32_t tick_ms;     /* Timestamp for Speed_Change_Rate */
+  uint16_t cnt;         /* Raw encoder count for debugging */
+} edge_t;
+
+#define RB_LOG2 11
+#define RB_SIZE (1u << RB_LOG2)
+#define RB_MASK (RB_SIZE - 1)
+
+static volatile edge_t rb[RB_SIZE];
+static volatile uint16_t rb_w = 0, rb_r = 0;
+
+/* --- Window FIFO --- */
+#define WINFIFO_LOG2 2
+#define WINFIFO (1u << WINFIFO_LOG2)
+static float win_fifo[WINFIFO][SEQ_LEN*FEAT_DIM];
+static uint32_t flags_fifo[WINFIFO];
+static uint8_t wf_w = 0, wf_r = 0, wf_count = 0;
+
+/* --- State tracking --- */
+#define TIM1_PERIOD 2000u
+static uint8_t last_AB = 0;
+static uint32_t steps_since_z_encoder = 0;
+static uint32_t last_change_tick_ms = 0;
+static float baseline_interval_ms = 0.0f;
+static float current_speed_change_rate = 0.0f;
+
+/* --- Scaling helper --- */
+static inline float scale_feat(int j, float x) {
+  float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
+  if (y < 0.f) y = 0.f;
+  if (y > 1.f) y = 1.f;
+  return y;
+}
+
+/* --- Gray code helpers --- */
+static const uint8_t gray2idx[4] = {0,1,3,2};
+static inline uint8_t idx2gray(uint8_t idx) {
+  static const uint8_t lut[4] = {0,1,3,2};
+  return lut[idx & 3];
+}
+
+/* --- Public API --- */
+void EncSampler_Init(void) {
+  baseline_interval_ms = 50.0f;
+  last_change_tick_ms = HAL_GetTick();
+}
+
+void EncSampler_Start(void) {}
+
+/* --- NEW: Edge-triggered callback (replaces TIM7_Callback) --- */
+void EncSampler_EdgeCallback(void)
+{
+  tim7_ticks++; // Keep for rate display compatibility
+  uint32_t tick_ms = HAL_GetTick();
+  uint16_t cnt = __HAL_TIM_GET_COUNTER(&htim1);
+
+  /* Check Z pulse */
+  uint8_t z_pulse = 0;
+  #if defined(TIM_FLAG_IDXF)
+  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDXF)) {
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDXF);
+    z_pulse = 1;
+  }
+  #else
+  if (__HAL_TIM_GET_FLAG(&htim1, TIM_FLAG_IDX)) {
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_FLAG_IDX);
+    z_pulse = 1;
+  }
+  #endif
+
+  /* Get current AB state from encoder phase */
+  const uint8_t idx_curr = (uint8_t)(cnt & 3);
+  const uint8_t AB = idx2gray(idx_curr);
+
+  /* Store in ring buffer */
+  uint16_t w = rb_w;
+  uint16_t n = (w + 1) & RB_MASK;
+  if (n == rb_r) rb_r = (rb_r + 1) & RB_MASK; // drop oldest on overflow
+
+  rb[w].AB_state = AB;
+  rb[w].z_pulse = z_pulse;
+  rb[w].tick_ms = tick_ms;
+  rb[w].cnt = cnt;
+  rb_w = n;
+}
+
+/* --- Process edge events into features --- */
+void EncSampler_Process(void)
+{
+  while (rb_r != rb_w) {
+    edge_t e = rb[rb_r];
+    rb_r = (rb_r + 1) & RB_MASK;
+
+    const uint8_t AB = e.AB_state;
+    const uint8_t z_pulse = e.z_pulse;
+    const uint32_t tick_ms = e.tick_ms;
+
+    /* Calculate A/B from AB state */
+    uint8_t A = (AB >> 1) & 1U;
+    uint8_t B = AB & 1U;
+
+    /* Previous state for comparisons */
+    uint8_t AB_prev = last_AB;
+    if (win_fill == 0) { AB_prev = AB; last_AB = AB; }
+
+    /* State change detection */
+    const uint8_t state_change = (AB != AB_prev);
+
+    /* Direction from Gray code step */
+    const uint8_t idx_prev = gray2idx[AB_prev];
+    const uint8_t idx_curr = gray2idx[AB];
+    const uint8_t step = (uint8_t)((idx_curr - idx_prev) & 3);
+    const uint8_t dir_fwd = (step == 1);
+    const uint8_t dir_bwd = (step == 3);
+
+    /* Edge detection */
+    const uint8_t last_A = (last_AB >> 1) & 1U;
+    const uint8_t last_B = last_AB & 1U;
+    const uint8_t A_rise = (A && !last_A);
+    const uint8_t B_rise = (B && !last_B);
+    const uint8_t edge_rising = (A_rise || B_rise || z_pulse) ? 1U : 0U;
+
+    /* Update counters */
+    if (A != last_A) edges_A++;
+    if (B != last_B) edges_B++;
+    ad_sum_win += 1; // Each edge represents 1 step
+
+    /* Steps since Z */
+    if (z_pulse) {
+      steps_since_z_encoder = 0;
+    } else if (state_change) {
+      steps_since_z_encoder += 1;
+    }
+
+    /* Speed Change Rate - calculated on state changes */
+    if (state_change) {
+      uint32_t interval_ms = tick_ms - last_change_tick_ms;
+      if (interval_ms == 0) interval_ms = 1;
+
+      if (baseline_interval_ms <= 0.0f) {
+        baseline_interval_ms = (float)interval_ms;
+      }
+
+      float ratio = ((float)interval_ms) / baseline_interval_ms;
+      current_speed_change_rate = fabsf(ratio - 1.0f);
+      baseline_interval_ms = 0.9f * baseline_interval_ms + 0.1f * (float)interval_ms;
+      last_change_tick_ms = tick_ms;
+    }
+
+    if (z_pulse) z_seen_in_window = 1;
+    last_AB = AB;
+
+    /* Pack features */
+    volatile float *f = feat_win[win_fill];
+    int k = 0;
+#define PACK(v) do { f[k] = scale_feat(k, (v)); k++; } while(0)
+    PACK((float)AB);
+    PACK((float)state_change);
+    PACK((float)dir_fwd);
+    PACK((float)dir_bwd);
+    PACK(current_speed_change_rate);
+    PACK((float)A);
+    PACK((float)B);
+    PACK((float)z_pulse);
+    PACK((float)edge_rising);
+    PACK((float)steps_since_z_encoder);
+#undef PACK
+
+    /* Advance window */
+    win_fill++;
+    if (win_fill >= SEQ_LEN) {
+      /* Same window completion logic as before */
+      uint32_t flags = 0;
+      // ... [keep existing flag logic] ...
+
+      /* Snapshot completed window */
+      int idx = 0;
+      for (int t = 0; t < SEQ_LEN; ++t) {
+        volatile float* src = feat_win[t];
+        for (int f = 0; f < FEAT_DIM; ++f) win_fifo[wf_w][idx++] = src[f];
+      }
+      flags_fifo[wf_w] = flags;
+      wf_w = (wf_w + 1) & (WINFIFO - 1);
+      if (wf_count < WINFIFO) { wf_count++; }
+      else { wf_r = (wf_r + 1) & (WINFIFO - 1); }
+
+#if ENABLE_RAW_LOG
+      printf("EDGE_SIGNALS [WIN #%lu]: ", (unsigned long)win_total + 1);
+      uint16_t start = (rb_r - SEQ_LEN + RB_SIZE) & RB_MASK;
+      for (int i = 0; i < SEQ_LEN; i++) {
+        volatile edge_t r = rb[(start + i) & RB_MASK];
+        printf("%u,%u,%lu ", r.AB_state, r.z_pulse, r.tick_ms);
+      }
+      printf("\r\n");
+#endif
+
+      /* Reset window */
+      edges_A = edges_B = quad_bad = 0;
+      z_seen_in_window = 0;
+      ad_sum_win = 0;
+      win_fill = 0;
+      win_ready = wf_count;
+      win_total++;
+    }
+  }
+}
+
+/* Keep existing CopyWindowLinear function unchanged */
+int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags)
+{
+  EncSampler_Process();
+
+  __disable_irq();
+  if (wf_count == 0) { __enable_irq(); return -1; }
+
+  uint8_t r = wf_r;
+  wf_r = (wf_r + 1) & (WINFIFO - 1);
+  wf_count--;
+  win_ready = wf_count;
+  uint32_t flags = flags_fifo[r];
+  __enable_irq();
+
+  for (int i = 0; i < SEQ_LEN*FEAT_DIM; ++i) dst[i] = win_fifo[r][i];
+
+  win_rule_flags = flags;
+  if (out_flags) *out_flags = flags;
+  return 0;
+}

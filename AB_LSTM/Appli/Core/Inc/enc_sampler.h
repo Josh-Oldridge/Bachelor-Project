@@ -13,6 +13,13 @@ extern "C" {
 #define SEQ_LEN   (MODEL_SEQ_LEN)
 #define FEAT_DIM  (MODEL_FEAT_DIM)
 
+#ifndef ENABLE_TRACE_WIN
+#define ENABLE_TRACE_WIN 1   // set to 1 to enable per-window trace capture
+#endif
+
+#ifndef ENC_IS_LIVE
+#define ENC_IS_LIVE 0
+#endif
 /* Rule flags (updated once per completed window) */
 enum {
   RS_A_STUCK  = 1u << 0,
@@ -31,15 +38,27 @@ extern volatile uint32_t win_rule_flags;
 extern volatile uint32_t tim7_ticks;
 extern volatile uint32_t win_ready;        // # of windows available in FIFO
 extern volatile uint32_t win_total;        // produced windows (cumulative)
-extern volatile float    feat_win[SEQ_LEN][FEAT_DIM];
+
 
 /* (Optional) model-output telemetry provided by the AI app */
 extern volatile float    last_y[];         // model output (from app_x-cube-ai)
 extern volatile uint32_t inf_total;        // # of inferences run (cumulative)
 
+#if ENABLE_TRACE_WIN
+void EncSampler_DebugGetLastTrace(uint8_t* ab, uint8_t* src, uint8_t* z);
+#endif
+
 /* Init + run */
 void EncSampler_Init(void);
 void EncSampler_Start(void);
+
+
+void EncSampler_StopHardware(void);
+void EncSampler_FlushWindows(void);
+
+void EncSampler_EncoderIRQ_Drain(void);
+
+void EncSampler_EncoderChangeCallback(void);
 
 /* Hook these from Cube/HAL */
 void EncSampler_TIM7_Callback(void);  // call inside HAL_TIM_PeriodElapsedCallback

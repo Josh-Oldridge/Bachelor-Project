@@ -1,5 +1,6 @@
-../Core/Src/enc_sampler.c:103:6:EncSampler_Init	1
-../Core/Src/enc_sampler.c:109:6:EncSampler_Start	1
-../Core/Src/enc_sampler.c:112:6:EncSampler_TIM7_Callback	5
-../Core/Src/enc_sampler.c:167:6:EncSampler_Process	53
-../Core/Src/enc_sampler.c:368:5:EncSampler_CopyWindowLinear	6
+../Core/Src/enc_sampler.c:157:6:EncSampler_Init	1
+../Core/Src/enc_sampler.c:164:6:EncSampler_TIM7_Callback	1
+../Core/Src/enc_sampler.c:288:5:EncSampler_CopyWindowLinear	3
+../Core/Src/enc_sampler.c:312:6:EncSampler_DebugGetLastTrace	1
+../Core/Src/enc_sampler.c:320:6:EncSampler_StopHardware	4
+../Core/Src/enc_sampler.c:358:6:EncSampler_FlushWindows	1

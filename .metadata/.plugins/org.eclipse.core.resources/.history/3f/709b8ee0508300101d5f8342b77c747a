@@ -1,0 +1,59 @@
+#ifndef INC_ENC_SAMPLER_H_
+#define INC_ENC_SAMPLER_H_
+
+#pragma once
+#include <stdint.h>
+#include "main.h"
+#include "model_meta.h"   // MODEL_SEQ_LEN / MODEL_FEAT_DIM
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Rule flags (updated once per completed window) */
+enum {
+  RS_A_STUCK  = 1u << 0,
+  RS_B_STUCK  = 1u << 1,
+  RS_QUAD_BAD = 1u << 2,
+  RS_Z_MISSED = 1u << 3,
+};
+
+/* Live rule flags
+   - enc_rule_flags: most recently computed flags (for telemetry)
+   - win_rule_flags: flags aligned to the *window just handed to the NN* */
+extern volatile uint32_t enc_rule_flags;
+extern volatile uint32_t win_rule_flags;
+
+/* Exposed telemetry / buffers */
+extern volatile uint32_t tim7_ticks;
+extern volatile uint32_t win_ready;        // # of windows available in FIFO
+extern volatile uint32_t win_total;        // produced windows (cumulative)
+
+
+/* (Optional) model-output telemetry provided by the AI app */
+extern volatile float    last_y[];         // model output (from app_x-cube-ai)
+extern volatile uint32_t inf_total;        // # of inferences run (cumulative)
+
+/* Init + run */
+void EncSampler_Init(void);
+void EncSampler_Start(void);
+
+void EncSampler_EncoderIRQ_Drain(void);
+
+void EncSampler_EncoderChangeCallback(void);
+
+/* Hook these from Cube/HAL */
+void EncSampler_TIM7_Callback(void);  // call inside HAL_TIM_PeriodElapsedCallback
+void EncSampler_Process(void);        // call from main while() OR rely on lazy drain
+/* Copy window into linear buffer (oldest->newest). Returns 0 on success.
+   Flags for this same window are published to win_rule_flags. */
+int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* INC_ENC_SAMPLER_H_ */
