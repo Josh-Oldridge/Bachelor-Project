@@ -1,0 +1,191 @@
+#include "diag_timing.h"
+#if DIAG_ENABLE
+
+#include "stm32n6xx_hal.h"
+#include <stdio.h>
+
+/* ===== Fast GPIO (BSRR) for scope pins ===== */
+#define GPIO_SET(port, pin)  ((port)->BSRR = (pin))
+#define GPIO_CLR(port, pin)  ((port)->BSRR = ((uint32_t)(pin) << 16u))
+
+/* ===== DWT cycle counter ===== */
+static volatile uint32_t s_cycles_per_us = 1;
+
+static inline uint32_t rdcyc(void) {
+  return DWT->CYCCNT;
+}
+
+static inline void dwt_enable(void) {
+  /* Enable trace */
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+#ifdef DWT_LAR
+  /* Unlock if present */
+  DWT->LAR = 0xC5ACCE55;
+#endif
+  DWT->CYCCNT = 0;
+  DWT->CTRL  |= DWT_CTRL_CYCCNTENA_Msk;
+}
+
+/* ===== Metrics and state ===== */
+static diag_timing_metrics_t g;
+
+static uint32_t s_irq_start = 0;
+static uint32_t s_pack_start = 0;
+static uint32_t s_winpub_start = 0;
+static uint32_t s_window_first_cyc = 0;
+static uint32_t s_model_start = 0;
+
+static inline void upd_cycles(diag_metric_cycles_t *m, uint32_t delta) {
+  m->count++;
+  m->cycles_total += (uint64_t)delta;
+  if (delta > m->cycles_max) m->cycles_max = delta;
+}
+static inline void upd_us(diag_metric_us_t *m, uint32_t us) {
+  m->count++;
+  m->us_total += (uint64_t)us;
+  if (us > m->us_max) m->us_max = us;
+}
+
+/* ===== Public API ===== */
+void diag_init(void) {
+  dwt_enable();
+  uint32_t hclk = HAL_RCC_GetHCLKFreq();
+  s_cycles_per_us = (hclk + 999999u) / 1000000u;
+  diag_reset_metrics();
+}
+
+void diag_reset_metrics(void) {
+  diag_timing_metrics_t z = {0};
+  g = z;
+  s_irq_start = s_pack_start = s_winpub_start = s_window_first_cyc = s_model_start = 0;
+  /* set capacities once if you know them; these can also be fed via mark_* */
+  g.eventbuf_capacity = 1u << 12; /* default matches your EVENT_BUF_BITS=12 */
+  g.winfifo_capacity  = 1u << 5;  /* default matches WINFIFO_LOG2=5       */
+}
+
+void diag_get_metrics(diag_timing_metrics_t *out) {
+  if (out) *out = g;
+}
+
+uint32_t diag_cycles_per_us(void) { return s_cycles_per_us; }
+
+void diag_dump_metrics(void) {
+  printf("\r\n=== DIAG ===\r\n");
+  printf("HCLK=%lu Hz, cycles/us=%lu\r\n",
+         (unsigned long)HAL_RCC_GetHCLKFreq(),
+         (unsigned long)s_cycles_per_us);
+
+#define PCT(a,b) ((b)? (100.0f * (float)(a) / (float)(b)) : 0.0f)
+  if (g.isr.count) {
+    uint64_t avg = g.isr.cycles_total / g.isr.count;
+    printf("ISR: count=%lu avg=%lu cyc max=%lu cyc\r\n",
+           (unsigned long)g.isr.count,
+           (unsigned long)avg,
+           (unsigned long)g.isr.cycles_max);
+  }
+  if (g.pack.count) {
+    uint64_t avg = g.pack.cycles_total / g.pack.count;
+    printf("Pack: count=%lu avg=%lu cyc max=%lu cyc\r\n",
+           (unsigned long)g.pack.count,
+           (unsigned long)avg,
+           (unsigned long)g.pack.cycles_max);
+  }
+  if (g.win_publish.count) {
+    uint64_t avg = g.win_publish.cycles_total / g.win_publish.count;
+    printf("WinPub: count=%lu avg=%lu cyc max=%lu cyc\r\n",
+           (unsigned long)g.win_publish.count,
+           (unsigned long)avg,
+           (unsigned long)g.win_publish.cycles_max);
+  }
+  if (g.model.count) {
+    uint64_t avg = g.model.cycles_total / g.model.count;
+    printf("Model: count=%lu avg=%lu cyc max=%lu cyc\r\n",
+           (unsigned long)g.model.count,
+           (unsigned long)avg,
+           (unsigned long)g.model.cycles_max);
+  }
+  if (g.win_wall.count) {
+    uint64_t avg = g.win_wall.us_total / g.win_wall.count;
+    printf("WinWall: count=%lu avg=%lu us max=%lu us\r\n",
+           (unsigned long)g.win_wall.count,
+           (unsigned long)avg,
+           (unsigned long)g.win_wall.us_max);
+  }
+  printf("EventBuf: max_used=%lu / %lu, drops_total=%lu\r\n",
+         (unsigned long)g.eventbuf_max_used,
+         (unsigned long)g.eventbuf_capacity,
+         (unsigned long)g.event_drops_total);
+  printf("WinFIFO : max_ready=%lu / %lu\r\n",
+         (unsigned long)g.winfifo_max_ready,
+         (unsigned long)g.winfifo_capacity);
+}
+
+/* ===== Scoping helpers ===== */
+void diag_irq_enter(void) {
+  GPIO_SET(INT_PIN_GPIO_Port, INT_PIN_Pin);
+  s_irq_start = rdcyc();
+}
+void diag_irq_exit(void) {
+  uint32_t delta = rdcyc() - s_irq_start;
+  GPIO_CLR(INT_PIN_GPIO_Port, INT_PIN_Pin);
+  upd_cycles(&g.isr, delta);
+}
+
+void diag_pack_start(void)  { s_pack_start = rdcyc(); }
+void diag_pack_end(void)    { upd_cycles(&g.pack, rdcyc() - s_pack_start); }
+
+void diag_winpub_start(void){ s_winpub_start = rdcyc(); }
+void diag_winpub_end(void)  { upd_cycles(&g.win_publish, rdcyc() - s_winpub_start); }
+
+void diag_window_first_row_mark(void) { s_window_first_cyc = rdcyc(); }
+void diag_window_published_mark(void) {
+  uint32_t delta_cyc = rdcyc() - s_window_first_cyc;
+  uint32_t us = (s_cycles_per_us) ? (delta_cyc / s_cycles_per_us) : 0;
+  upd_us(&g.win_wall, us);
+}
+
+void diag_model_start(void) {
+  GPIO_SET(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin);
+  s_model_start = rdcyc();
+}
+void diag_model_end(void) {
+  uint32_t delta = rdcyc() - s_model_start;
+  GPIO_CLR(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin);
+  upd_cycles(&g.model, delta);
+}
+
+/* Watermarks */
+void diag_mark_eventbuf(uint32_t used, uint32_t capacity) {
+  g.eventbuf_capacity = capacity;
+  if (used > g.eventbuf_max_used) g.eventbuf_max_used = used;
+}
+void diag_mark_winfifo(uint32_t ready, uint32_t capacity) {
+  g.winfifo_capacity = capacity;
+  if (ready > g.winfifo_max_ready) g.winfifo_max_ready = ready;
+}
+void diag_add_event_drops(uint32_t drops_inc) {
+  g.event_drops_total += drops_inc;
+}
+
+#else /* DIAG_ENABLE == 0 */
+/* No-ops */
+void diag_init(void) {}
+void diag_reset_metrics(void) {}
+void diag_get_metrics(diag_timing_metrics_t *out) { if (out) *out = (diag_timing_metrics_t){0}; }
+void diag_dump_metrics(void) {}
+
+void diag_irq_enter(void) {}
+void diag_irq_exit(void) {}
+void diag_pack_start(void) {}
+void diag_pack_end(void) {}
+void diag_winpub_start(void) {}
+void diag_winpub_end(void) {}
+void diag_window_first_row_mark(void) {}
+void diag_window_published_mark(void) {}
+void diag_model_start(void) {}
+void diag_model_end(void) {}
+void diag_mark_eventbuf(uint32_t a, uint32_t b) { (void)a; (void)b; }
+void diag_mark_winfifo(uint32_t a, uint32_t b) { (void)a; (void)b; }
+void diag_add_event_drops(uint32_t a) { (void)a; }
+uint32_t diag_cycles_per_us(void) { return 1; }
+#endif

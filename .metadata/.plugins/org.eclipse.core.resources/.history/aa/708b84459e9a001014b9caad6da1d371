@@ -1,0 +1,537 @@
+
+/**
+  ******************************************************************************
+  * @file    app_x-cube-ai.c
+  * @author  X-CUBE-AI C code generator
+  * @brief   AI program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
+ /*
+  * Description
+  *   v1.0 - Minimum template to show how to use the Embedded Client API
+  *          model. Only one input and one output is supported. All
+  *          memory resources are allocated statically (AI_NETWORK_XX, defines
+  *          are used).
+  *          Re-target of the printf function is out-of-scope.
+  *   v2.0 - add multiple IO and/or multiple heap support
+  *
+  *   For more information, see the embeded documentation:
+  *
+  *       [1] %X_CUBE_AI_DIR%/Documentation/index.html
+  *
+  *   X_CUBE_AI_DIR indicates the location where the X-CUBE-AI pack is installed
+  *   typical : C:\Users\[user_name]\STM32Cube\Repository\STMicroelectronics\X-CUBE-AI\7.1.0
+  */
+
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
+/* Includes ------------------------------------------------------------------*/
+
+#if defined ( __ICCARM__ )
+#define AI_AXIFLEXMEM   _Pragma("location=\"AI_AXIFLEXMEM\"")
+#elif defined ( __CC_ARM ) || ( __GNUC__ )
+#define AI_AXIFLEXMEM   __attribute__((section(".AI_AXIFLEXMEM")))
+#endif
+
+AI_AXIFLEXMEM __attribute__((aligned(4)))
+uint8_t flexMEM[AI_NETWORK_DATA_ACTIVATION_1_SIZE];
+
+/* System headers */
+#include <stdint.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <inttypes.h>
+#include <string.h>
+
+#include "app_x-cube-ai.h"
+#include "main.h"
+#include "ai_datatypes_defines.h"
+#include "network.h"
+#include "network_data.h"
+
+/* USER CODE BEGIN includes */
+#include "model_meta.h"
+#include "enc_sampler.h"
+#include "diag_timing.h"
+#include <stdarg.h>
+
+#ifndef AI_LOG_PRINT_DIRTRACE
+#define AI_LOG_PRINT_DIRTRACE  1   /* 1 = print DIR + WIN AB/SRC/Z */
+#endif
+
+#ifndef AI_LOG_PRINT_WINSTAMP
+#define AI_LOG_PRINT_WINSTAMP 1   /* 1 = print WINSTAMP line */
+#endif
+
+#ifndef PRINTF_FMT
+# if defined(__GNUC__) || defined(__clang__)
+#  define PRINTF_FMT(a,b) __attribute__((format(printf, a, b)))
+# else
+#  define PRINTF_FMT(a,b)
+# endif
+#endif
+
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+#if (SEQ_LEN * FEAT_DIM) != AI_NETWORK_IN_1_SIZE
+#error "Input size mismatch: regenerate model_meta.h or re-export network"
+#endif
+
+/* Class indices (model_meta.h order): ['missing_step','normal','z_index'] */
+#define C_MISSINGSTEP  0
+#define C_NORMAL       1
+#define C_ZINDEX       2
+
+static ai_handle data_activations0[] = { (ai_handle)flexMEM };
+
+/* Fast single-shot logger to LPUART1 (appears in PuTTY) */
+static inline void log_tx(const char *s, size_t n) {
+	if (n == 0)
+		return;
+	HAL_UART_Transmit(&hlpuart1, (uint8_t*) s, (uint16_t) n, 0xFFFF);
+}
+
+/* printf-like logger with compile-time format checking on GCC/Clang */
+static void ai_log(const char *fmt, ...) PRINTF_FMT(1,2);
+static void ai_log(const char *fmt, ...) {
+	char buf[256];
+	va_list ap;
+	va_start(ap, fmt);
+	int n = vsnprintf(buf, sizeof(buf), fmt, ap);
+	va_end(ap);
+	if (n < 0)
+		return;
+	if (n >= (int) sizeof(buf))
+		n = (int) sizeof(buf) - 1;
+	log_tx(buf, (size_t) n);
+}
+
+static inline uint32_t ms_now(void) {
+	return HAL_GetTick();
+}
+/* USER CODE END includes */
+
+/* IO buffers ----------------------------------------------------------------*/
+
+#if !defined(AI_NETWORK_INPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_in_1[AI_NETWORK_IN_1_SIZE_BYTES];
+ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
+data_in_1
+};
+#else
+ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
+NULL
+};
+#endif
+
+#if !defined(AI_NETWORK_OUTPUTS_IN_ACTIVATIONS)
+AI_ALIGNED(4) ai_i8 data_out_1[AI_NETWORK_OUT_1_SIZE_BYTES];
+ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
+data_out_1
+};
+#else
+ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
+NULL
+};
+#endif
+
+/* Activations buffers -------------------------------------------------------*/
+
+ai_handle data_activations0[] = {(ai_handle) 0x34000000};
+
+/* AI objects ----------------------------------------------------------------*/
+
+static ai_handle network = AI_HANDLE_NULL;
+
+static ai_buffer* ai_input;
+static ai_buffer* ai_output;
+
+static void ai_log_err(const ai_error err, const char *fct)
+{
+  /* USER CODE BEGIN log */
+	if (fct)
+		printf("TEMPLATE - Error (%s) - type=0x%02x code=0x%02x\r\n", fct,
+				err.type, err.code);
+	else
+		printf("TEMPLATE - Error - type=0x%02x code=0x%02x\r\n", err.type,
+				err.code);
+
+	do {
+	} while (1);
+  /* USER CODE END log */
+}
+
+static int ai_boostrap(ai_handle *act_addr)
+{
+  ai_error err;
+
+  /* Create and initialize an instance of the model */
+  err = ai_network_create_and_init(&network, act_addr, NULL);
+  if (err.type != AI_ERROR_NONE) {
+    ai_log_err(err, "ai_network_create_and_init");
+    return -1;
+  }
+
+  ai_input = ai_network_inputs_get(network, NULL);
+  ai_output = ai_network_outputs_get(network, NULL);
+
+#if defined(AI_NETWORK_INPUTS_IN_ACTIVATIONS)
+  /*  In the case where "--allocate-inputs" option is used, memory buffer can be
+   *  used from the activations buffer. This is not mandatory.
+   */
+  for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
+	data_ins[idx] = ai_input[idx].data;
+  }
+#else
+  for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
+	  ai_input[idx].data = data_ins[idx];
+  }
+#endif
+
+#if defined(AI_NETWORK_OUTPUTS_IN_ACTIVATIONS)
+  /*  In the case where "--allocate-outputs" option is used, memory buffer can be
+   *  used from the activations buffer. This is no mandatory.
+   */
+  for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
+	data_outs[idx] = ai_output[idx].data;
+  }
+#else
+  for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
+	ai_output[idx].data = data_outs[idx];
+  }
+#endif
+
+  return 0;
+}
+
+static int ai_run(void)
+{
+  ai_i32 batch;
+
+  batch = ai_network_run(network, ai_input, ai_output);
+  if (batch != 1) {
+    ai_log_err(ai_network_get_error(network),
+        "ai_network_run");
+    return -1;
+  }
+
+  return 0;
+}
+
+/* USER CODE BEGIN 2 */
+
+extern const ai_u64 s_network_weights_array_u64[1830]; /* network_data.c */
+
+/* Your activations buffer lives here */
+extern uint8_t flexMEM[AI_NETWORK_DATA_ACTIVATION_1_SIZE];
+
+/* Quick region labeler (adjust if you add more memory regions) */
+static const char* region_of(uintptr_t a) {
+	if (a >= 0x34200000UL && a < 0x343C0000UL)
+		return "AXISRAM3-6";
+	if (a >= 0x34000000UL && a < 0x34200000UL)
+		return "SRAM";
+	return "unknown";
+}
+
+static void Print_ModelSramFootprint(void) {
+	/* Sizes from generated headers (compile-time truth) */
+	const uint32_t sz_weights = (uint32_t) AI_NETWORK_DATA_WEIGHTS_SIZE; /* 24716 */
+	const uint32_t sz_acts = (uint32_t) AI_NETWORK_DATA_ACTIVATIONS_SIZE; /* 1824  */
+
+	/* Addresses we actually use at runtime */
+	const uintptr_t w_base = (uintptr_t) &s_network_weights_array_u64[0];
+	const uintptr_t w_end = w_base + sz_weights;
+	const uintptr_t a_base = (uintptr_t) &flexMEM[0];
+	const uintptr_t a_end = a_base + sz_acts;
+
+	/* Totals (model-only SRAM; excludes your encoder rings etc.) */
+	const uint32_t total_model_sram = sz_weights + sz_acts;
+
+	ai_log("MODEL_MEM: weights=%lu B @0x%08lX..0x%08lX (%s), "
+			"activations=%lu B @0x%08lX..0x%08lX (%s), "
+			"total=%lu B\n", (unsigned long) sz_weights, (unsigned long) w_base,
+			(unsigned long) w_end, region_of(w_base), (unsigned long) sz_acts,
+			(unsigned long) a_base, (unsigned long) a_end, region_of(a_base),
+			(unsigned long) total_model_sram);
+}
+
+/* From enc_sampler.c */
+extern volatile uint32_t win_ready; /* number of ready windows */
+extern volatile uint32_t win_rule_flags; /* sampler flags aligned to window */
+extern volatile uint32_t enc_rule_flags; /* rolling/live flags */
+extern volatile uint32_t z_epoch_isr; /* increments once per accepted Z */
+
+/* Exported raw NN output (optional for other modules) */
+volatile float last_y_raw[AI_NETWORK_OUT_1_SIZE];
+
+/* Z-path diagnostics (from enc_sampler.c) */
+extern volatile uint32_t z_diag_isr_seen, z_diag_isr_accepted;
+extern volatile uint32_t z_diag_ab_since_isr, z_diag_steps_x4, z_diag_last_z_ms;
+
+/* Local state */
+static uint32_t rf_snapshot = 0;
+static uint32_t inf_seq = 0;
+
+/* Global class totals across the whole run */
+static uint32_t tot_missing = 0, tot_normal = 0, tot_zindex = 0;
+
+static int ai_run_timed(void) {
+	ai_i32 batch;
+
+	HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_SET);
+	DiagTiming_Start(DIAG_T_MODEL);
+
+	batch = ai_network_run(network, ai_input, ai_output);
+
+	DiagTiming_Stop(DIAG_T_MODEL);
+	HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_RESET);
+
+	if (batch != 1) {
+		ai_log_err(ai_network_get_error(network), "ai_network_run");
+		return -1;
+	}
+
+	Diag_IncInferenceCount();
+	return 0;
+}
+
+/* Acquire oldest ready window directly into NN input (live only) */
+static int acquire_and_process_data(void) {
+	return EncSampler_CopyWindowLinear((float*) ai_input[0].data, &rf_snapshot);
+}
+
+/* Post-process: just mirror raw output (model already softmax) */
+static int post_process(void) {
+	const float *out = (const float*) ai_output[0].data;
+	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
+		last_y_raw[i] = out[i];
+	return 0;
+}
+
+static void print_dir_and_trace_only(void) {
+#if AI_LOG_PRINT_DIRTRACE
+	int8_t latched = EncSampler_GetLatchedDir();
+	int8_t wdir = EncSampler_GetLastWindowDir();
+	ai_log("DIR: latched=%s  window=%s\r\n", (latched > 0 ? "FWD" : "BWD"),
+			(wdir > 0 ? "FWD" : "BWD"));
+
+#if ENABLE_TRACE_WIN
+	uint8_t ab[SEQ_LEN], src[SEQ_LEN], z[SEQ_LEN];
+	EncSampler_DebugGetLastTrace(ab, src, z);
+
+	char lineAB[SEQ_LEN + 1], lineSRC[SEQ_LEN + 1], lineZ[SEQ_LEN + 1];
+	for (int i = 0; i < SEQ_LEN; ++i) {
+		lineAB[i] = "0123"[ab[i] & 3u];
+		lineSRC[i] = (src[i] == 1 ? 'A' : (src[i] == 2 ? 'B' : '?'));
+		lineZ[i] = '.'; /* start empty; we'll set caret below */
+	}
+	lineAB[SEQ_LEN] = '\0';
+	lineSRC[SEQ_LEN] = '\0';
+	lineZ[SEQ_LEN] = '\0';
+
+	/* Prefer the stamped Z row for this dequeued window */
+	if (win_stamp_z_row >= 0 && win_stamp_z_row < SEQ_LEN) {
+		lineZ[win_stamp_z_row] = '^';
+	} else {
+		/* fallback to whatever the trace captured */
+		for (int i = 0; i < SEQ_LEN; ++i) {
+			if (z[i]) {
+				lineZ[i] = '^';
+				break;
+			}
+		}
+	}
+
+	ai_log("WIN AB : %s\r\n", lineAB);
+	ai_log("WIN SRC: %s\r\n", lineSRC);
+	ai_log("WIN  Z : %s\r\n", lineZ);
+#endif
+
+#else
+  /* printing disabled; keep function defined */
+  (void)0;
+#endif /* AI_LOG_PRINT_DIRTRACE */
+
+}
+
+static void print_winstamp_smart(void) {
+
+#if AI_LOG_PRINT_WINSTAMP
+	uint32_t s4 = win_stamp_ab_start_x4;
+	uint32_t e4 = win_stamp_ab_end_x4;
+	int16_t zrow = win_stamp_z_row; /* -1 = none */
+	uint32_t epoch = win_stamp_z_epoch;
+	uint32_t zseq = win_stamp_z_seq_end; /* total Zs accepted so far (monotonic) */
+
+	if (zrow < 0) {
+		uint32_t d4 = win_stamp_ab_delta_x4;
+		ai_log(
+				"WINSTAMP: Zepoch=%lu Zrow=-1 Zseq=%lu  ABx4:%lu->%lu (+%lu)\r\n",
+				(unsigned long) epoch, (unsigned long) zseq, (unsigned long) s4,
+				(unsigned long) e4, (unsigned long) d4);
+		return;
+	}
+
+	/* Z inside this window: one row == one AB×4 edge (both-edge capture) */
+	uint32_t pre_rows = (uint32_t) zrow; /* edges before Z row */
+	uint32_t post_rows = (uint32_t) (SEQ_LEN - zrow); /* edges from Z row to end */
+	uint32_t pre_x4 = pre_rows;
+	uint32_t post_x4 = post_rows;
+	uint32_t tot_x4 = pre_x4 + post_x4; /* equals SEQ_LEN */
+
+	ai_log(
+			"WINSTAMP: Zepoch=%lu Zrow=%d Zseq=%lu  ABx4: pre=+%lu post=+%lu total=+%lu\r\n",
+			(unsigned long) epoch, (int) zrow, (unsigned long) zseq,
+			(unsigned long) pre_x4, (unsigned long) post_x4,
+			(unsigned long) tot_x4);
+#else
+  (void)win_stamp_ab_start_x4;
+  (void)win_stamp_ab_end_x4;
+  (void)win_stamp_ab_delta_x4;
+  (void)win_stamp_z_row;
+  (void)win_stamp_z_epoch;
+  (void)win_stamp_z_seq_end;
+#endif
+}
+
+/* Compact INF line + window/diag dump using the fast logger */
+static void snapshot_and_print(void) {
+	inf_seq++;
+
+	int best = 0;
+	for (int i = 1; i < AI_NETWORK_OUT_1_SIZE; ++i)
+		if (last_y_raw[i] > last_y_raw[best])
+			best = i;
+
+	if (rf_snapshot & RF_TRIAL) {
+		Diag_NotifyInferenceTop((uint32_t) best);
+	}
+
+	switch (best) {
+	case C_MISSINGSTEP:
+		tot_missing++;
+		break;
+	case C_NORMAL:
+		tot_normal++;
+		break;
+	case C_ZINDEX:
+		tot_zindex++;
+		break;
+	default:
+		break;
+	}
+
+	float p_ms = last_y_raw[C_MISSINGSTEP];
+	float p_n = last_y_raw[C_NORMAL];
+	float p_z = last_y_raw[C_ZINDEX];
+
+	/* If you want to avoid any time reads, you can remove ms_now() */
+	uint32_t tms = ms_now();
+	ai_log(
+			"INF#%lu t=%lums TOP=%s P=[MS:%.3f, N:%.3f, Z:%.3f] flags(win)=0x%08lX flags(live)=0x%08lX\r\n",
+			(unsigned long) inf_seq, (unsigned long) tms, MODEL_CLASSES[best],
+			p_ms, p_n, p_z, (unsigned long) win_rule_flags,
+			(unsigned long) enc_rule_flags);
+
+	/* Per-window, perfectly aligned metadata */
+	print_winstamp_smart();
+
+	/* Optional: direction + traces (no live Z_DIAG here) */
+	print_dir_and_trace_only();
+}
+
+void Model_GetTotals(uint32_t *normal, uint32_t *missing, uint32_t *zindex) {
+	if (normal)
+		*normal = tot_normal;
+	if (missing)
+		*missing = tot_missing;
+	if (zindex)
+		*zindex = tot_zindex;
+}
+
+/* USER CODE END 2 */
+
+/* Entry points --------------------------------------------------------------*/
+
+void MX_X_CUBE_AI_Init(void)
+{
+    __HAL_RCC_AXISRAM2_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM3_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM4_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM5_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM6_MEM_CLK_ENABLE();
+    RAMCFG_SRAM2_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM3_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM4_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM5_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM6_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    /* USER CODE BEGIN 5 */
+	ai_log("AI: init\r\n");
+	if (ai_boostrap(data_activations0) != 0) {
+		ai_log_err(ai_network_get_error(network), "ai_boostrap");
+		return;
+	}
+
+	/* Assert float32 I/O (fast path) */
+	const uint32_t in_type = AI_BUFFER_FMT_GET_TYPE(ai_input[0].format);
+	const uint32_t out_type = AI_BUFFER_FMT_GET_TYPE(ai_output[0].format);
+	const uint32_t in_bits = AI_BUFFER_FMT_GET_BITS(ai_input[0].format);
+	const uint32_t out_bits = AI_BUFFER_FMT_GET_BITS(ai_output[0].format);
+
+	if (!((in_type == AI_BUFFER_FMT_TYPE_FLOAT && in_bits == 32)
+			&& (out_type == AI_BUFFER_FMT_TYPE_FLOAT && out_bits == 32))) {
+		ai_log_err((ai_error ) { AI_ERROR_INVALID_PARAM,
+						AI_ERROR_CODE_INVALID_SIZE }, "Model I/O not float32");
+	}
+
+	ai_log("AI: I/O OK (in:%lubits out:%lubits)\r\n", (unsigned long) in_bits,
+			(unsigned long) out_bits);
+	Print_ModelSramFootprint();
+    /* USER CODE END 5 */
+}
+
+void MX_X_CUBE_AI_Process(void)
+{
+    /* USER CODE BEGIN 6 */
+#ifndef INFER_BUDGET_PER_TICK
+#define INFER_BUDGET_PER_TICK 1000000
+#endif
+
+	if (!network)
+		return;
+
+	/* Always keep sampler moving (builds windows) */
+	EncSampler_Process();
+
+	/* Trial active (or capture-only disabled): infer every ready window */
+	{
+		int budget = INFER_BUDGET_PER_TICK;
+		while (budget-- > 0) {
+			if (acquire_and_process_data() != 0)
+				break;
+
+			if (ai_run_timed() == 0) {
+				post_process();
+				snapshot_and_print();
+			}
+		}
+	}
+    /* USER CODE END 6 */
+}
+#ifdef __cplusplus
+}
+#endif

@@ -1,0 +1,106 @@
+#ifndef INC_ENC_SAMPLER_H_
+#define INC_ENC_SAMPLER_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "model_meta.h"   // MODEL_SEQ_LEN / MODEL_FEAT_DIM
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* ========= Public constants ========= */
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Attribute helpers (safe in headers) */
+#ifndef ENC_SECTION
+#define ENC_SECTION(name) __attribute__((section(name), aligned(32)))
+#endif
+#ifndef ENC_USED
+#define ENC_USED __attribute__((used))
+#endif
+
+/* Enable per-window AB/SRC/Z trace (last-window snapshot API stays available). */
+#ifndef ENABLE_TRACE_WIN
+#define ENABLE_TRACE_WIN 1
+#endif
+
+/* ========= Public state (read-only to app) ========= */
+extern volatile uint32_t enc_rule_flags;   /* rolling/live flags */
+extern volatile uint32_t win_rule_flags;   /* flags for last window */
+
+/* FIFO flow control */
+extern volatile uint32_t win_ready;        /* # of windows available */
+extern volatile uint32_t win_total;        /* total produced windows */
+extern volatile uint32_t event_drops;      /* overcapture / ring overflow */
+
+/* Z-path diagnostics consumed by the app logger */
+extern volatile uint32_t z_diag_isr_seen;
+extern volatile uint32_t z_diag_isr_accepted;
+extern volatile uint32_t z_diag_ab_since_isr;
+extern volatile uint32_t z_diag_steps_x4;
+extern volatile uint32_t z_diag_last_z_ms;
+
+/* Window stamps exported to app_x-cube-ai */
+extern volatile uint32_t win_stamp_ab_start_x4;
+extern volatile uint32_t win_stamp_ab_end_x4;
+extern volatile uint32_t win_stamp_ab_delta_x4;
+extern volatile uint32_t win_stamp_z_epoch;
+extern volatile int16_t  win_stamp_z_row;
+extern volatile uint32_t win_stamp_z_seq_end;
+
+/* ========= API ========= */
+void EncSampler_Init(void);
+void EncSampler_StopHardware(void);
+void EncSampler_FlushWindows(void);
+
+/* IRQ drain (call from TIM1 CC and/or TRG/COM ISRs) */
+void EncSampler_EncoderIRQ_Drain(void);
+
+/* Run in main loop to consume events and build windows */
+void EncSampler_Process(void);
+
+/* Direction helpers */
+int8_t EncSampler_GetLatchedDir(void);
+int8_t EncSampler_GetLastWindowDir(void);
+
+/* Copy the oldest ready window (SEQ_LEN*FEAT_DIM floats).
+   Returns 0 on success, -1 if no window available.
+   win_rule_flags is updated; optionally echoed via out_flags. */
+int EncSampler_CopyWindowLinear(float *dst, uint32_t *out_flags);
+
+/* Last-window trace (implemented as no-op when tracing is disabled) */
+void EncSampler_DebugGetLastTrace(uint8_t *ab, uint8_t *src, uint8_t *z);
+
+/* ======== 1s raw capture API ======== */
+typedef struct {
+  uint32_t t_ms;      // HAL tick at capture time
+  uint16_t ccr;       // CCR1/CCR2 sample (0 for Z mark)
+  uint8_t  src;       // 1=CC1(A), 2=CC2(B), 0=Z mark
+  int8_t   dir;       // +1/-1 (from HW DIR), undefined for Z mark
+  uint8_t  ab_state;  // Gray state (bit1=A, bit0=B) at capture time
+  uint8_t  flags;     // bit0: Z mark (CAP_F_Z)
+} enc_capture_evt_t;
+
+void     EncSampler_CaptureArmOnNextZ(uint32_t duration_ms);
+void     EncSampler_CaptureCancel(void);
+bool     EncSampler_CaptureActive(void);
+bool     EncSampler_CaptureDone(void);
+uint32_t EncSampler_CaptureCount(void);
+uint32_t EncSampler_CaptureRead(enc_capture_evt_t *dst, uint32_t max);
+uint32_t EncSampler_CaptureDrops(void);       /* if you implement it */
+void     EncSampler_CaptureForceStopFromISR(void);
+
+void EncSampler_GetLastCaptureStats(uint32_t* edges, uint32_t* dur_ms,
+                                    uint32_t* first_ms, uint32_t* last_ms,
+                                    uint32_t* z_marks);
+
+/* Utility */
+uint8_t EncSampler_HasPending(void);
+
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* INC_ENC_SAMPLER_H_ */

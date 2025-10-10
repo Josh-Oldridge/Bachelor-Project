@@ -1,37 +1,38 @@
-/**
- ******************************************************************************
- * @file    app_x-cube-ai.c
- * @author  X-CUBE-AI C code generator
- * @brief   AI program body
- ******************************************************************************
- * @attention
- *
- * Copyright (c) 2025 STMicroelectronics.
- * All rights reserved.
- *
- * This software is licensed under terms that can be found in the LICENSE file
- * in the root directory of this software component.
- * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- ******************************************************************************
- */
 
-/*
- * Description
- *   v1.0 - Minimum template to show how to use the Embedded Client API
- *          model. Only one input and one output is supported. All
- *          memory resources are allocated statically (AI_NETWORK_XX, defines
- *          are used).
- *          Re-target of the printf function is out-of-scope.
- *   v2.0 - add multiple IO and/or multiple heap support
- *
- *   For more information, see the embeded documentation:
- *
- *       [1] %X_CUBE_AI_DIR%/Documentation/index.html
- *
- *   X_CUBE_AI_DIR indicates the location where the X-CUBE-AI pack is installed
- *   typical : C:\Users\[user_name]\STM32Cube\Repository\STMicroelectronics\X-CUBE-AI\7.1.0
- */
+/**
+  ******************************************************************************
+  * @file    app_x-cube-ai.c
+  * @author  X-CUBE-AI C code generator
+  * @brief   AI program body
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2025 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+
+ /*
+  * Description
+  *   v1.0 - Minimum template to show how to use the Embedded Client API
+  *          model. Only one input and one output is supported. All
+  *          memory resources are allocated statically (AI_NETWORK_XX, defines
+  *          are used).
+  *          Re-target of the printf function is out-of-scope.
+  *   v2.0 - add multiple IO and/or multiple heap support
+  *
+  *   For more information, see the embeded documentation:
+  *
+  *       [1] %X_CUBE_AI_DIR%/Documentation/index.html
+  *
+  *   X_CUBE_AI_DIR indicates the location where the X-CUBE-AI pack is installed
+  *   typical : C:\Users\[user_name]\STM32Cube\Repository\STMicroelectronics\X-CUBE-AI\7.1.0
+  */
 
 #ifdef __cplusplus
  extern "C" {
@@ -61,99 +62,102 @@
 /* USER CODE BEGIN includes */
 #include "model_meta.h"
 #include "enc_sampler.h"
-#include "synthetic.h"
-#include <math.h>
+#include "diag_timing.h"
+#include <stdarg.h>
+#include <stdbool.h>
 
- /* Mirror ENC_IS_LIVE (0 = synthetic, 1 = live) into INJECT_SYNTH */
-#if defined(ENC_IS_LIVE)
-  #if ENC_IS_LIVE
-    #undef INJECT_SYNTH
-    #define INJECT_SYNTH 0   /* live -> no synthetic injection */
-  #else
-    #undef INJECT_SYNTH
-    #define INJECT_SYNTH 1   /* synthetic mode */
-  #endif
-#else
-  /* Fallback default if ENC_IS_LIVE isn't defined by the sampler */
-  #ifndef INJECT_SYNTH
-  #define INJECT_SYNTH 1     /* default to synthetic */
-  #endif
-#endif
-
- /* Console verbosity guards */
- #ifndef DIAG_PRINT_1HZ
- #define DIAG_PRINT_1HZ 1   /* 0 = silence 1 Hz model prints */
+ /**
+  * @def AI_LOG_PRINT_DIRTRACE
+  * @brief Enables logging of direction and (optional) per-window AB/SRC/Z traces.
+  *        Set to 1 to print, 0 to disable. Printing is lightweight but still
+  *        has a runtime cost on the logging UART.
+  */
+ #ifndef AI_LOG_PRINT_DIRTRACE
+ #define AI_LOG_PRINT_DIRTRACE  1  /* 1 = print DIR + WIN AB/SRC/Z */
  #endif
 
- #ifndef SYNTH_TRACE_PRINT
- #define SYNTH_TRACE_PRINT 1 /* 0 = silence synthetic window trace */
+ /**
+  * @def AI_LOG_PRINT_WINSTAMP
+  * @brief Enables compact "WINSTAMP" line that summarizes the ABx4 span and Z
+  *        position(s) for the current dequeued window. Set to 1 to enable.
+  */
+ #ifndef AI_LOG_PRINT_WINSTAMP
+ #define AI_LOG_PRINT_WINSTAMP 1   /* 1 = print WINSTAMP line */
  #endif
 
-
- /* Classes */
- #define SYNTH_CLASS_NORMAL       0
- #define SYNTH_CLASS_BOUNCE       1
- #define SYNTH_CLASS_MISSINGSTEP  2
- #define SYNTH_CLASS_ZINDEX       3
-
- /* Pick which synthetic class to generate (override via -DSYNTH_CLASS=...) */
- #ifndef SYNTH_CLASS
- #define SYNTH_CLASS SYNTH_CLASS_BOUNCE
+ /**
+  * @def PRINTF_FMT
+  * @brief Compile-time printf format checking attribute for GCC/Clang.
+  * @param a Index (1-based) of the format string parameter.
+  * @param b Index (1-based) of the first variadic argument.
+  */
+ #ifndef PRINTF_FMT
+ # if defined(__GNUC__) || defined(__clang__)
+ #  define PRINTF_FMT(a,b) __attribute__((format(printf, a, b)))
+ # else
+ #  define PRINTF_FMT(a,b)
+ # endif
  #endif
 
- /* Common knobs (override via build flags as needed) */
- #ifndef SYNTH_FORWARD
- #define SYNTH_FORWARD 1          /* 1=forward, 0=backward */
- #endif
- #ifndef SYNTH_START_STATE
- #define SYNTH_START_STATE 0      /* 0..3 Gray start */
- #endif
- #ifndef SYNTH_STEPS0
- #define SYNTH_STEPS0 500         /* Steps_Since_Z at first row */
- #endif
- #ifndef SYNTH_RISING_ONLY
- #define SYNTH_RISING_ONLY 0      /* your HW is rising-only → keep 1 */
- #endif
-
- /* Bounce scenario knobs */
- #ifndef SYNTH_BOUNCE_CH
- #define SYNTH_BOUNCE_CH 1        /* 1 = A, 2 = B */
- #endif
- #ifndef SYNTH_BOUNCE_T_BEG
- #define SYNTH_BOUNCE_T_BEG 10    /* row to start bouncing */
- #endif
- #ifndef SYNTH_BOUNCE_COUNT
- #define SYNTH_BOUNCE_COUNT 3     /* how many extra edges */
- #endif
-
- /* Missing-step scenario knobs */
- #ifndef SYNTH_MISS_CH
- #define SYNTH_MISS_CH 1          /* 1 = A, 2 = B */
- #endif
- #ifndef SYNTH_MISS_T_AT
- #define SYNTH_MISS_T_AT 8        /* row where we “miss” the other edge */
- #endif
-
- /* Z-index scenario knobs */
- #ifndef SYNTH_Z_T_AT
- #define SYNTH_Z_T_AT 7           /* row where Z pulse occurs */
- #endif
-
+ /**
+  * @def SEQ_LEN
+  * @brief Model sequence length (time steps), from @ref MODEL_SEQ_LEN.
+  */
 #define SEQ_LEN   (MODEL_SEQ_LEN)
-#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Sanity-check the compiled network interface against model_meta.h */
 #if (SEQ_LEN * FEAT_DIM) != AI_NETWORK_IN_1_SIZE
 #error "Input size mismatch: regenerate model_meta.h or re-export network"
 #endif
 
-#define MODEL_OUTPUT_IS_LOGITS 0
-#define DIAG_VERBOSE 0
+ /**
+  * @name Model class indices (align with MODEL_CLASSES in model_meta.h)
+  * @{
+  */
+ #define C_MISSINGSTEP  0  /**< Index of 'missing_step' class   */
+ #define C_NORMAL       1  /**< Index of 'normal' class         */
+ #define C_ZINDEX       2  /**< Index of 'z_index' class        */
+ /** @} */
 
-#if DIAG_VERBOSE
-static void diag_dump_scalers(void);
-static void diag_softmax_sum_check(volatile const float *y, const char *tag);
-static void diag_dump_window_stats(const float *w);
-static void diag_run_synthetic_normal(void);
-#endif
+ /**
+  * @brief Fast, single-shot transmit to LPUART1 (used by @ref ai_log).
+  * @param s Pointer to raw bytes (not necessarily NUL-terminated).
+  * @param n Number of bytes to send; returns immediately if zero.
+  */
+ static inline void log_tx(const char *s, size_t n) {
+ 	if (n == 0)
+ 		return;
+ 	HAL_UART_Transmit(&hlpuart1, (uint8_t*) s, (uint16_t) n, 0xFFFF);
+ }
+
+ /**
+  * @brief Lightweight printf-style logger to LPUART1.
+  * @details Uses a small stack buffer and bounds checks the formatted length.
+  *          If the buffer overflows, the message is truncated cleanly.
+  * @param fmt printf-style format string.
+  * @param ... Variadic arguments.
+  */
+ static void ai_log(const char *fmt, ...) PRINTF_FMT(1,2);
+ static void ai_log(const char *fmt, ...) {
+ 	char buf[256];
+ 	va_list ap;
+ 	va_start(ap, fmt);
+ 	int n = vsnprintf(buf, sizeof(buf), fmt, ap);
+ 	va_end(ap);
+ 	if (n < 0)
+ 		return;
+ 	if (n >= (int) sizeof(buf))
+ 		n = (int) sizeof(buf) - 1;
+ 	log_tx(buf, (size_t) n);
+ }
+
+ /**
+  * @brief Millisecond tick helper.
+  * @return Milliseconds since boot (HAL_GetTick()).
+  */
+ static inline uint32_t ms_now(void) {
+ 	return HAL_GetTick();
+ }
 /* USER CODE END includes */
 
 /* IO buffers ----------------------------------------------------------------*/
@@ -164,8 +168,9 @@ ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
 data_in_1
 };
 #else
-ai_i8 *data_ins[AI_NETWORK_IN_NUM] = {
-NULL };
+ai_i8* data_ins[AI_NETWORK_IN_NUM] = {
+NULL
+};
 #endif
 
 #if !defined(AI_NETWORK_OUTPUTS_IN_ACTIVATIONS)
@@ -174,8 +179,9 @@ ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
 data_out_1
 };
 #else
-ai_i8 *data_outs[AI_NETWORK_OUT_NUM] = {
-NULL };
+ai_i8* data_outs[AI_NETWORK_OUT_NUM] = {
+NULL
+};
 #endif
 
 /* Activations buffers -------------------------------------------------------*/
@@ -184,17 +190,18 @@ AI_ALIGNED(32)
 AI_AXIFLEXMEM
 static uint8_t flexMEM[AI_NETWORK_DATA_ACTIVATION_1_SIZE];
 
-ai_handle data_activations0[] = { flexMEM };
+ai_handle data_activations0[] = {flexMEM};
 
 /* AI objects ----------------------------------------------------------------*/
 
 static ai_handle network = AI_HANDLE_NULL;
 
-static ai_buffer *ai_input;
-static ai_buffer *ai_output;
+static ai_buffer* ai_input;
+static ai_buffer* ai_output;
 
-static void ai_log_err(const ai_error err, const char *fct) {
-	/* USER CODE BEGIN log */
+static void ai_log_err(const ai_error err, const char *fct)
+{
+  /* USER CODE BEGIN log */
 	if (fct)
 		printf("TEMPLATE - Error (%s) - type=0x%02x code=0x%02x\r\n", fct,
 				err.type, err.code);
@@ -204,29 +211,30 @@ static void ai_log_err(const ai_error err, const char *fct) {
 
 	do {
 	} while (1);
-	/* USER CODE END log */
+  /* USER CODE END log */
 }
 
-static int ai_boostrap(ai_handle *act_addr) {
-	ai_error err;
+static int ai_boostrap(ai_handle *act_addr)
+{
+  ai_error err;
 
-	/* Create and initialize an instance of the model */
-	err = ai_network_create_and_init(&network, act_addr, NULL);
-	if (err.type != AI_ERROR_NONE) {
-		ai_log_err(err, "ai_network_create_and_init");
-		return -1;
-	}
+  /* Create and initialize an instance of the model */
+  err = ai_network_create_and_init(&network, act_addr, NULL);
+  if (err.type != AI_ERROR_NONE) {
+    ai_log_err(err, "ai_network_create_and_init");
+    return -1;
+  }
 
-	ai_input = ai_network_inputs_get(network, NULL);
-	ai_output = ai_network_outputs_get(network, NULL);
+  ai_input = ai_network_inputs_get(network, NULL);
+  ai_output = ai_network_outputs_get(network, NULL);
 
 #if defined(AI_NETWORK_INPUTS_IN_ACTIVATIONS)
-	/*  In the case where "--allocate-inputs" option is used, memory buffer can be
-	 *  used from the activations buffer. This is not mandatory.
-	 */
-	for (int idx = 0; idx < AI_NETWORK_IN_NUM; idx++) {
-		data_ins[idx] = ai_input[idx].data;
-	}
+  /*  In the case where "--allocate-inputs" option is used, memory buffer can be
+   *  used from the activations buffer. This is not mandatory.
+   */
+  for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
+	data_ins[idx] = ai_input[idx].data;
+  }
 #else
   for (int idx=0; idx < AI_NETWORK_IN_NUM; idx++) {
 	  ai_input[idx].data = data_ins[idx];
@@ -234,421 +242,552 @@ static int ai_boostrap(ai_handle *act_addr) {
 #endif
 
 #if defined(AI_NETWORK_OUTPUTS_IN_ACTIVATIONS)
-	/*  In the case where "--allocate-outputs" option is used, memory buffer can be
-	 *  used from the activations buffer. This is no mandatory.
-	 */
-	for (int idx = 0; idx < AI_NETWORK_OUT_NUM; idx++) {
-		data_outs[idx] = ai_output[idx].data;
-	}
+  /*  In the case where "--allocate-outputs" option is used, memory buffer can be
+   *  used from the activations buffer. This is no mandatory.
+   */
+  for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
+	data_outs[idx] = ai_output[idx].data;
+  }
 #else
   for (int idx=0; idx < AI_NETWORK_OUT_NUM; idx++) {
 	ai_output[idx].data = data_outs[idx];
   }
 #endif
 
-	return 0;
+  return 0;
 }
 
-static int ai_run(void) {
+static int ai_run(void)
+{
+  ai_i32 batch;
+
+  batch = ai_network_run(network, ai_input, ai_output);
+  if (batch != 1) {
+    ai_log_err(ai_network_get_error(network),
+        "ai_network_run");
+    return -1;
+  }
+
+  return 0;
+}
+
+/* USER CODE BEGIN 2 */
+
+/* ---- Model binary bindings ------------------------------------------------ */
+
+/** @brief Linker-provided packed weight blob (read-only, const in flash). */
+extern const ai_u64 s_network_weights_array_u64[1830];
+
+/** @brief Activations buffer (lives in .AI_AXIFLEXMEM; sized by generated headers). */
+extern uint8_t flexMEM[AI_NETWORK_DATA_ACTIVATION_1_SIZE];
+
+/* ---- Memory reporting helpers -------------------------------------------- */
+
+/**
+ * @brief Return a human-friendly label for a given SRAM/AXISRAM address.
+ * @param a Byte address to classify.
+ * @return "AXISRAM3-6", "SRAM", or "unknown".
+ */
+static const char* region_of(uintptr_t a) {
+	if (a >= 0x34200000UL && a < 0x343C0000UL)
+		return "AXISRAM3-6";
+	if (a >= 0x34000000UL && a < 0x34200000UL)
+		return "SRAM";
+	return "unknown";
+}
+
+/**
+ * @brief Print the model-only SRAM footprint (weights+activations) and locations.
+ * @details Uses compile-time sizes from generated headers and runtime bases for
+ *          the weight array and activations arena. Excludes application buffers
+ *          (e.g., encoder rings, traces).
+ */
+static void Print_ModelSramFootprint(void) {
+	const uint32_t sz_weights = (uint32_t) AI_NETWORK_DATA_WEIGHTS_SIZE;   /* bytes */
+	const uint32_t sz_acts    = (uint32_t) AI_NETWORK_DATA_ACTIVATIONS_SIZE;
+
+	const uintptr_t w_base = (uintptr_t) &s_network_weights_array_u64[0];
+	const uintptr_t w_end  = w_base + sz_weights;
+	const uintptr_t a_base = (uintptr_t) &flexMEM[0];
+	const uintptr_t a_end  = a_base + sz_acts;
+
+	const uint32_t total_model_sram = sz_weights + sz_acts;
+
+	ai_log("MODEL_MEM: weights=%lu B @0x%08lX..0x%08lX (%s), "
+	       "activations=%lu B @0x%08lX..0x%08lX (%s), total=%lu B\n",
+	       (unsigned long) sz_weights, (unsigned long) w_base,
+	       (unsigned long) w_end,  region_of(w_base),
+	       (unsigned long) sz_acts, (unsigned long) a_base,
+	       (unsigned long) a_end,  region_of(a_base),
+	       (unsigned long) total_model_sram);
+}
+
+/* ---- Sampler bindings & diagnostics -------------------------------------- */
+
+/**< Number of ready windows in the sampler FIFO. */
+extern volatile uint32_t win_ready;
+/**< Sampler flags captured alongside the window being dequeued. */
+extern volatile uint32_t win_rule_flags;
+/**< Rolling/live sampler flags (not latched to the dequeued window). */
+extern volatile uint32_t enc_rule_flags;
+/**< Monotonic counter: increments once per accepted Z (index) in ISR path. */
+extern volatile uint32_t z_epoch_isr;
+/**< Bitmask of Z rows in the dequeued window (multiple Zs possible). */
+extern volatile uint32_t win_stamp_z_mask;
+
+/**
+ * @brief Last raw softmax output of the model (float32), exported for other modules.
+ * @note  Length equals AI_NETWORK_OUT_1_SIZE; updated after each inference.
+ */
+volatile float last_y_raw[AI_NETWORK_OUT_1_SIZE];
+
+/**< ISR saw-Z counter (all detections). */
+extern volatile uint32_t z_diag_isr_seen;
+/**< ISR accepted-Z counter (post-debounce/gating). */
+extern volatile uint32_t z_diag_isr_accepted;
+/**< AB edges since last ISR Z event (diagnostics). */
+extern volatile uint32_t z_diag_ab_since_isr;
+/**< Steps×4 (AB both-edge) since start (diagnostics). */
+extern volatile uint32_t z_diag_steps_x4;
+/**< Milliseconds since last accepted Z (diagnostics). */
+extern volatile uint32_t z_diag_last_z_ms;
+
+/* ---- Local runtime state -------------------------------------------------- */
+
+/**< Snapshot of rule flags captured with the just-acquired window. */
+static uint32_t rf_snapshot = 0;
+/**< Inference sequence number (monotonic, increments per window processed). */
+static uint32_t inf_seq = 0;
+
+/**< Totals of RAW argmax decisions (telemetry only). */
+static uint32_t tot_missing_raw = 0, tot_normal_raw = 0, tot_zindex_raw = 0;
+/**< Totals of POLICY decisions (what the system publishes). */
+static uint32_t tot_missing_pol = 0, tot_normal_pol = 0, tot_zindex_pol = 0;
+
+/* ---- Inference helpers ---------------------------------------------------- */
+
+/**
+ * @brief Run one network inference with timing and GPIO pulse.
+ * @details Pulses MODEL_PIN high for the duration of inference, brackets the
+ *          call with @ref DiagTiming_Start / Stop for profiling.
+ * @retval 0 on success, -1 on error (and logs the AI error).
+ */
+static int ai_run_timed(void) {
 	ai_i32 batch;
 
+	HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_SET);
+	DiagTiming_Start(DIAG_T_MODEL);
+
 	batch = ai_network_run(network, ai_input, ai_output);
+
+	DiagTiming_Stop(DIAG_T_MODEL);
+	HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_RESET);
+
 	if (batch != 1) {
 		ai_log_err(ai_network_get_error(network), "ai_network_run");
 		return -1;
 	}
 
+	Diag_IncInferenceCount();
 	return 0;
 }
 
-/* USER CODE BEGIN 2 */
-extern volatile uint32_t win_ready;                    // from enc_sampler.c
-extern volatile uint32_t win_rule_flags;
-extern volatile uint32_t enc_rule_flags;            // live telemetry (optional)
-volatile uint32_t last_inf_flags = 0;
-volatile uint32_t inf_total = 0;
-volatile float last_y[AI_NETWORK_OUT_1_SIZE];
-volatile float last_y_raw[AI_NETWORK_OUT_1_SIZE];
-static uint32_t rf_snapshot = 0;
-
-/* Class indices (model_meta.h order) */
-#define C_BOUNCE       0   // "bounce"
-#define C_MISSINGSTEP  1   // "missing_step"
-#define C_NORMAL       2   // "normal"
-#define C_ZINDEX       3   // "z_index"
-
-/* Acquire input: copy the oldest complete window straight into the NN input */
+/**
+ * @brief Copy the oldest ready window from the sampler into the NN input buffer.
+ * @details Performs a row-major, linear copy into @c ai_input[0].data and
+ *          snapshots the window's rule flags into @ref rf_snapshot.
+ * @retval 0 if a window was acquired, non-zero if no window was available.
+ */
 static int acquire_and_process_data(void) {
-#if INJECT_SYNTH
-  /* Choose which synthetic class to generate */
-  switch (SYNTH_CLASS) {
-    default:
-    case SYNTH_CLASS_NORMAL:
-      EncSynth_MakeNormalWindow(
-        /*forward=*/SYNTH_FORWARD,
-        /*start_state=*/SYNTH_START_STATE,
-        /*steps0=*/SYNTH_STEPS0,
-        /*rising_only=*/SYNTH_RISING_ONLY);
-      break;
-
-    case SYNTH_CLASS_BOUNCE:
-      EncSynth_MakeBounceWindow(
-        /*forward=*/SYNTH_FORWARD,
-        /*start_state=*/SYNTH_START_STATE,
-        /*steps0=*/SYNTH_STEPS0,
-        /*which_channel=*/SYNTH_BOUNCE_CH,
-        /*t_beg=*/SYNTH_BOUNCE_T_BEG,
-        /*n_bounces=*/SYNTH_BOUNCE_COUNT,
-        /*rising_only=*/SYNTH_RISING_ONLY);
-      break;
-
-    case SYNTH_CLASS_MISSINGSTEP:
-      EncSynth_MakeMissingStepWindow(
-        /*forward=*/SYNTH_FORWARD,
-        /*start_state=*/SYNTH_START_STATE,
-        /*steps0=*/SYNTH_STEPS0,
-        /*which_channel=*/SYNTH_MISS_CH,
-        /*t_at=*/SYNTH_MISS_T_AT,
-        /*rising_only=*/SYNTH_RISING_ONLY);
-      break;
-
-    case SYNTH_CLASS_ZINDEX:
-      EncSynth_MakeZIndexWindow(
-        /*forward=*/SYNTH_FORWARD,
-        /*start_state=*/SYNTH_START_STATE,
-        /*steps0=*/SYNTH_STEPS0,
-        /*t_z=*/SYNTH_Z_T_AT,
-        /*rising_only=*/SYNTH_RISING_ONLY);
-      break;
-  }
-
-  /* Copy T×F into NN input */
-  const float* flat = EncSynth_GetFlat();
-  memcpy((float*)ai_input[0].data, flat, SEQ_LEN * FEAT_DIM * sizeof(float));
-
-  rf_snapshot = 0;     /* no rule flags for synthetic windows */
-  return 0;
-#else
-  /* Live path */
-  return EncSampler_CopyWindowLinear((float*) ai_input[0].data, &rf_snapshot);
-#endif
+	return EncSampler_CopyWindowLinear((float*) ai_input[0].data, &rf_snapshot);
 }
 
-
-/* Renormalize to sum==1, clamp to [0,1] */
-static inline void renorm(void) {
-	float s = 0.f;
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
-		if (last_y[i] < 0.f)
-			last_y[i] = 0.f;
-		s += last_y[i];
-	}
-	if (s > 1e-12f) {
-		float inv = 1.0f / s;
-		for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-			last_y[i] *= inv;
-	}
-}
-
-/* Ensure class 'cls' is at least 'floor' by taking mass from others (prefer NORMAL) */
-static inline void floor_class(int cls, float floor) {
-	if (last_y[cls] >= floor)
-		return;
-	float need = floor - last_y[cls];
-	/* compute available pool (others) */
-	float pool = 0.f;
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-		if (i != cls)
-			pool += last_y[i];
-	if (pool <= 1e-12f) {
-		last_y[cls] = 1.f;
-		for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-			if (i != cls)
-				last_y[i] = 0.f;
-		return;
-	}
-
-	/* take proportionally, but 2x from NORMAL to keep errors honest */
-	float weights[AI_NETWORK_OUT_1_SIZE];
-	float wsum = 0.f;
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
-		if (i == cls) {
-			weights[i] = 0.f;
-			continue;
-		}
-		float w = last_y[i];
-		if (i == C_NORMAL)
-			w *= 2.f;
-		weights[i] = w;
-		wsum += w;
-	}
-	if (wsum < 1e-12f) {
-		last_y[cls] = 1.f;
-		for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-			if (i != cls)
-				last_y[i] = 0.f;
-		return;
-	}
-
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
-		if (i == cls)
-			continue;
-		float take = need * (weights[i] / wsum);
-		if (take > last_y[i])
-			take = last_y[i];
-		last_y[i] -= take;
-		last_y[cls] += take;
-	}
-	renorm();
-}
-
-
-
-/* Handle post-inference: copy outputs, apply thresholds, then rule guardrails */
+/**
+ * @brief Minimal post-processing: mirror raw softmax output into @ref last_y_raw.
+ * @details The network head already contains a softmax; no additional scaling
+ *          or thresholding is applied here.
+ * @retval 0 always.
+ */
 static int post_process(void) {
 	const float *out = (const float*) ai_output[0].data;
-
-	/* Always capture raw network output */
 	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
 		last_y_raw[i] = out[i];
-
-#if DIAG_VERBOSE
-	/* Check whether the model already outputs a softmax (sum≈1). */
-	diag_softmax_sum_check(last_y_raw, "raw");
-#endif
-
-#if MODEL_OUTPUT_IS_LOGITS
-  /* ... your logits->softmax path ... */
-  float maxv = last_y_raw[0];
-  for (int i = 1; i < AI_NETWORK_OUT_1_SIZE; ++i)
-    if (last_y_raw[i] > maxv) maxv = last_y_raw[i];
-
-  float sum = 0.f;
-  for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i) {
-    last_y[i] = expf(last_y_raw[i] - maxv);
-    sum += last_y[i];
-  }
-  if (sum > 0.f) {
-    float inv = 1.0f / sum;
-    for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-      last_y[i] *= inv;
-  }
-#else
-	/* Model already outputs probabilities; mirror raw->final. */
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-		last_y[i] = last_y_raw[i];
-#endif
-
-	/* No thresholds or guardrails in this diagnostic build */
-	inf_total++;
 	return 0;
 }
 
-#if DIAG_PRINT_1HZ
-static void dbg_model_print_1Hz(void) {
-  static uint32_t t0 = 0;
-  uint32_t now = HAL_GetTick();
-  if ((int32_t)(now - t0) < 1000) return;
-  t0 = now;
+/**
+ * @brief Policy layer: apply deployment rules on top of softmax scores.
+ * @details
+ *  Implements conservative acceptance for @ref C_ZINDEX using:
+ *   - presence of a Z row in the window,
+ *   - SSZ health (pre-Z or at-Z, normalized) vs @ref OP_SSZ_MIN_NORM,
+ *   - two-level thresholds @ref OP_Z_LO / @ref OP_Z_HI and margin @ref OP_Z_MARGIN,
+ *   - optional consecutive confirmation @ref OP_Z_CONSEC,
+ *   - strict bypass @ref OP_Z_STRICT_HI for ultra-confident cases.
+ *
+ *  @ref C_MISSINGSTEP is accepted when its prob exceeds @ref OP_MS_TAU and
+ *  the @ref OP_MS_MARGIN over @ref C_NORMAL. Otherwise, defaults to @ref C_NORMAL.
+ *
+ * @param y         Pointer to softmax probs [missing_step, normal, z_index].
+ * @param x_last    Pointer to the last row of the model input (length FEAT_DIM).
+ * @param warn_pre_z[out] Optional: 1 if in warn band for Z but not escalated.
+ * @param early_z  [out] Optional: 1 if escalated early to z_index from warn band.
+ * @return Chosen class index: @ref C_MISSINGSTEP, @ref C_NORMAL, or @ref C_ZINDEX.
+ */
+static int DecideWithPolicy(const float *y, const float *x_last,
+                            int *warn_pre_z, int *early_z)
+{
+  const float p_ms = y[C_MISSINGSTEP];
+  const float p_n  = y[C_NORMAL];
+  const float p_z  = y[C_ZINDEX];
 
-  /* RAW */
-  int best = 0;
-  for (int i = 1; i < AI_NETWORK_OUT_1_SIZE; ++i)
-    if (last_y_raw[i] > last_y_raw[best]) best = i;
+  if (warn_pre_z) *warn_pre_z = 0;
+  if (early_z)    *early_z    = 0;
 
-  printf("RAW@1s top=%s [%.3f, %.3f, %.3f, %.3f]\r\n",
-         MODEL_CLASSES[best],
-         (double)last_y_raw[0], (double)last_y_raw[1],
-         (double)last_y_raw[2], (double)last_y_raw[3]);
-
-  /* AB health (flags from same inference) */
-  const uint32_t WR_SKIP2 = 0x00000001u;
-  printf("AB_HEALTH: skip2=%s\r\n",
-         (last_inf_flags & WR_SKIP2) ? "YES (probable missed edge)" : "no");
-
-  /* Only show window trace when using the live encoder path */
-  #if !INJECT_SYNTH && ENABLE_TRACE_WIN
-  uint8_t ab[SEQ_LEN], src[SEQ_LEN], z[SEQ_LEN];
-  EncSampler_DebugGetLastTrace(ab, src, z);
-
-  char lineAB[SEQ_LEN+1], lineSRC[SEQ_LEN+1], lineZ[SEQ_LEN+1];
-  for (int i = 0; i < SEQ_LEN; ++i) {
-    switch (ab[i] & 3u) { case 0: lineAB[i]='0'; break; case 1: lineAB[i]='1'; break;
-                          case 2: lineAB[i]='2'; break; case 3: lineAB[i]='3'; break; }
-    lineSRC[i] = (src[i]==1?'A':(src[i]==2?'B':'?'));
-    lineZ[i]   = z[i] ? '^' : '.';
-  }
-  lineAB[SEQ_LEN]=lineSRC[SEQ_LEN]=lineZ[SEQ_LEN]='\0';
-
-  printf("WIN AB : %s\r\n", lineAB);
-  printf("WIN SRC: %s\r\n", lineSRC);
-  printf("WIN  Z : %s\r\n", lineZ);
-  #endif
-}
-#endif /* DIAG_PRINT_1HZ */
-
-
-
-#if DIAG_VERBOSE
-static void diag_dump_scalers(void) {
-	printf("=== FEAT SCALES (min, scale) ===\r\n");
-	for (int j = 0; j < FEAT_DIM; ++j)
-		printf("%2d: %.6f, %.6f\r\n", j, (double) MODEL_FEAT_MIN[j],
-				(double) MODEL_FEAT_SCALE[j]);
-}
-
-static void diag_softmax_sum_check(volatile const float *y, const char *tag) {
-	float s = 0.f;
-	for (int i = 0; i < AI_NETWORK_OUT_1_SIZE; ++i)
-		s += y[i];
-	printf("SUM(%s)=%.6f\r\n", tag, (double) s);
-}
-
-
-
-/* build & run a clean forward Gray sequence to sanity-check model */
-static void diag_run_synthetic_normal(void) {
-	float *X = (float*) ai_input[0].data;
-
-	int idx = 0, ab = 0;
-	int ssz = 0;
-	for (int t = 0; t < SEQ_LEN; ++t) {
-		/* unscaled raw features in the SAME order as firmware packs */
-		float AB = (float) ab;        // 0..3 (Gray index order 00,01,11,10)
-		float dchg = 1.f;              // one state change per step in this toy
-		float dirF = 1.f, dirB = 0.f;
-		float SCR = 0.f;              // steady timing
-		float A = ((ab == 0) || (ab == 1)) ? 0.f : 1.f;    // A from 00,01,11,10
-		float B = ((ab == 0) || (ab == 3)) ? 0.f : 1.f;    // B from 00,01,11,10
-		float Z = 0.f;
-		float ER = 1.f;              // rising edge present regularly
-		float SSZ = (float) ssz++;
-
-		float raw[FEAT_DIM] = { AB, dchg, dirF, dirB, SCR, A, B, Z, ER, SSZ };
-		for (int f = 0; f < FEAT_DIM; ++f) {
-			float y = (raw[f] - MODEL_FEAT_MIN[f]) * MODEL_FEAT_SCALE[f];
-			if (y < 0.f)
-				y = 0.f;
-			if (y > 1.f)
-				y = 1.f;
-			X[idx++] = y;
-		}
-		ab = (ab + 1) & 3;
-	}
-
-	if (ai_run() == 0) {
-		const float *out = (const float*) ai_output[0].data;
-		printf("SYNTH(norm) RAW = [%.3f %.3f %.3f %.3f]\r\n", (double) out[0],
-				(double) out[1], (double) out[2], (double) out[3]);
-		diag_softmax_sum_check(out, "synth_raw");
-	}
-}
-
+  /* --- SSZ health: prefer pre-Z where available --- */
+  float ssz_norm_for_health = 1.0f;
+#if (MODEL_FEAT_IDX_SSZ >= 0)
+  ssz_norm_for_health = x_last[MODEL_FEAT_IDX_SSZ];
 #endif
+
+  const int has_zrow = (win_stamp_z_row >= 0);
+
+#if (MODEL_FEAT_IDX_SSZ >= 0)
+  if (has_zrow) {
+    const float *xin = (const float*) ai_input[0].data; /* window buffer */
+    const int zr = win_stamp_z_row;
+
+    float ssz_at_z = xin[zr * MODEL_FEAT_DIM + MODEL_FEAT_IDX_SSZ];
+    float ssz_pre  = ssz_at_z;
+    if (zr > 0) {
+      ssz_pre = xin[(zr - 1) * MODEL_FEAT_DIM + MODEL_FEAT_IDX_SSZ];
+    }
+    ssz_norm_for_health = (ssz_pre > ssz_at_z) ? ssz_pre : ssz_at_z;
+  }
+#endif
+
+  const int ssz_healthy = (ssz_norm_for_health >= OP_SSZ_MIN_NORM);
+  const int in_warn     = (p_z >= OP_Z_LO) && (p_z < OP_Z_HI);
+
+  /* ---- Strong gate for z_index ---- */
+  int allow_z = 0;
+  if (has_zrow) {
+    if ((p_z >= OP_Z_HI) && (p_z >= p_n + OP_Z_MARGIN)) {
+#if OP_Z_REQUIRE_HEALTHY
+      if (ssz_healthy) allow_z = 1;
+#else
+      allow_z = 1;
+#endif
+    }
+  }
+  if (!allow_z && (p_z >= OP_Z_STRICT_HI)) {
+    allow_z = 1; /* strict bypass */
+  }
+
+#if (OP_Z_CONSEC > 1)
+  {
+    static uint8_t z_run = 0;
+    if (allow_z) {
+      if (++z_run >= OP_Z_CONSEC) {
+        z_run = 0;
+      } else {
+        allow_z = 0;
+      }
+    } else {
+      z_run = 0;
+    }
+  }
+#endif
+
+  if (allow_z)
+    return C_ZINDEX;
+
+  /* ---- Warn band handling for Z ---- */
+  int escalate_early = 0;
+  if (in_warn) {
+#if OP_USE_HASZ_GATE
+    if (has_zrow && ssz_healthy && (p_z >= p_n + OP_Z_MARGIN))
+      escalate_early = 1;
+#else
+    if (ssz_healthy && (p_z >= p_n + OP_Z_MARGIN))
+      escalate_early = 1;
+#endif
+  }
+
+  if (warn_pre_z) *warn_pre_z = (in_warn && !escalate_early);
+  if (early_z)    *early_z    = escalate_early;
+  if (escalate_early)
+    return C_ZINDEX;
+
+  /* ---- Missing-step rule ---- */
+  if ((p_ms >= OP_MS_TAU) && (p_ms >= (p_n + OP_MS_MARGIN)))
+    return C_MISSINGSTEP;
+
+  /* ---- Default ---- */
+  return C_NORMAL;
+}
+
+/**
+ * @brief Print only direction + compact ASCII traces (AB/SRC/Z) when enabled.
+ * @note Controlled by @ref AI_LOG_PRINT_DIRTRACE and @ref ENABLE_TRACE_WIN.
+ */
+static void print_dir_and_trace_only(void) {
+#if AI_LOG_PRINT_DIRTRACE
+	int8_t latched = EncSampler_GetLatchedDir();
+	int8_t wdir = EncSampler_GetLastWindowDir();
+	ai_log("DIR: latched=%s  window=%s\r\n", (latched > 0 ? "FWD" : "BWD"),
+			(wdir > 0 ? "FWD" : "BWD"));
+
+#if ENABLE_TRACE_WIN
+	uint8_t ab[SEQ_LEN], src[SEQ_LEN], z[SEQ_LEN];
+	EncSampler_DebugGetLastTrace(ab, src, z);
+
+	char lineAB[SEQ_LEN + 1], lineSRC[SEQ_LEN + 1], lineZ[SEQ_LEN + 1];
+	for (int i = 0; i < SEQ_LEN; ++i) {
+		lineAB[i]  = "0123"[ab[i] & 3u];
+		lineSRC[i] = (src[i] == 1 ? 'A' : (src[i] == 2 ? 'B' : '?'));
+		lineZ[i]   = '.';
+	}
+	lineAB[SEQ_LEN]  = '\0';
+	lineSRC[SEQ_LEN] = '\0';
+	lineZ[SEQ_LEN]   = '\0';
+
+	/* Prefer stamped Z mask; fallback to single-row or captured trace */
+	if (win_stamp_z_mask) {
+	    uint32_t m = win_stamp_z_mask;
+	    for (int i = 0; i < SEQ_LEN; ++i) {
+	        if (m & (1u << i))
+	            lineZ[i] = '^';
+	    }
+	} else if (win_stamp_z_row >= 0 && win_stamp_z_row < SEQ_LEN) {
+	    lineZ[win_stamp_z_row] = '^';
+	} else {
+	    for (int i = 0; i < SEQ_LEN; ++i) {
+	        if (z[i]) { lineZ[i] = '^'; break; }
+	    }
+	}
+
+	ai_log("WIN AB : %s\r\n", lineAB);
+	ai_log("WIN SRC: %s\r\n", lineSRC);
+	ai_log("WIN  Z : %s\r\n", lineZ);
+#endif
+
+#else
+  (void)0;
+#endif /* AI_LOG_PRINT_DIRTRACE */
+
+}
+
+/**
+ * @brief Print a compact per-window stamp including Z position and ABx4 span.
+ * @note Enabled by @ref AI_LOG_PRINT_WINSTAMP.
+ */
+static void print_winstamp_smart(void) {
+
+#if AI_LOG_PRINT_WINSTAMP
+	uint32_t s4 = win_stamp_ab_start_x4;
+	uint32_t e4 = win_stamp_ab_end_x4;
+	int16_t zrow = win_stamp_z_row; /* -1 = none */
+	uint32_t epoch = win_stamp_z_epoch;
+	uint32_t zseq = win_stamp_z_seq_end; /* monotonic count of accepted Zs */
+
+	if (zrow < 0) {
+		uint32_t d4 = win_stamp_ab_delta_x4;
+		ai_log("WINSTAMP: Zepoch=%lu Zrow=-1 Zseq=%lu  ABx4:%lu->%lu (+%lu)\r\n",
+				(unsigned long) epoch, (unsigned long) zseq, (unsigned long) s4,
+				(unsigned long) e4, (unsigned long) d4);
+		return;
+	}
+
+	/* Z inside this window: one row == one AB×4 edge (both-edge capture) */
+	uint32_t pre_x4  = (uint32_t) zrow;
+	uint32_t post_x4 = (uint32_t) (SEQ_LEN - zrow);
+	uint32_t tot_x4  = pre_x4 + post_x4;
+
+	ai_log("WINSTAMP: Zepoch=%lu Zrow=%d Zseq=%lu  ABx4: pre=+%lu post=+%lu total=+%lu\r\n",
+			(unsigned long) epoch, (int) zrow, (unsigned long) zseq,
+			(unsigned long) pre_x4, (unsigned long) post_x4,
+			(unsigned long) tot_x4);
+	ai_log("WIN ZMASK: 0x%08lX\r\n", (unsigned long)win_stamp_z_mask);
+#else
+  (void)win_stamp_ab_start_x4;
+  (void)win_stamp_ab_end_x4;
+  (void)win_stamp_ab_delta_x4;
+  (void)win_stamp_z_row;
+  (void)win_stamp_z_epoch;
+  (void)win_stamp_z_seq_end;
+#endif
+}
+
+/**
+ * @brief Capture a snapshot of results and print compact telemetry lines.
+ * @details
+ *  - Computes RAW argmax and POLICY decision, updates totals.
+ *  - Prints INF line with probabilities and rule flags (win/live).
+ *  - Emits WINSTAMP and optional DIR/trace lines.
+ */
+static void snapshot_and_print(void) {
+  inf_seq++;
+
+  /* RAW argmax */
+  int best_raw = 0;
+  for (int i = 1; i < AI_NETWORK_OUT_1_SIZE; ++i)
+    if (last_y_raw[i] > last_y_raw[best_raw])
+      best_raw = i;
+
+  /* Last-row features for policy (e.g., SSZ) */
+  float *xin = (float*) ai_input[0].data;
+  const float *x_last = xin + (MODEL_SEQ_LEN - 1) * MODEL_FEAT_DIM;
+
+  int warn_pre = 0, early_z = 0;
+  int best_pol = DecideWithPolicy((const float*)last_y_raw, x_last, &warn_pre, &early_z);
+
+  /* ---- Totals: RAW ---- */
+  switch (best_raw) {
+    case C_MISSINGSTEP: tot_missing_raw++; break;
+    case C_NORMAL:      tot_normal_raw++;  break;
+    case C_ZINDEX:      tot_zindex_raw++;  break;
+  }
+  /* ---- Totals: POLICY ---- */
+  switch (best_pol) {
+    case C_MISSINGSTEP: tot_missing_pol++; break;
+    case C_NORMAL:      tot_normal_pol++;  break;
+    case C_ZINDEX:      tot_zindex_pol++;  break;
+  }
+
+  const int best = best_pol;
+  const int overridden = (best_pol != best_raw);
+
+  const float p_ms = last_y_raw[C_MISSINGSTEP];
+  const float p_n  = last_y_raw[C_NORMAL];
+  const float p_z  = last_y_raw[C_ZINDEX];
+
+  uint32_t tms = ms_now();
+
+  if (overridden) {
+    ai_log("INF#%lu t=%lums TOP=%s (policy override from RAW=%s) "
+           "P=[MS:%.3f, N:%.3f, Z:%.3f] flags(win)=0x%08lX flags(live)=0x%08lX\r\n",
+           (unsigned long)inf_seq, (unsigned long)tms, MODEL_CLASSES[best],
+           MODEL_CLASSES[best_raw], p_ms, p_n, p_z,
+           (unsigned long)win_rule_flags, (unsigned long)enc_rule_flags);
+  } else {
+    ai_log("INF#%lu t=%lums TOP=%s P=[MS:%.3f, N:%.3f, Z:%.3f] "
+           "flags(win)=0x%08lX flags(live)=0x%08lX\r\n",
+           (unsigned long)inf_seq, (unsigned long)tms, MODEL_CLASSES[best],
+           p_ms, p_n, p_z, (unsigned long)win_rule_flags,
+           (unsigned long)enc_rule_flags);
+  }
+
+  /* Optional detailed policy debug:
+     ai_log("POLICY: warn_pre=%d early_z=%d ...\r\n", warn_pre, early_z); */
+
+  print_winstamp_smart();
+  print_dir_and_trace_only();
+}
+
+/**
+ * @brief Get POLICY decision totals since boot.
+ * @param normal  [out] Total @ref C_NORMAL decisions, or NULL to ignore.
+ * @param missing [out] Total @ref C_MISSINGSTEP decisions, or NULL.
+ * @param zindex  [out] Total @ref C_ZINDEX decisions, or NULL.
+ */
+void Model_GetTotals(uint32_t *normal, uint32_t *missing, uint32_t *zindex) {
+  if (normal)  *normal  = tot_normal_pol;
+  if (missing) *missing = tot_missing_pol;
+  if (zindex)  *zindex  = tot_zindex_pol;
+}
+
+/**
+ * @brief Get RAW argmax totals since boot (diagnostics).
+ * @param normal  [out] RAW normal count, or NULL.
+ * @param missing [out] RAW missing_step count, or NULL.
+ * @param zindex  [out] RAW z_index count, or NULL.
+ */
+void Model_GetTotalsRaw(uint32_t *normal, uint32_t *missing, uint32_t *zindex) {
+  if (normal)  *normal  = tot_normal_raw;
+  if (missing) *missing = tot_missing_raw;
+  if (zindex)  *zindex  = tot_zindex_raw;
+}
 
 /* USER CODE END 2 */
 
 /* Entry points --------------------------------------------------------------*/
 
-void MX_X_CUBE_AI_Init(void) {
-	__HAL_RCC_AXISRAM2_MEM_CLK_ENABLE();
-	__HAL_RCC_AXISRAM3_MEM_CLK_ENABLE();
-	__HAL_RCC_AXISRAM4_MEM_CLK_ENABLE();
-	__HAL_RCC_AXISRAM5_MEM_CLK_ENABLE();
-	__HAL_RCC_AXISRAM6_MEM_CLK_ENABLE();
-	RAMCFG_SRAM2_AXI->CR &= ~RAMCFG_CR_SRAMSD;
-	RAMCFG_SRAM3_AXI->CR &= ~RAMCFG_CR_SRAMSD;
-	RAMCFG_SRAM4_AXI->CR &= ~RAMCFG_CR_SRAMSD;
-	RAMCFG_SRAM5_AXI->CR &= ~RAMCFG_CR_SRAMSD;
-	RAMCFG_SRAM6_AXI->CR &= ~RAMCFG_CR_SRAMSD;
-	/* USER CODE BEGIN 5 */
-	printf("AI: init\r\n");
-	if (ai_boostrap(data_activations0) != 0) {
-		ai_log_err(ai_network_get_error(network), "ai_boostrap");
-		return;
-	}
+void MX_X_CUBE_AI_Init(void)
+{
+    __HAL_RCC_AXISRAM2_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM3_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM4_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM5_MEM_CLK_ENABLE();
+    __HAL_RCC_AXISRAM6_MEM_CLK_ENABLE();
+    RAMCFG_SRAM2_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM3_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM4_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM5_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    RAMCFG_SRAM6_AXI->CR &= ~RAMCFG_CR_SRAMSD;
+    /* USER CODE BEGIN 5 */
+    /** @brief Runtime init: create network, bind I/O buffers, and sanity-check I/O types. */
+    ai_log("AI: init\r\n");
+    if (ai_boostrap(data_activations0) != 0) {
+    	ai_log_err(ai_network_get_error(network), "ai_boostrap");
+    	return;
+    }
 
-	/* Hard assert the model expects float tensors (fast path) */
-	const uint32_t in_type = AI_BUFFER_FMT_GET_TYPE(ai_input[0].format);
-	const uint32_t out_type = AI_BUFFER_FMT_GET_TYPE(ai_output[0].format);
-	const uint32_t in_bits = AI_BUFFER_FMT_GET_BITS(ai_input[0].format);
-	const uint32_t out_bits = AI_BUFFER_FMT_GET_BITS(ai_output[0].format);
+    /* Assert float32 I/O (deployment expects fp32 model I/O on this build). */
+    const uint32_t in_type  = AI_BUFFER_FMT_GET_TYPE(ai_input[0].format);
+    const uint32_t out_type = AI_BUFFER_FMT_GET_TYPE(ai_output[0].format);
+    const uint32_t in_bits  = AI_BUFFER_FMT_GET_BITS(ai_input[0].format);
+    const uint32_t out_bits = AI_BUFFER_FMT_GET_BITS(ai_output[0].format);
 
-	if (!((in_type == AI_BUFFER_FMT_TYPE_FLOAT && in_bits == 32)
-			&& (out_type == AI_BUFFER_FMT_TYPE_FLOAT && out_bits == 32))) {
-		ai_log_err((ai_error ) { AI_ERROR_INVALID_PARAM,
-						AI_ERROR_CODE_INVALID_SIZE },
-				"Model I/O not float32 — re-export as float or add quant path");
-	}
+    if (!((in_type == AI_BUFFER_FMT_TYPE_FLOAT && in_bits == 32)
+       && (out_type == AI_BUFFER_FMT_TYPE_FLOAT && out_bits == 32))) {
+    	ai_log_err((ai_error){ AI_ERROR_INVALID_PARAM, AI_ERROR_CODE_INVALID_SIZE },
+    	           "Model I/O not float32");
+    }
 
-	/* helpful debug print */
-	printf("AI: I/O fmt OK (in: type=%lu bits=%lu, out: type=%lu bits=%lu)\r\n",
-			(unsigned long) in_type, (unsigned long) in_bits,
-			(unsigned long) out_type, (unsigned long) out_bits);
+    ai_log("AI: I/O OK (in:%lubits out:%lubits)\r\n",
+           (unsigned long) in_bits, (unsigned long) out_bits);
 
-#if DIAG_VERBOSE
-	diag_dump_scalers();
-	/* optional: one-shot sanity on a clean synthetic window */
-	diag_run_synthetic_normal();
-#endif
-	/* USER CODE END 5 */
+    /* Report model SRAM usage (weights + activations) and memory regions. */
+    Print_ModelSramFootprint();
+    /* USER CODE END 5 */
 }
 
-void MX_X_CUBE_AI_Process(void) {
-	/* USER CODE BEGIN 6 */
-#ifndef INFER_BUDGET_PER_TICK
-#define INFER_BUDGET_PER_TICK  64   // 8..64 is fine on N6 with your model
-#endif
-#ifndef INFER_DECIMATE_MS
-#define INFER_DECIMATE_MS      1000    // 0 = as fast as budget allows
-#endif
+void MX_X_CUBE_AI_Process(void)
+{
+    /* USER CODE BEGIN 6 */
+
+	/**
+	 * @brief Main processing loop (called each scheduler tick).
+	 * @details
+	 *  - Advances the encoder sampler so windows can accumulate.
+	 *  - Dequeues up to INFER_BUDGET_PER_TICK ready windows.
+	 *  - Runs timed inference, mirrors outputs, and prints compact telemetry.
+	 */
+	#ifndef INFER_BUDGET_PER_TICK
+	#define INFER_BUDGET_PER_TICK 1000000  /**< Safety cap on windows per tick. */
+	#endif
+
 	if (!network)
 		return;
 
-#if !INJECT_SYNTH
-  EncSampler_Process();
-#endif
+	/* Always advance the sampler (even if not inferring). */
+	EncSampler_Process();
 
-	int drained = 0;
-	int budget = INFER_BUDGET_PER_TICK;
+	/* Infer every ready window (within the per-tick budget). */
+	{
+		int budget = INFER_BUDGET_PER_TICK;
+		while (budget-- > 0) {
+			if (acquire_and_process_data() != 0)
+				break;
 
-#if INFER_DECIMATE_MS > 0
-	  static uint32_t next_run_ms = 0;
-	  uint32_t now = HAL_GetTick();
-
-	  /* Drain oldest windows so the input buffer always holds the freshest window */
-	  while (budget-- > 0) {
-	    if (acquire_and_process_data() != 0) break;  /* no window ready */
-	    drained++;
-	  }
-
-	  /* Only run if time slice has arrived and we actually have fed at least one window */
-	  if ((drained > 0) && ((int32_t)(now - next_run_ms) >= 0)) {
-	    if (ai_run() == 0) {
-	      post_process();
-	      #if INJECT_SYNTH && SYNTH_TRACE_PRINT
-	        EncSynth_DebugPrint();   // synthetic window ASCII dump
-	      #endif
-	      last_inf_flags = rf_snapshot;
-	    }
-	    next_run_ms = now + INFER_DECIMATE_MS;
-	  }
-	#else
-	/* No decimation: run the NN for each drained window (up to budget) */
-	  while (budget-- > 0) {
-	    if (acquire_and_process_data() != 0) break;
-	    if (ai_run() == 0) {
-	      post_process();
-	      last_inf_flags = rf_snapshot;   // <<< latch flags for this inference
-	    }
-	    drained++;
-	  }
-#endif
-#if DIAG_PRINT_1HZ
-  dbg_model_print_1Hz();
-#endif
-
-/* USER CODE END 6 */
+			if (ai_run_timed() == 0) {
+				post_process();
+				snapshot_and_print();
+			}
+		}
+	}
+    /* USER CODE END 6 */
 }
 #ifdef __cplusplus
 }

@@ -81,8 +81,12 @@ void Error_Handler(void);
 #define ENC_A_GPIO_Port GPIOE
 #define ENC_Z_Pin GPIO_PIN_7
 #define ENC_Z_GPIO_Port GPIOE
-#define ENC_B_Pin GPIO_PIN_7
-#define ENC_B_GPIO_Port GPIOD
+#define INT_PIN_Pin GPIO_PIN_12
+#define INT_PIN_GPIO_Port GPIOD
+#define ENC_B_Pin GPIO_PIN_11
+#define ENC_B_GPIO_Port GPIOE
+#define MODEL_PIN_Pin GPIO_PIN_7
+#define MODEL_PIN_GPIO_Port GPIOD
 #define TRACED1_Pin GPIO_PIN_0
 #define TRACED1_GPIO_Port GPIOB
 #define TRACED3_Pin GPIO_PIN_7
@@ -105,6 +109,7 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 extern UART_HandleTypeDef hlpuart1;
 extern TIM_HandleTypeDef  htim1;
+extern TIM_HandleTypeDef  htim2;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

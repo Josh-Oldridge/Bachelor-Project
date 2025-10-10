@@ -1,6 +1,6 @@
 ST Edge AI Core v2.2.0-20266 2adc00962
-Created date          : 2025-08-27 13:53:11
-Parameters            : generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace5296609771307005130835346827855286 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
+Created date          : 2025-10-06 15:45:26
+Parameters            : generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 -O time --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace41289285253720011355566680385303890 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
 
 Exec/report summary (generate)
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -9,38 +9,38 @@ type               :   keras
 c_name             :   network                                                                                                                                 
 compression        :   none                                                                                                                                    
 options            :   allocate-inputs, allocate-outputs                                                                                                       
-optimization       :   balanced                                                                                                                                
+optimization       :   time                                                                                                                                    
 target/series      :   stm32n6                                                                                                                                 
-workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace5296609771307005130835346827855286                                                   
+workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace41289285253720011355566680385303890                                                  
 output dir         :   C:\Users\ZOJOLDRI\.stm32cubemx\network_output                                                                                           
 model_fmt          :   float                                                                                                                                   
 model_name         :   lstm_ab_encoder                                                                                                                         
-model_hash         :   0xa47bada8397fa61bef25ba35fe6f4e01                                                                                                      
-params #           :   6,100 items (23.83 KiB)                                                                                                                 
+model_hash         :   0xbde4b1632482397ee7becd37a41ac6bb                                                                                                      
+params #           :   3,587 items (14.01 KiB)                                                                                                                 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 input 1/1          :   'input_0', f32(1x20x10), 800 Bytes, activations                                                                                         
-output 1/1         :   'output', f32(1x4), 16 Bytes, activations                                                                                               
-macc               :   111,392                                                                                                                                 
-weights (ro)       :   24,784 B (24.20 KiB) (1 segment) / +384(+1.6%) vs float model                                                                           
-activations (rw)   :   1,824 B (1.78 KiB) (1 segment) *                                                                                                        
-ram (total)        :   1,824 B (1.78 KiB) = 1,824 + 0 + 0                                                                                                      
+output 1/1         :   'output', f32(1x3), 12 Bytes, activations                                                                                               
+macc               :   67,960                                                                                                                                  
+weights (ro)       :   14,636 B (14.29 KiB) (1 segment) / +288(+2.0%) vs float model                                                                           
+activations (rw)   :   1,568 B (1.53 KiB) (1 segment) *                                                                                                        
+ram (total)        :   1,568 B (1.53 KiB) = 1,568 + 0 + 0                                                                                                      
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 (*) 'input'/'output' buffers are allocated in the activations buffer
 
 Model name - lstm_ab_encoder
------- ------------------------------- ----------------- -------------- --------- --------------- --- ------------------ ------------------- ------------------------------- 
-m_id   layer (type,original)           oshape            param/size          macc    connected to   | c_size             c_macc              c_type                          
------- ------------------------------- ----------------- -------------- --------- --------------- --- ------------------ ------------------- ------------------------------- 
-0      input_0 (Input, None)           [b:1,h:20,c:10]                                              | +22,400(+100.0%)   +110,720(+100.0%)   LSTM_[0]                        
-       lstm_1 (LSTM, LSTM)             [b:1,c:32]        5,504/22,016     110,720         input_0   | -22,016(-100.0%)   -110,720(-100.0%)   
------- ------------------------------- ----------------- -------------- --------- --------------- --- ------------------ ------------------- ------------------------------- 
-2      dense_1_dense (Dense, Dense)    [b:1,c:16]        528/2,112            528          lstm_1   |                    +16(+3.0%)          Dense_/Nonlinearity_[1, 2]      
-       dense_1 (Nonlinearity, Dense)   [b:1,c:16]                              16   dense_1_dense   |                    -16(-100.0%)        
------- ------------------------------- ----------------- -------------- --------- --------------- --- ------------------ ------------------- ------------------------------- 
-4      output_dense (Dense, Dense)     [b:1,c:4]         68/272                68         dense_1   |                    +60(+88.2%)         Dense_/Nonlinearity_[o][3, 4]   
-       output (Nonlinearity, Dense)    [b:1,c:4]                               60    output_dense   |                    -60(-100.0%)        
------- ------------------------------- ----------------- -------------- --------- --------------- --- ------------------ ------------------- ------------------------------- 
-model/c-model: macc=111,392/111,392  weights=24,400/24,784 +384(+1.6%) activations=--/1,824 io=--/0
+------ ------------------------------- ----------------- -------------- -------- --------------- --- ------------------ ------------------ ------------------------------- 
+m_id   layer (type,original)           oshape            param/size         macc    connected to   | c_size             c_macc             c_type                          
+------ ------------------------------- ----------------- -------------- -------- --------------- --- ------------------ ------------------ ------------------------------- 
+0      input_0 (Input, None)           [b:1,h:20,c:10]                                             | +13,728(+100.0%)   +67,680(+100.0%)   LSTM_[0]                        
+       lstm_1 (LSTM, LSTM)             [b:1,c:24]        3,360/13,440     67,680         input_0   | -13,440(-100.0%)   -67,680(-100.0%)   
+------ ------------------------------- ----------------- -------------- -------- --------------- --- ------------------ ------------------ ------------------------------- 
+2      dense_1_dense (Dense, Dense)    [b:1,c:8]         200/800             200          lstm_1   |                    +8(+4.0%)          Dense_/Nonlinearity_[1, 2]      
+       dense_1 (Nonlinearity, Dense)   [b:1,c:8]                               8   dense_1_dense   |                    -8(-100.0%)        
+------ ------------------------------- ----------------- -------------- -------- --------------- --- ------------------ ------------------ ------------------------------- 
+3      output_dense (Dense, Dense)     [b:1,c:3]         27/108               27         dense_1   |                    +45(+166.7%)       Dense_/Nonlinearity_[o][3, 4]   
+       output (Nonlinearity, Dense)    [b:1,c:3]                              45    output_dense   |                    -45(-100.0%)       
+------ ------------------------------- ----------------- -------------- -------- --------------- --- ------------------ ------------------ ------------------------------- 
+model/c-model: macc=67,960/67,960  weights=14,348/14,636 +288(+2.0%) activations=--/1,568 io=--/0
 
 
 
@@ -50,92 +50,92 @@ model name            : lstm_ab_encoder
 c-name                : network
 c-node #              : 5
 c-array #             : 15
-activations size      : 1824 (1 segment)
-weights size          : 24784 (1 segment)
-macc                  : 111392
+activations size      : 1568 (1 segment)
+weights size          : 14636 (1 segment)
+macc                  : 67960
 inputs                : ['input_0_output']
 outputs               : ['output_output']
 
 C-Arrays (15)
------- ----------------------- ------------ ------------------------- ------------- --------- 
-c_id   name (*_array)          item/size    domain/mem-pool           c-type        comment   
------- ----------------------- ------------ ------------------------- ------------- --------- 
-0      dense_1_dense_bias      16/64        weights/weights           const float             
-1      dense_1_dense_output    16/64        activations/**default**   float                   
-2      dense_1_dense_weights   512/2048     weights/weights           const float             
-3      dense_1_output          16/64        activations/**default**   float                   
-4      input_0_output          200/800      activations/**default**   float         /input    
-5      lstm_1_bias             128/512      weights/weights           const float             
-6      lstm_1_kernel           1280/5120    weights/weights           const float             
-7      lstm_1_output0          32/128       activations/**default**   float                   
-8      lstm_1_peepholes        96/384       weights/weights           const float             
-9      lstm_1_recurrent        4096/16384   weights/weights           const float             
-10     lstm_1_scratch0         224/896      activations/**default**   float                   
-11     output_dense_bias       4/16         weights/weights           const float             
-12     output_dense_output     4/16         activations/**default**   float                   
-13     output_dense_weights    64/256       weights/weights           const float             
-14     output_output           4/16         activations/**default**   float         /output   
------- ----------------------- ------------ ------------------------- ------------- --------- 
+------ ----------------------- ----------- ------------------------- ------------- --------- 
+c_id   name (*_array)          item/size   domain/mem-pool           c-type        comment   
+------ ----------------------- ----------- ------------------------- ------------- --------- 
+0      dense_1_dense_bias      8/32        weights/weights           const float             
+1      dense_1_dense_output    8/32        activations/**default**   float                   
+2      dense_1_dense_weights   192/768     weights/weights           const float             
+3      dense_1_output          8/32        activations/**default**   float                   
+4      input_0_output          200/800     activations/**default**   float         /input    
+5      lstm_1_bias             96/384      weights/weights           const float             
+6      lstm_1_kernel           960/3840    weights/weights           const float             
+7      lstm_1_output0          24/96       activations/**default**   float                   
+8      lstm_1_peepholes        72/288      weights/weights           const float             
+9      lstm_1_recurrent        2304/9216   weights/weights           const float             
+10     lstm_1_scratch0         168/672     activations/**default**   float                   
+11     output_dense_bias       3/12        weights/weights           const float             
+12     output_dense_output     3/12        activations/**default**   float                   
+13     output_dense_weights    24/96       weights/weights           const float             
+14     output_output           3/12        activations/**default**   float         /output   
+------ ----------------------- ----------- ------------------------- ------------- --------- 
 
 C-Layers (5)
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-c_id   name (*_layer)   id   layer_type      macc     rom     tensors                    shape (array id)    
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-0      lstm_1           0    LSTM            110720   22400   I: input_0_output          f32(1x20x10) (4)    
-                                                              S: lstm_1_scratch0                             
-                                                              W: lstm_1_kernel           f32(128x10) (6)     
-                                                              W: lstm_1_recurrent        f32(128x32) (9)     
-                                                              W: lstm_1_bias             f32(128) (5)        
-                                                              W: lstm_1_peepholes        f32(96x1x1x1) (8)   
-                                                              O: lstm_1_output0          f32(1x32) (7)       
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-1      dense_1_dense    2    Dense           528      2112    I: lstm_1_output0          f32(1x32) (7)       
-                                                              W: dense_1_dense_weights   f32(16x32) (2)      
-                                                              W: dense_1_dense_bias      f32(16) (0)         
-                                                              O: dense_1_dense_output    f32(1x16) (1)       
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-2      dense_1          2    Nonlinearity    16       0       I: dense_1_dense_output    f32(1x16) (1)       
-                                                              O: dense_1_output          f32(1x16) (3)       
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-3      output_dense     4    Dense           68       272     I: dense_1_output          f32(1x16) (3)       
-                                                              W: output_dense_weights    f32(4x16) (13)      
-                                                              W: output_dense_bias       f32(4) (11)         
-                                                              O: output_dense_output     f32(1x4) (12)       
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
-4      output           4    Nonlinearity    60       0       I: output_dense_output     f32(1x4) (12)       
-                                                              O: output_output           f32(1x4) (14)       
------- ---------------- ---- --------------- -------- ------- -------------------------- ------------------- 
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+c_id   name (*_layer)   id   layer_type      macc    rom     tensors                    shape (array id)    
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+0      lstm_1           0    LSTM            67680   13728   I: input_0_output          f32(1x20x10) (4)    
+                                                             S: lstm_1_scratch0                             
+                                                             W: lstm_1_kernel           f32(96x10) (6)      
+                                                             W: lstm_1_recurrent        f32(96x24) (9)      
+                                                             W: lstm_1_bias             f32(96) (5)         
+                                                             W: lstm_1_peepholes        f32(72x1x1x1) (8)   
+                                                             O: lstm_1_output0          f32(1x24) (7)       
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+1      dense_1_dense    2    Dense           200     800     I: lstm_1_output0          f32(1x24) (7)       
+                                                             W: dense_1_dense_weights   f32(8x24) (2)       
+                                                             W: dense_1_dense_bias      f32(8) (0)          
+                                                             O: dense_1_dense_output    f32(1x8) (1)        
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+2      dense_1          2    Nonlinearity    8       0       I: dense_1_dense_output    f32(1x8) (1)        
+                                                             O: dense_1_output          f32(1x8) (3)        
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+3      output_dense     3    Dense           27      108     I: dense_1_output          f32(1x8) (3)        
+                                                             W: output_dense_weights    f32(3x8) (13)       
+                                                             W: output_dense_bias       f32(3) (11)         
+                                                             O: output_dense_output     f32(1x3) (12)       
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
+4      output           3    Nonlinearity    45      0       I: output_dense_output     f32(1x3) (12)       
+                                                             O: output_output           f32(1x3) (14)       
+------ ---------------- ---- --------------- ------- ------- -------------------------- ------------------- 
 
 
 
 Number of operations per c-layer
-------- ------ ------------------------ --------- -------------- 
-c_id    m_id   name (type)                    #op           type 
-------- ------ ------------------------ --------- -------------- 
-0       0      lstm_1 (LSTM)              110,720   smul_f32_f32 
-1       2      dense_1_dense (Dense)          528   smul_f32_f32 
-2       2      dense_1 (Nonlinearity)          16     op_f32_f32 
-3       4      output_dense (Dense)            68   smul_f32_f32 
-4       4      output (Nonlinearity)           60     op_f32_f32 
-------- ------ ------------------------ --------- -------------- 
-total                                     111,392 
+------- ------ ------------------------ -------- -------------- 
+c_id    m_id   name (type)                   #op           type 
+------- ------ ------------------------ -------- -------------- 
+0       0      lstm_1 (LSTM)              67,680   smul_f32_f32 
+1       2      dense_1_dense (Dense)         200   smul_f32_f32 
+2       2      dense_1 (Nonlinearity)          8     op_f32_f32 
+3       3      output_dense (Dense)           27   smul_f32_f32 
+4       3      output (Nonlinearity)          45     op_f32_f32 
+------- ------ ------------------------ -------- -------------- 
+total                                     67,960 
 
 Number of operation types
----------------- --------- ----------- 
-operation type           #           % 
----------------- --------- ----------- 
-smul_f32_f32       111,316       99.9% 
-op_f32_f32              76        0.1% 
+---------------- -------- ----------- 
+operation type          #           % 
+---------------- -------- ----------- 
+smul_f32_f32       67,907       99.9% 
+op_f32_f32             53        0.1% 
 
 Complexity report (model)
 ------ --------------- ------------------------- ------------------------- -------- 
 m_id   name            c_macc                    c_rom                     c_id     
 ------ --------------- ------------------------- ------------------------- -------- 
-0      input_0         ||||||||||||||||  99.4%   ||||||||||||||||  90.4%   [0]      
-2      dense_1_dense   |                  0.5%   ||                 8.5%   [1, 2]   
-4      output_dense    |                  0.1%   |                  1.1%   [3, 4]   
+0      input_0         ||||||||||||||||  99.6%   ||||||||||||||||  93.8%   [0]      
+2      dense_1_dense   |                  0.3%   |                  5.5%   [1, 2]   
+3      output_dense    |                  0.1%   |                  0.7%   [3, 4]   
 ------ --------------- ------------------------- ------------------------- -------- 
-macc=111,392 weights=24,784 act=1,824 ram_io=0
+macc=67,960 weights=14,636 act=1,568 ram_io=0
  
  Requested memory size by section - "stm32n6" target
  ------------------------------- -------- -------- ------- ------- 
@@ -148,11 +148,11 @@ macc=111,392 weights=24,784 act=1,824 ram_io=0
  ------------------------------- -------- -------- ------- ------- 
  RT total**                        17,576      428   1,976     136 
  ------------------------------- -------- -------- ------- ------- 
- weights                                0   24,784       0       0 
- activations                            0        0       0   1,824 
+ weights                                0   14,640       0       0 
+ activations                            0        0       0   1,568 
  io                                     0        0       0       0 
  ------------------------------- -------- -------- ------- ------- 
- TOTAL                             17,576   25,212   1,976   1,960 
+ TOTAL                             17,576   15,068   1,976   1,704 
  ------------------------------- -------- -------- ------- ------- 
  *  toolchain objects (libm/libgcc*)
  ** RT AI runtime objects (kernels+infrastructure)
@@ -161,9 +161,9 @@ macc=111,392 weights=24,784 act=1,824 ram_io=0
   ---------------------------------------------------
                FLASH (ro)      %*   RAM (rw)       % 
   ---------------------------------------------------
-  RT total         19,980   44.6%      2,112   53.7% 
+  RT total         19,980   57.7%      2,112   57.4% 
   ---------------------------------------------------
-  TOTAL            44,764              3,936         
+  TOTAL            34,620              3,680         
   ---------------------------------------------------
   *  rt/total
 

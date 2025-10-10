@@ -1,20 +1,20 @@
 /* USER CODE BEGIN Header */
 /**
-  ******************************************************************************
-  * @file    stm32n6xx_it.c
-  * @brief   Interrupt Service Routines.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file    stm32n6xx_it.c
+ * @brief   Interrupt Service Routines.
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2025 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -66,151 +66,135 @@ extern TIM_HandleTypeDef htim1;
 /*           Cortex Processor Interruption and Exception Handlers          */
 /******************************************************************************/
 /**
-  * @brief This function handles Non maskable interrupt.
-  */
-void NMI_Handler(void)
-{
-  /* USER CODE BEGIN NonMaskableInt_IRQn 0 */
+ * @brief This function handles Non maskable interrupt.
+ */
+void NMI_Handler(void) {
+	/* USER CODE BEGIN NonMaskableInt_IRQn 0 */
 
-  /* USER CODE END NonMaskableInt_IRQn 0 */
-  /* USER CODE BEGIN NonMaskableInt_IRQn 1 */
-   while (1)
-  {
-  }
-  /* USER CODE END NonMaskableInt_IRQn 1 */
+	/* USER CODE END NonMaskableInt_IRQn 0 */
+	/* USER CODE BEGIN NonMaskableInt_IRQn 1 */
+	while (1) {
+	}
+	/* USER CODE END NonMaskableInt_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Hard fault interrupt.
-  */
-void HardFault_Handler(void)
-{
-  /* USER CODE BEGIN HardFault_IRQn 0 */
+ * @brief This function handles Hard fault interrupt.
+ */
+void HardFault_Handler(void) {
+	/* USER CODE BEGIN HardFault_IRQn 0 */
 	printf("HARD FAULT DETECTED!\r\n");
-	  printf("System crashed - Hard Fault\r\n");
-  /* USER CODE END HardFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_HardFault_IRQn 0 */
-    /* USER CODE END W1_HardFault_IRQn 0 */
-  }
+	printf("System crashed - Hard Fault\r\n");
+	/* USER CODE END HardFault_IRQn 0 */
+	while (1) {
+		/* USER CODE BEGIN W1_HardFault_IRQn 0 */
+		/* USER CODE END W1_HardFault_IRQn 0 */
+	}
 }
 
 /**
-  * @brief This function handles Memory management fault.
-  */
-void MemManage_Handler(void)
-{
-  /* USER CODE BEGIN MemoryManagement_IRQn 0 */
-	 printf("MEMORY MANAGEMENT FAULT!\r\n");
-	  printf("Stack overflow or invalid memory access\r\n");
-  /* USER CODE END MemoryManagement_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
-    /* USER CODE END W1_MemoryManagement_IRQn 0 */
-  }
+ * @brief This function handles Memory management fault.
+ */
+void MemManage_Handler(void) {
+	/* USER CODE BEGIN MemoryManagement_IRQn 0 */
+	printf("MEMORY MANAGEMENT FAULT!\r\n");
+	printf("Stack overflow or invalid memory access\r\n");
+	/* USER CODE END MemoryManagement_IRQn 0 */
+	while (1) {
+		/* USER CODE BEGIN W1_MemoryManagement_IRQn 0 */
+		/* USER CODE END W1_MemoryManagement_IRQn 0 */
+	}
 }
 
 /**
-  * @brief This function handles Prefetch fault, memory access fault.
-  */
-void BusFault_Handler(void)
-{
-  /* USER CODE BEGIN BusFault_IRQn 0 */
+ * @brief This function handles Prefetch fault, memory access fault.
+ */
+void BusFault_Handler(void) {
+	/* USER CODE BEGIN BusFault_IRQn 0 */
 	printf("BUS FAULT!\r\n");
-	  printf("Invalid memory access or bus error\r\n");
-  /* USER CODE END BusFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_BusFault_IRQn 0 */
-    /* USER CODE END W1_BusFault_IRQn 0 */
-  }
+	printf("Invalid memory access or bus error\r\n");
+	/* USER CODE END BusFault_IRQn 0 */
+	while (1) {
+		/* USER CODE BEGIN W1_BusFault_IRQn 0 */
+		/* USER CODE END W1_BusFault_IRQn 0 */
+	}
 }
 
 /**
-  * @brief This function handles Undefined instruction or illegal state.
-  */
-void UsageFault_Handler(void)
-{
-  /* USER CODE BEGIN UsageFault_IRQn 0 */
+ * @brief This function handles Undefined instruction or illegal state.
+ */
+void UsageFault_Handler(void) {
+	/* USER CODE BEGIN UsageFault_IRQn 0 */
 	printf("USAGE FAULT!\r\n");
-	  printf("Invalid instruction or state\r\n");
-  /* USER CODE END UsageFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_UsageFault_IRQn 0 */
-    /* USER CODE END W1_UsageFault_IRQn 0 */
-  }
+	printf("Invalid instruction or state\r\n");
+	/* USER CODE END UsageFault_IRQn 0 */
+	while (1) {
+		/* USER CODE BEGIN W1_UsageFault_IRQn 0 */
+		/* USER CODE END W1_UsageFault_IRQn 0 */
+	}
 }
 
 /**
-  * @brief This function handles Secure fault.
-  */
-void SecureFault_Handler(void)
-{
-  /* USER CODE BEGIN SecureFault_IRQn 0 */
+ * @brief This function handles Secure fault.
+ */
+void SecureFault_Handler(void) {
+	/* USER CODE BEGIN SecureFault_IRQn 0 */
 	printf("SECURE FAULT!\r\n");
-	  printf("Security violation detected\r\n");
-  /* USER CODE END SecureFault_IRQn 0 */
-  while (1)
-  {
-    /* USER CODE BEGIN W1_SecureFault_IRQn 0 */
-    /* USER CODE END W1_SecureFault_IRQn 0 */
-  }
+	printf("Security violation detected\r\n");
+	/* USER CODE END SecureFault_IRQn 0 */
+	while (1) {
+		/* USER CODE BEGIN W1_SecureFault_IRQn 0 */
+		/* USER CODE END W1_SecureFault_IRQn 0 */
+	}
 }
 
 /**
-  * @brief This function handles System service call via SWI instruction.
-  */
-void SVC_Handler(void)
-{
-  /* USER CODE BEGIN SVCall_IRQn 0 */
+ * @brief This function handles System service call via SWI instruction.
+ */
+void SVC_Handler(void) {
+	/* USER CODE BEGIN SVCall_IRQn 0 */
 
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
+	/* USER CODE END SVCall_IRQn 0 */
+	/* USER CODE BEGIN SVCall_IRQn 1 */
 
-  /* USER CODE END SVCall_IRQn 1 */
+	/* USER CODE END SVCall_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Debug monitor.
-  */
-void DebugMon_Handler(void)
-{
-  /* USER CODE BEGIN DebugMonitor_IRQn 0 */
+ * @brief This function handles Debug monitor.
+ */
+void DebugMon_Handler(void) {
+	/* USER CODE BEGIN DebugMonitor_IRQn 0 */
 
-  /* USER CODE END DebugMonitor_IRQn 0 */
-  /* USER CODE BEGIN DebugMonitor_IRQn 1 */
+	/* USER CODE END DebugMonitor_IRQn 0 */
+	/* USER CODE BEGIN DebugMonitor_IRQn 1 */
 
-  /* USER CODE END DebugMonitor_IRQn 1 */
+	/* USER CODE END DebugMonitor_IRQn 1 */
 }
 
 /**
-  * @brief This function handles Pendable request for system service.
-  */
-void PendSV_Handler(void)
-{
-  /* USER CODE BEGIN PendSV_IRQn 0 */
+ * @brief This function handles Pendable request for system service.
+ */
+void PendSV_Handler(void) {
+	/* USER CODE BEGIN PendSV_IRQn 0 */
 
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
+	/* USER CODE END PendSV_IRQn 0 */
+	/* USER CODE BEGIN PendSV_IRQn 1 */
 
-  /* USER CODE END PendSV_IRQn 1 */
+	/* USER CODE END PendSV_IRQn 1 */
 }
 
 /**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
+ * @brief This function handles System tick timer.
+ */
+void SysTick_Handler(void) {
+	/* USER CODE BEGIN SysTick_IRQn 0 */
 
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
+	/* USER CODE END SysTick_IRQn 0 */
+	HAL_IncTick();
+	/* USER CODE BEGIN SysTick_IRQn 1 */
 
-  /* USER CODE END SysTick_IRQn 1 */
+	/* USER CODE END SysTick_IRQn 1 */
 }
 
 /******************************************************************************/
@@ -221,21 +205,51 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles TIM1 Capture Compare interrupt.
-  */
-void TIM1_CC_IRQHandler(void)
-{
-  /* USER CODE BEGIN TIM1_CC_IRQn 0 */
-#if ENC_IS_LIVE
-  EncSampler_EncoderIRQ_Drain();
-  return;
-#endif
-  /* USER CODE END TIM1_CC_IRQn 0 */
+ * @brief This function handles TIM1 Trigger and Commutation interrupts.
+ */
+void TIM1_TRG_COM_IRQHandler(void) {
+	/* USER CODE BEGIN TIM1_TRG_COM_IRQn 0 */
 
+	/**
+	   * Fast path: drain encoder/index events directly from the TIM1 TRG/COM ISR.
+	   *
+	   * - Uses a zero-copy SPSC ring to push compact events (A/B/Z) with
+	   *   uwTick deltas for later feature packing in the main loop.
+	   * - We return early to intentionally bypass HAL_TIM_IRQHandler to
+	   *   minimize latency and avoid double handling. If you add other TRG/COM
+	   *   users later, reconsider this early return.
+	   */
+	EncSampler_EncoderIRQ_Drain();
+	return;
 
-  /* USER CODE BEGIN TIM1_CC_IRQn 1 */
+	/* USER CODE END TIM1_TRG_COM_IRQn 0 */
+	HAL_TIM_IRQHandler(&htim1);
+	/* USER CODE BEGIN TIM1_TRG_COM_IRQn 1 */
 
-  /* USER CODE END TIM1_CC_IRQn 1 */
+	/* USER CODE END TIM1_TRG_COM_IRQn 1 */
+}
+
+/**
+ * @brief This function handles TIM1 Capture Compare interrupt.
+ */
+void TIM1_CC_IRQHandler(void) {
+	/* USER CODE BEGIN TIM1_CC_IRQn 0 */
+
+	/**
+	   * Fast path: drain encoder A/B (CC1/CC2) and gated Z into the event ring.
+	   *
+	   * - Keeps ISR short and bounded; over-capture increments a drop counter.
+	   * - Returning here avoids the generic HAL path for lower jitter.
+	   *   If other CC users are added, revisit this.
+	   */
+	EncSampler_EncoderIRQ_Drain();
+	return;
+
+	/* USER CODE END TIM1_CC_IRQn 0 */
+	HAL_TIM_IRQHandler(&htim1);
+	/* USER CODE BEGIN TIM1_CC_IRQn 1 */
+
+	/* USER CODE END TIM1_CC_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */

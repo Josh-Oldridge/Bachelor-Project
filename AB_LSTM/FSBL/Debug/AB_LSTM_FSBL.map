@@ -4716,7 +4716,7 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x34180400                g_pfnVectors
                 0x3418074c                        . = ALIGN (0x4)
 
-.text           0x3418074c     0xed80
+.text           0x3418074c     0xed7c
                 0x3418074c                        . = ALIGN (0x4)
  *(.text)
  .text          0x3418074c       0x40 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
@@ -5637,225 +5637,226 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x3418c810       0x64 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
                 0x3418c810                MapMemory
  .text.CopyApplication
-                0x3418c874       0x98 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
+                0x3418c874       0x94 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
                 0x3418c874                CopyApplication
  .text.JumpToApplication
-                0x3418c90c      0x148 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
-                0x3418c90c                JumpToApplication
+                0x3418c908      0x148 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
+                0x3418c908                JumpToApplication
  .text.BOOT_GetApplicationSize
-                0x3418ca54       0x1c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
-                0x3418ca54                BOOT_GetApplicationSize
+                0x3418ca50       0x1c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
+                0x3418ca50                BOOT_GetApplicationSize
  .text.BOOT_GetApplicationVectorTable
-                0x3418ca70       0x24 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
-                0x3418ca70                BOOT_GetApplicationVectorTable
+                0x3418ca6c       0x22 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_boot_lrun.o
+                0x3418ca6c                BOOT_GetApplicationVectorTable
+ *fill*         0x3418ca8e        0x2 
  .text.EXTMEM_Init
-                0x3418ca94       0x84 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
-                0x3418ca94                EXTMEM_Init
+                0x3418ca90       0x84 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
+                0x3418ca90                EXTMEM_Init
  .text.EXTMEM_Read
-                0x3418cb18       0x6c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
-                0x3418cb18                EXTMEM_Read
+                0x3418cb14       0x6c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
+                0x3418cb14                EXTMEM_Read
  .text.EXTMEM_MemoryMappedMode
-                0x3418cb84       0x9c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
-                0x3418cb84                EXTMEM_MemoryMappedMode
+                0x3418cb80       0x9c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
+                0x3418cb80                EXTMEM_MemoryMappedMode
  .text.EXTMEM_GetMapAddress
-                0x3418cc20       0xc0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
-                0x3418cc20                EXTMEM_GetMapAddress
+                0x3418cc1c       0xc0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_extmem.o
+                0x3418cc1c                EXTMEM_GetMapAddress
  .text.SAL_XSPI_SetClock
-                0x3418cce0       0x7e ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418cce0                SAL_XSPI_SetClock
+                0x3418ccdc       0x7e ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418ccdc                SAL_XSPI_SetClock
  .text.SAL_XSPI_Init
-                0x3418cd5e       0x66 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418cd5e                SAL_XSPI_Init
+                0x3418cd5a       0x66 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418cd5a                SAL_XSPI_Init
  .text.SAL_XSPI_MemoryConfig
-                0x3418cdc4      0x2a4 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418cdc4                SAL_XSPI_MemoryConfig
+                0x3418cdc0      0x2a4 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418cdc0                SAL_XSPI_MemoryConfig
  .text.SAL_XSPI_GetSFDP
-                0x3418d068       0xb4 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d068                SAL_XSPI_GetSFDP
+                0x3418d064       0xb4 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d064                SAL_XSPI_GetSFDP
  .text.SAL_XSPI_GetId
-                0x3418d11c      0x100 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d11c                SAL_XSPI_GetId
+                0x3418d118      0x100 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d118                SAL_XSPI_GetId
  .text.SAL_XSPI_Read
-                0x3418d21c       0xd0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d21c                SAL_XSPI_Read
+                0x3418d218       0xd0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d218                SAL_XSPI_Read
  .text.SAL_XSPI_Write
-                0x3418d2ec       0x92 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d2ec                SAL_XSPI_Write
+                0x3418d2e8       0x92 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d2e8                SAL_XSPI_Write
  .text.SAL_XSPI_CommandSendData
-                0x3418d37e       0xa8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d37e                SAL_XSPI_CommandSendData
+                0x3418d37a       0xa8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d37a                SAL_XSPI_CommandSendData
  .text.SAL_XSPI_SendReadCommand
-                0x3418d426       0xa8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d426                SAL_XSPI_SendReadCommand
+                0x3418d422       0xa8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d422                SAL_XSPI_SendReadCommand
  .text.SAL_XSPI_CommandSendReadAddress
-                0x3418d4ce       0xca ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d4ce                SAL_XSPI_CommandSendReadAddress
+                0x3418d4ca       0xca ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d4ca                SAL_XSPI_CommandSendReadAddress
  .text.SAL_XSPI_CheckStatusRegister
-                0x3418d598       0xf2 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d598                SAL_XSPI_CheckStatusRegister
+                0x3418d594       0xf2 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d594                SAL_XSPI_CheckStatusRegister
  .text.SAL_XSPI_EnableMapMode
-                0x3418d68a       0xf2 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d68a                SAL_XSPI_EnableMapMode
+                0x3418d686       0xf2 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d686                SAL_XSPI_EnableMapMode
  .text.SAL_XSPI_DisableMapMode
-                0x3418d77c       0x22 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d77c                SAL_XSPI_DisableMapMode
+                0x3418d778       0x22 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d778                SAL_XSPI_DisableMapMode
  .text.SAL_XSPI_UpdateMemoryType
-                0x3418d79e       0x70 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d79e                SAL_XSPI_UpdateMemoryType
+                0x3418d79a       0x70 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d79a                SAL_XSPI_UpdateMemoryType
  .text.SAL_XSPI_Abort
-                0x3418d80e       0x1c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d80e                SAL_XSPI_Abort
+                0x3418d80a       0x1c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d80a                SAL_XSPI_Abort
  .text.XSPI_FormatCommand
-                0x3418d82a       0x52 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d82a                XSPI_FormatCommand
+                0x3418d826       0x52 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d826                XSPI_FormatCommand
  .text.XSPI_Transmit
-                0x3418d87c       0x26 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d87c                XSPI_Transmit
+                0x3418d878       0x26 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d878                XSPI_Transmit
  .text.XSPI_Receive
-                0x3418d8a2       0x26 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
-                0x3418d8a2                XSPI_Receive
+                0x3418d89e       0x26 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sal_xspi.o
+                0x3418d89e                XSPI_Receive
  .text.SFDP_ReadHeader
-                0x3418d8c8       0x7a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418d8c8                SFDP_ReadHeader
- *fill*         0x3418d942        0x2 
+                0x3418d8c4       0x7a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418d8c4                SFDP_ReadHeader
+ *fill*         0x3418d93e        0x2 
  .text.SFDP_GetHeader
-                0x3418d944       0xbc ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418d944                SFDP_GetHeader
+                0x3418d940       0xbc ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418d940                SFDP_GetHeader
  .text.SFDP_CollectData
-                0x3418da00      0x1b8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418da00                SFDP_CollectData
+                0x3418d9fc      0x1b8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418d9fc                SFDP_CollectData
  .text.SFDP_MemoryReset
-                0x3418dbb8      0x1b8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418dbb8                SFDP_MemoryReset
+                0x3418dbb4      0x1b8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418dbb4                SFDP_MemoryReset
  .text.SFDP_BuildGenericDriver
-                0x3418dd70      0xbd0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418dd70                SFDP_BuildGenericDriver
+                0x3418dd6c      0xbd0 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418dd6c                SFDP_BuildGenericDriver
  .text.driver_check_FlagBUSY
-                0x3418e940       0x7c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418e940                driver_check_FlagBUSY
+                0x3418e93c       0x7c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418e93c                driver_check_FlagBUSY
  .text.sfdp_getfrequencevalue
-                0x3418e9bc       0x4c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418e9bc                sfdp_getfrequencevalue
+                0x3418e9b8       0x4c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418e9b8                sfdp_getfrequencevalue
  .text.sfdp_get_paraminfo
-                0x3418ea08      0x1f8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418ea08                sfdp_get_paraminfo
+                0x3418ea04      0x1f8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418ea04                sfdp_get_paraminfo
  .text.sfdp_enter_octal_mode
-                0x3418ec00      0x1c8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418ec00                sfdp_enter_octal_mode
+                0x3418ebfc      0x1c8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418ebfc                sfdp_enter_octal_mode
  .text.sfdp_set_dummycycle
-                0x3418edc8      0x1ec ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418edc8                sfdp_set_dummycycle
+                0x3418edc4      0x1ec ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418edc4                sfdp_set_dummycycle
  .text.JEDEC_Basic_ManageQuadEnableRequirement
-                0x3418efb4      0x178 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418efb4                JEDEC_Basic_ManageQuadEnableRequirement
+                0x3418efb0      0x178 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418efb0                JEDEC_Basic_ManageQuadEnableRequirement
  .text.JEDEC_Basic_Manage4S4S4SEnableSequence
-                0x3418f12c       0x80 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418f12c                JEDEC_Basic_Manage4S4S4SEnableSequence
+                0x3418f128       0x80 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418f128                JEDEC_Basic_Manage4S4S4SEnableSequence
  .text.CheckSFDP_Signature
-                0x3418f1ac       0x54 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418f1ac                CheckSFDP_Signature
+                0x3418f1a8       0x54 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418f1a8                CheckSFDP_Signature
  .text.EXTMEM_DRIVER_NOR_SFDP_Init
-                0x3418f200      0x178 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
-                0x3418f200                EXTMEM_DRIVER_NOR_SFDP_Init
+                0x3418f1fc      0x178 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
+                0x3418f1fc                EXTMEM_DRIVER_NOR_SFDP_Init
  .text.EXTMEM_DRIVER_NOR_SFDP_Read
-                0x3418f378       0x5a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
-                0x3418f378                EXTMEM_DRIVER_NOR_SFDP_Read
+                0x3418f374       0x5a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
+                0x3418f374                EXTMEM_DRIVER_NOR_SFDP_Read
  .text.EXTMEM_DRIVER_NOR_SFDP_Enable_MemoryMappedMode
-                0x3418f3d2       0x42 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
-                0x3418f3d2                EXTMEM_DRIVER_NOR_SFDP_Enable_MemoryMappedMode
+                0x3418f3ce       0x42 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
+                0x3418f3ce                EXTMEM_DRIVER_NOR_SFDP_Enable_MemoryMappedMode
  .text.EXTMEM_DRIVER_NOR_SFDP_Disable_MemoryMappedMode
-                0x3418f414       0x2c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
-                0x3418f414                EXTMEM_DRIVER_NOR_SFDP_Disable_MemoryMappedMode
- .text.memset   0x3418f440       0x10 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-memset.o)
-                0x3418f440                memset
+                0x3418f410       0x2c ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_driver.o
+                0x3418f410                EXTMEM_DRIVER_NOR_SFDP_Disable_MemoryMappedMode
+ .text.memset   0x3418f43c       0x10 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-memset.o)
+                0x3418f43c                memset
  .text.__libc_init_array
-                0x3418f450       0x48 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-init.o)
-                0x3418f450                __libc_init_array
- .text.memcpy   0x3418f498       0x1a C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-memcpy-stub.o)
-                0x3418f498                memcpy
+                0x3418f44c       0x48 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-init.o)
+                0x3418f44c                __libc_init_array
+ .text.memcpy   0x3418f494       0x1a C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/../../../../arm-none-eabi/lib/thumb/v8-m.main+dp/hard\libc_nano.a(libc_a-memcpy-stub.o)
+                0x3418f494                memcpy
  *(.glue_7)
- .glue_7        0x3418f4b2        0x0 linker stubs
+ .glue_7        0x3418f4ae        0x0 linker stubs
  *(.glue_7t)
- .glue_7t       0x3418f4b2        0x0 linker stubs
+ .glue_7t       0x3418f4ae        0x0 linker stubs
  *(.eh_frame)
- *fill*         0x3418f4b2        0x2 
- .eh_frame      0x3418f4b4        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
+ *fill*         0x3418f4ae        0x2 
+ .eh_frame      0x3418f4b0        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
  *(.RamFunc)
  *(.RamFunc*)
  *(.init)
- .init          0x3418f4b4        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crti.o
-                0x3418f4b4                _init
- .init          0x3418f4b8        0x8 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtn.o
+ .init          0x3418f4b0        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crti.o
+                0x3418f4b0                _init
+ .init          0x3418f4b4        0x8 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtn.o
  *(.fini)
- .fini          0x3418f4c0        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crti.o
-                0x3418f4c0                _fini
- .fini          0x3418f4c4        0x8 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtn.o
-                0x3418f4cc                        . = ALIGN (0x4)
-                0x3418f4cc                        _etext = .
+ .fini          0x3418f4bc        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crti.o
+                0x3418f4bc                _fini
+ .fini          0x3418f4c0        0x8 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtn.o
+                0x3418f4c8                        . = ALIGN (0x4)
+                0x3418f4c8                        _etext = .
 
-.vfp11_veneer   0x3418f4cc        0x0
- .vfp11_veneer  0x3418f4cc        0x0 linker stubs
+.vfp11_veneer   0x3418f4c8        0x0
+ .vfp11_veneer  0x3418f4c8        0x0 linker stubs
 
-.v4_bx          0x3418f4cc        0x0
- .v4_bx         0x3418f4cc        0x0 linker stubs
+.v4_bx          0x3418f4c8        0x0
+ .v4_bx         0x3418f4c8        0x0 linker stubs
 
-.iplt           0x3418f4cc        0x0
- .iplt          0x3418f4cc        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
+.iplt           0x3418f4c8        0x0
+ .iplt          0x3418f4c8        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
 
-.rodata         0x3418f4cc       0x44
-                0x3418f4cc                        . = ALIGN (0x4)
+.rodata         0x3418f4c8       0x44
+                0x3418f4c8                        . = ALIGN (0x4)
  *(.rodata)
- .rodata        0x3418f4cc       0x2a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+ .rodata        0x3418f4c8       0x2a ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
  *(.rodata*)
- *fill*         0x3418f4f6        0x2 
+ *fill*         0x3418f4f2        0x2 
  .rodata.block_erase_unit.1
-                0x3418f4f8        0x8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418f4f4        0x8 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
  .rodata.chip_erase_unit.0
-                0x3418f500       0x10 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
-                0x3418f510                        . = ALIGN (0x4)
+                0x3418f4fc       0x10 ./Middlewares/ST/STM32_ExtMem_Manager/stm32_sfdp_data.o
+                0x3418f50c                        . = ALIGN (0x4)
 
-.ARM.extab      0x3418f510        0x0
-                0x3418f510                        . = ALIGN (0x4)
+.ARM.extab      0x3418f50c        0x0
+                0x3418f50c                        . = ALIGN (0x4)
  *(.ARM.extab* .gnu.linkonce.armextab.*)
-                0x3418f510                        . = ALIGN (0x4)
+                0x3418f50c                        . = ALIGN (0x4)
 
-.ARM            0x3418f510        0x0
-                0x3418f510                        . = ALIGN (0x4)
-                0x3418f510                        __exidx_start = .
+.ARM            0x3418f50c        0x0
+                0x3418f50c                        . = ALIGN (0x4)
+                0x3418f50c                        __exidx_start = .
  *(.ARM.exidx*)
-                0x3418f510                        __exidx_end = .
-                0x3418f510                        . = ALIGN (0x4)
+                0x3418f50c                        __exidx_end = .
+                0x3418f50c                        . = ALIGN (0x4)
 
-.preinit_array  0x3418f510        0x0
-                0x3418f510                        . = ALIGN (0x4)
-                0x3418f510                        PROVIDE (__preinit_array_start = .)
+.preinit_array  0x3418f50c        0x0
+                0x3418f50c                        . = ALIGN (0x4)
+                0x3418f50c                        PROVIDE (__preinit_array_start = .)
  *(.preinit_array*)
-                0x3418f510                        PROVIDE (__preinit_array_end = .)
-                0x3418f510                        . = ALIGN (0x4)
+                0x3418f50c                        PROVIDE (__preinit_array_end = .)
+                0x3418f50c                        . = ALIGN (0x4)
 
-.init_array     0x3418f510        0x4
-                0x3418f510                        . = ALIGN (0x4)
-                0x3418f510                        PROVIDE (__init_array_start = .)
+.init_array     0x3418f50c        0x4
+                0x3418f50c                        . = ALIGN (0x4)
+                0x3418f50c                        PROVIDE (__init_array_start = .)
  *(SORT_BY_NAME(.init_array.*))
  *(.init_array*)
- .init_array    0x3418f510        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
-                0x3418f514                        PROVIDE (__init_array_end = .)
-                0x3418f514                        . = ALIGN (0x4)
+ .init_array    0x3418f50c        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
+                0x3418f510                        PROVIDE (__init_array_end = .)
+                0x3418f510                        . = ALIGN (0x4)
 
-.fini_array     0x3418f514        0x4
-                0x3418f514                        . = ALIGN (0x4)
+.fini_array     0x3418f510        0x4
+                0x3418f510                        . = ALIGN (0x4)
                 [!provide]                        PROVIDE (__fini_array_start = .)
  *(SORT_BY_NAME(.fini_array.*))
  *(.fini_array*)
- .fini_array    0x3418f514        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
+ .fini_array    0x3418f510        0x4 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
                 [!provide]                        PROVIDE (__fini_array_end = .)
-                0x3418f518                        . = ALIGN (0x4)
-                0x3418f518                        _sidata = LOADADDR (.data)
+                0x3418f514                        . = ALIGN (0x4)
+                0x3418f514                        _sidata = LOADADDR (.data)
 
-.rel.dyn        0x3418f518        0x0
- .rel.iplt      0x3418f518        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
+.rel.dyn        0x3418f514        0x0
+ .rel.iplt      0x3418f514        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
 
-.data           0x341c0000        0xc load address 0x3418f518
+.data           0x341c0000        0xc load address 0x3418f514
                 0x341c0000                        . = ALIGN (0x4)
                 0x341c0000                        _sdata = .
  *(.data)
@@ -5873,10 +5874,10 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  *fill*         0x341c0009        0x3 
                 0x341c000c                        _edata = .
 
-.igot.plt       0x341c000c        0x0 load address 0x3418f524
+.igot.plt       0x341c000c        0x0 load address 0x3418f520
  .igot.plt      0x341c000c        0x0 C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344/tools/bin/../lib/gcc/arm-none-eabi/13.3.1/thumb/v8-m.main+dp/hard/crtbegin.o
 
-.noncacheable   0x341c000c        0x4 load address 0x3418f524
+.noncacheable   0x341c000c        0x4 load address 0x3418f520
                 0x341c0010                        . = ALIGN (0x8)
  *fill*         0x341c000c        0x4 
                 0x341c0010                        __snoncacheable = .
@@ -5884,14 +5885,14 @@ LOAD C:/ST/STM32CubeIDE_1.19.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
                 0x341c0010                        . = ALIGN (0x8)
                 0x341c0010                        __enoncacheable = .
 
-.gnu.sgstubs    0x3418f540       0x20
-                0x3418f540                        . = ALIGN (0x4)
+.gnu.sgstubs    0x3418f520       0x20
+                0x3418f520                        . = ALIGN (0x4)
  *(.gnu.sgstubs*)
-                0x3418f540                        . = ALIGN (0x4)
+                0x3418f520                        . = ALIGN (0x4)
  .gnu.sgstubs.__stub
-                0x3418f540        0x8 linker stubs
-                0x3418f540                SECURE_SystemCoreClockUpdate
-                0x3418f548                        . = ALIGN (0x4)
+                0x3418f520        0x8 linker stubs
+                0x3418f520                SECURE_SystemCoreClockUpdate
+                0x3418f528                        . = ALIGN (0x4)
 
 .bss            0x341c0010      0x2bc
                 0x341c0010                        _sbss = .

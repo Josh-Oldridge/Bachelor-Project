@@ -20,6 +20,7 @@ c_string=23,198,163
 c_type=221,40,103
 eclipse.preferences.version=1
 inactiveCodeColor=30,30,30
+markOccurrences=false
 org.eclipse.cdt.internal.ui.text.doctools.multi=98,98,98
 org.eclipse.cdt.internal.ui.text.doctools.recognizedTag=30,120,155
 org.eclipse.cdt.internal.ui.text.doctools.single=98,98,98

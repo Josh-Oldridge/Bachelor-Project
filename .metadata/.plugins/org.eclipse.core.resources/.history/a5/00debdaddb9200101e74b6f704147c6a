@@ -1,0 +1,988 @@
+#include "enc_sampler.h"
+#include <string.h>
+#include <math.h>
+#include <stdbool.h>
+#include "model_meta.h"
+#include "main.h"
+#include "diag_timing.h"
+#include "stm32n6xx_hal.h"
+#include <stdio.h>
+
+/* ============================= Config ================================== */
+
+#ifndef CPR
+#define CPR 500u
+#endif
+
+#ifndef HAVE_Z_INDEX
+#define HAVE_Z_INDEX 1
+#endif
+#if !defined(TIM_SR_IDXF) || !defined(TIM_IT_IDX)
+# undef HAVE_Z_INDEX
+# define HAVE_Z_INDEX 0
+# warning "No TIM1 IDXF/IDX in headers -> Z gated off at build time"
+#endif
+
+#ifndef FORCE_IGNORE_Z
+#define FORCE_IGNORE_Z 0
+#endif
+
+#ifndef ENC_DIR_REVERSED
+#define ENC_DIR_REVERSED 0
+#endif
+
+#ifndef MODEL_FEEDS_X4
+#define MODEL_FEEDS_X4 1   /* 1 = feed x4 step-count to model (recommended) */
+#endif
+
+#ifndef STEPS_PER_AB_EVENT
+#define STEPS_PER_AB_EVENT 2u
+#endif
+
+/* NOTE: with rising-only CC1/CC2 we observe ~2*CPR edges per rev. */
+#ifndef QUAD_EDGES_PER_REV
+#define QUAD_EDGES_PER_REV (2u * CPR)
+#endif
+
+#ifndef DIAG_NOTIFY_AB_IN_ISR
+#define DIAG_NOTIFY_AB_IN_ISR 1   /* call Diag_NotifyABEdgeAt() from ISR */
+#endif
+
+/* LIVE-FIRST: keep feeding live FIFO even during capture */
+#ifndef CAPTURE_STEALS_EVENTS
+#define CAPTURE_STEALS_EVENTS 0
+#endif
+
+/* Z acceptance hygiene */
+#ifndef Z_SOFT_DEBOUNCE_MS
+#define Z_SOFT_DEBOUNCE_MS 0u
+#endif
+#ifndef Z_MIN_AB_EDGES
+#define Z_MIN_AB_EDGES 2u
+#endif
+#ifndef Z_MIN_GAP_EDGES
+#define Z_MIN_GAP_EDGES 3u
+#endif
+#ifndef Z_MISS_EDGE_LIMIT
+#define Z_MISS_EDGE_LIMIT (QUAD_EDGES_PER_REV + QUAD_EDGES_PER_REV/8u)
+#endif
+
+#if ((2u * CPR) % MODEL_SEQ_LEN) == 0
+#warning "SEQ_LEN divides (2*CPR): Z will appear in a fixed column each window."
+#endif
+
+#ifndef ENC_ZSTAMP_DEBUG
+#define ENC_ZSTAMP_DEBUG 0
+#endif
+#if ENC_ZSTAMP_DEBUG
+#include <stdio.h>
+#define ENC_DEBUG_PRINTF(...) do { printf(__VA_ARGS__); } while(0)
+#else
+#define ENC_DEBUG_PRINTF(...) do { } while(0)
+#endif
+
+#ifndef ENABLE_TRACE_WIN
+#define ENABLE_TRACE_WIN 0
+#endif
+
+/* Map big buffers to sections defined in the linker script */
+#undef  WIN_RING_ATTR
+#define WIN_RING_ATTR __attribute__((aligned(32)))
+
+#undef  EVENTBUF_ATTR
+#define EVENTBUF_ATTR __attribute__((aligned(32)))
+
+// Keep the big 1s capture in AXISRAM3–6
+#undef  CAPTURE_ATTR
+#define CAPTURE_ATTR __attribute__((section(".enc_capturebuf"), aligned(64)))
+
+/* ======================== Globals / Exposed state ====================== */
+
+extern TIM_HandleTypeDef htim1;
+
+enum {
+  WR_SKIP2   = 1u<<0,
+  WR_ZMISS   = 1u<<1,
+  WR_ZDOUBLE = 1u<<2,
+  WR_ZINWIN  = 1u<<3,
+};
+
+volatile uint32_t enc_rule_flags = 0;
+volatile uint32_t win_rule_flags = 0;
+
+/* FIFO flow control (windows) */
+volatile uint32_t win_ready = 0;
+volatile uint32_t win_total = 0;
+volatile uint32_t event_drops = 0;
+
+/* Feature sizes */
+#define SEQ_LEN  (MODEL_SEQ_LEN)
+#define FEAT_DIM (MODEL_FEAT_DIM)
+
+/* ===================== SPSC window ring (zero-copy) ==================== */
+#ifndef WINFIFO_LOG2
+#define WINFIFO_LOG2 10            /* 1024 windows (~800 KiB for 20x10 floats) */
+#endif
+#define WINFIFO      (1u << WINFIFO_LOG2)
+#define WINMASK      (WINFIFO - 1u)
+
+ENC_USED static float    WIN_RING_ATTR win_ring[WINFIFO][SEQ_LEN * FEAT_DIM];
+ENC_USED static uint32_t WIN_RING_ATTR flags_ring[WINFIFO];
+static uint16_t  wf_w = 0, wf_r = 0, wf_count = 0;
+
+/* Current in-construction window row index */
+static uint8_t  win_row = 0;
+
+/* ========================= Optional per-window trace =================== */
+#if ENABLE_TRACE_WIN
+static uint8_t trace_ab[SEQ_LEN];
+static uint8_t trace_src[SEQ_LEN];
+static uint8_t trace_z[SEQ_LEN];
+
+static uint8_t last_trace_ab[SEQ_LEN];
+static uint8_t last_trace_src[SEQ_LEN];
+static uint8_t last_trace_z[SEQ_LEN];
+#endif
+
+typedef struct {
+  uint32_t ab_since_z_soft;       /* edges since the last stamped Z, in AB edges (x2 domain) */
+  uint16_t z_row_this_window;     /* first row within current window where Z was stamped, or 0xFFFF */
+  uint32_t z_epoch_this_window;   /* epoch value for that Z (0 if none) */
+} winstamp_t;
+
+static winstamp_t g_ws = {0, 0xFFFFu, 0};
+
+/* ---- window-stamp helpers ---- */
+static inline void WinStamp_InitAll(void) {
+  memset(win_ab_start_x4, 0, sizeof(win_ab_start_x4));
+  memset(win_ab_end_x4,   0, sizeof(win_ab_end_x4));
+  for (uint32_t i=0; i<WINFIFO; ++i) win_z_row[i] = 0xFFFFu;
+  memset(win_z_epoch,     0, sizeof(win_z_epoch));
+  win_stamp_ab_start_x4 = 0;
+  win_stamp_ab_end_x4   = 0;
+  win_stamp_ab_delta_x4 = 0;
+  win_stamp_z_epoch     = 0;
+  win_stamp_z_row       = -1;
+  g_ws.ab_since_z_soft  = 0;
+  g_ws.z_row_this_window= 0xFFFFu;
+  g_ws.z_epoch_this_window = 0;
+}
+
+static inline void WinStamp_BeginWindow(uint16_t wf_w_local) {
+  g_ws.z_row_this_window = 0xFFFFu;
+  g_ws.z_epoch_this_window = 0;
+  win_ab_start_x4[wf_w_local] = g_ws.ab_since_z_soft * STEPS_PER_AB_EVENT; /* x4 */
+}
+
+static inline void WinStamp_OnZStampedInStream(uint8_t row, uint32_t epoch) {
+  if (g_ws.z_row_this_window == 0xFFFFu) {
+    g_ws.z_row_this_window = row;
+    g_ws.z_epoch_this_window = epoch;
+  }
+  /* reset the stream-aligned since-Z counter at the exact row Z is stamped */
+  g_ws.ab_since_z_soft = 0;
+}
+
+static inline void WinStamp_OnEdge(void) {
+  g_ws.ab_since_z_soft++;
+}
+
+static inline void WinStamp_PublishWindow(uint16_t wf_w_local) {
+  win_ab_end_x4[wf_w_local] = g_ws.ab_since_z_soft * STEPS_PER_AB_EVENT; /* x4 */
+  win_z_row[wf_w_local]     = g_ws.z_row_this_window;
+  win_z_epoch[wf_w_local]   = g_ws.z_epoch_this_window;
+}
+
+/* called from CopyWindowLinear to expose stamps for the window you just dequeued */
+static inline void WinStamp_CopyOut(uint16_t r) {
+  win_stamp_ab_start_x4 = win_ab_start_x4[r];
+  win_stamp_ab_end_x4   = win_ab_end_x4[r];
+  win_stamp_ab_delta_x4 = win_stamp_ab_end_x4 - win_stamp_ab_start_x4;
+  win_stamp_z_epoch     = win_z_epoch[r];
+  win_stamp_z_row       = (win_z_row[r] == 0xFFFFu) ? -1 : (int16_t)win_z_row[r];
+}
+
+/* helper to get “since Z” for feature f[7], already in the right units */
+static inline uint32_t WinStamp_GetAbForModel(void) {
+#if MODEL_FEEDS_X4
+  return g_ws.ab_since_z_soft * STEPS_PER_AB_EVENT;  /* x4 */
+#else
+  return g_ws.ab_since_z_soft;                        /* x2 */
+#endif
+}
+
+/* ============================ Encoder state ============================ */
+
+typedef struct {
+  uint8_t  last_AB_state;       /* Gray digit (bit1=A, bit0=B) */
+  float    speed_change_rate;   /* |interval_ratio - 1| */
+  float    baseline_interval;   /* EWMA step interval (ms) */
+} encoder_state_t;
+
+static encoder_state_t enc_state = { 0 };
+
+/* Direction tracking (+1 forward, -1 backward), always from HW DIR bit */
+static volatile int8_t enc_latched_dir = +1;
+int8_t EncSampler_GetLatchedDir(void) { return enc_latched_dir; }
+
+/* Last window summarized direction */
+static volatile int8_t last_window_dir = +1;
+int8_t EncSampler_GetLastWindowDir(void) { return last_window_dir; }
+
+/* Z timing (ISR) */
+static volatile uint32_t z_last_ms_isr = 0;
+
+/* Canonical edges since last accepted Z (monotonic 32-bit) */
+static volatile uint32_t ab_edges_since_z_isr = 0;
+
+/* latch the pre-reset Z gap in ISR for robust checks */
+static volatile uint32_t z_last_gap_edges_isr = 0;
+
+/* Z epoch: increments ONCE per accepted Z in ISR */
+volatile uint32_t z_epoch_isr = 0;
+/* Main-side last seen epoch (kept equal to z_epoch_isr when stamped) */
+static uint32_t z_epoch_seen_main = 0;
+
+/* Public diagnostics (read by app) */
+volatile uint32_t z_diag_isr_seen         = 0;
+volatile uint32_t z_diag_isr_accepted     = 0;
+volatile uint32_t z_diag_ab_since_isr     = 0;
+volatile uint32_t z_diag_steps_x4         = 0;
+volatile uint32_t z_diag_last_z_ms        = 0;
+
+/* ===================== Synth Gray (for printing only) =================== */
+static inline uint8_t gray_to_ring_idx(uint8_t g) {
+  switch (g & 3u) { case 0: return 0; case 1: return 1; case 3: return 2; case 2: return 3; default: return 0; }
+}
+static const uint8_t GRAY_RING[4] = {0, 1, 3, 2};
+static volatile uint8_t synth_ring_idx = 0;
+static volatile uint8_t synth_gray     = 0;
+
+/* ============================ Events =================================== */
+
+typedef struct {
+  uint8_t  src;           /* 1=CC1(A), 2=CC2(B) */
+  int8_t   dir;           /* +1/-1 from hardware DIR at capture time */
+  uint8_t  ab_state;      /* Gray at capture */
+  uint16_t ccr;           /* captured counter (debug/optional) */
+  uint32_t timestamp_ms;  /* HAL_GetTick() */
+} encoder_event_t;
+
+#ifndef EVENT_BUF_BITS
+#define EVENT_BUF_BITS    16  /* 32768 live events */
+#endif
+#define EVENT_BUFFER_SIZE (1u << EVENT_BUF_BITS)
+#define EVENT_IDX_MASK    (EVENT_BUFFER_SIZE - 1u)
+
+ENC_USED static encoder_event_t EVENTBUF_ATTR event_buffer[EVENT_BUFFER_SIZE];
+static volatile uint32_t event_write = 0;
+static volatile uint32_t event_read  = 0;
+
+/* =========================== 1s RAW CAPTURE ============================ */
+
+#ifndef CAPTURE_MAX_EDGES_PER_SEC
+#define CAPTURE_MAX_EDGES_PER_SEC 140000u
+#endif
+#ifndef CAPTURE_SEC
+#define CAPTURE_SEC 1u
+#endif
+#ifndef CAPTURE_BYTES
+#define CAPTURE_BYTES ((CAPTURE_MAX_EDGES_PER_SEC * CAPTURE_SEC + 4096u) * (uint32_t)sizeof(enc_capture_evt_t))
+#endif
+
+enum { CAP_F_Z = 1u << 0 };
+
+#ifndef CAPTURE_MAX_EVENTS
+#define CAPTURE_MAX_EVENTS   (CAPTURE_BYTES / sizeof(enc_capture_evt_t))
+#endif
+
+ENC_USED static enc_capture_evt_t CAPTURE_ATTR cap_buf[CAPTURE_MAX_EVENTS];
+_Static_assert(CAPTURE_MAX_EVENTS > 0, "CAPTURE_MAX_EVENTS must be > 0");
+
+static volatile uint32_t cap_w = 0, cap_r = 0, cap_count = 0, cap_drops = 0;
+static volatile uint8_t  cap_armed = 0, cap_active = 0, cap_done = 0;
+static volatile uint32_t cap_start_ms = 0, cap_end_ms = 0, cap_duration_ms = 0;
+
+ENC_USED static uint32_t WIN_RING_ATTR win_ab_start_x4[WINFIFO];
+ENC_USED static uint32_t WIN_RING_ATTR win_ab_end_x4[WINFIFO];
+ENC_USED static uint16_t WIN_RING_ATTR win_z_row[WINFIFO];   /* 0..SEQ_LEN-1, 0xFFFF = none */
+ENC_USED static uint32_t WIN_RING_ATTR win_z_epoch[WINFIFO]; /* epoch of first Z stamped in the window or 0 */
+
+/* ---- exported "last copied window" stamps (read by app_x-cube-ai) ---- */
+volatile uint32_t win_stamp_ab_start_x4 = 0;
+volatile uint32_t win_stamp_ab_end_x4   = 0;
+volatile uint32_t win_stamp_ab_delta_x4 = 0;
+volatile uint32_t win_stamp_z_epoch     = 0;
+volatile int16_t  win_stamp_z_row       = -1;
+
+static inline void cap_reset_locked(void) {
+  cap_w = cap_r = cap_count = cap_drops = 0;
+  cap_done = 0;
+}
+
+/* during capture we also write into cap_buf, but still feed live FIFO */
+static inline void cap_push_isr(uint8_t src, int8_t dir, uint16_t ccr,
+                                uint8_t ab, uint32_t t_ms, uint8_t flags)
+{
+  uint32_t next = cap_w + 1u;
+  if (next >= CAPTURE_MAX_EVENTS) next = 0;
+  if (next == cap_r) { cap_drops++; return; }  /* drop if full */
+
+  enc_capture_evt_t *e = &cap_buf[cap_w];
+  e->t_ms     = t_ms;
+  e->ccr      = ccr;
+  e->src      = src;          /* 0 = Z, 1 = A(CC1), 2 = B(CC2) */
+  e->dir      = dir;
+  e->ab_state = ab;
+  e->flags    = flags;
+
+  cap_w = next;
+  cap_count++;
+}
+
+/* ============================ Helpers ================================== */
+
+static inline float scale_feat(int j, float x) {
+  float y = (x - MODEL_FEAT_MIN[j]) * MODEL_FEAT_SCALE[j];
+  if (y < 0.f) y = 0.f;
+  if (y > 1.f) y = 1.f;
+  return y;
+}
+
+static inline uint8_t enc_read_AB(void) {
+  const uint32_t idr = GPIOE->IDR;              /* A=PE9, B=PE11 */
+  const uint8_t a = (idr & ENC_A_Pin) ? 1u : 0u;
+  const uint8_t b = (idr & ENC_B_Pin) ? 1u : 0u;
+  return (uint8_t)((a << 1) | b);
+}
+
+/* Hardware DIR at capture time */
+static inline int8_t dir_from_hw(void) {
+  int8_t dir = ((TIM1->CR1 & TIM_CR1_DIR) == 0) ? +1 : -1; /* DIR=0 => up */
+#if ENC_DIR_REVERSED
+  dir = (int8_t)-dir;
+#endif
+  return dir;
+}
+
+/* ======================= IRQ enable helpers ============================ */
+
+static volatile uint8_t ab_irqs_on = 1;  /* mirror state for AB (CC1/CC2) */
+
+static inline void EncSampler_ConfigIRQs(void) {
+  __HAL_TIM_ENABLE_IT(&htim1, TIM_IT_CC1 | TIM_IT_CC2);
+#if HAVE_Z_INDEX && !FORCE_IGNORE_Z
+  __HAL_TIM_ENABLE_IT(&htim1, TIM_IT_IDX);
+#endif
+  __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_UPDATE | TIM_IT_TRIGGER | TIM_IT_COM);
+  __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_UIF | TIM_SR_TIF | TIM_SR_COMIF);
+}
+
+void EncSampler_SetABIrqs(uint8_t on)
+{
+  __disable_irq();
+  if (on) {
+    __HAL_TIM_ENABLE_IT(&htim1, TIM_IT_CC1 | TIM_IT_CC2);
+  } else {
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_IDX);
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC1IF | TIM_SR_CC1OF |
+                               TIM_SR_CC2IF | TIM_SR_CC2OF | TIM_SR_IDXF);
+  }
+  ab_irqs_on = on ? 1u : 0u;
+  __enable_irq();
+}
+
+/* ======================== IRQ Drain (encoder) ========================== */
+
+static inline void push_event_isr(uint8_t src, int8_t dir, uint16_t ccr_sample,
+                                  uint8_t ab_state)
+{
+  const uint32_t next = (event_write + 1u) & EVENT_IDX_MASK;
+  if (next == event_read) { event_drops++; Diag_AddEventDrops(1); return; }
+  encoder_event_t *e = &event_buffer[event_write];
+  e->timestamp_ms = HAL_GetTick();
+  e->ccr          = ccr_sample;
+  e->src          = src;
+  e->dir          = dir;
+  e->ab_state     = ab_state;
+  event_write = next;
+}
+
+void EncSampler_EncoderIRQ_Drain(void) {
+  HAL_GPIO_WritePin(INT_PIN_GPIO_Port, INT_PIN_Pin, GPIO_PIN_SET);
+  DiagTiming_Start(DIAG_T_ISR_TOTAL);
+
+  for (int guard = 0; guard < 256; ++guard) {
+    uint32_t sr = TIM1->SR;
+    uint32_t pending = sr & (TIM_SR_CC1IF | TIM_SR_CC2IF | TIM_SR_CC1OF | TIM_SR_CC2OF);
+#if HAVE_Z_INDEX && !FORCE_IGNORE_Z && defined(TIM_SR_IDXF)
+    pending |= (sr & TIM_SR_IDXF);
+#endif
+    if (!pending) break;
+
+    if (sr & TIM_SR_CC1OF) {
+      __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC1OF);
+      event_drops++; Diag_AddEventDrops(1);
+    }
+    if (sr & TIM_SR_CC2OF) {
+      __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_CC2OF);
+      event_drops++; Diag_AddEventDrops(1);
+    }
+
+#if HAVE_Z_INDEX && !FORCE_IGNORE_Z && defined(TIM_SR_IDXF)
+    if (sr & TIM_SR_IDXF) {
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_IDX);
+# ifdef TIM_SR_IDXF
+      __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_IDXF);
+# endif
+      z_diag_isr_seen++;
+
+      const uint32_t now_ms = HAL_GetTick();
+      const int32_t  dt_ms  = (int32_t)(now_ms - z_last_ms_isr);
+
+      if ((dt_ms >= (int32_t)Z_SOFT_DEBOUNCE_MS) &&
+          (ab_edges_since_z_isr >= Z_MIN_AB_EDGES)) {
+
+        /* latch the gap BEFORE we reset so main can judge double/miss */
+        z_last_gap_edges_isr = ab_edges_since_z_isr;
+
+        /* reset canonical counters at Z */
+        ab_edges_since_z_isr = 0u;
+        z_diag_ab_since_isr  = 0u;
+        z_diag_steps_x4      = 0u;
+
+        z_last_ms_isr    = now_ms;
+        z_diag_last_z_ms = now_ms;
+        z_diag_isr_accepted++;
+
+        /* epoch tick -> main path will stamp Z once per epoch */
+        z_epoch_isr++;
+
+        /* write Z into capture stream if active, and/or arm start */
+        if (cap_active) {
+          cap_push_isr(0u, dir_from_hw(), 0u, enc_read_AB() & 3u, now_ms, CAP_F_Z);
+        } else if (cap_armed) {
+          cap_active   = 1u;
+          cap_armed    = 0u;
+          cap_done     = 0u;
+          cap_start_ms = now_ms;
+          cap_end_ms   = now_ms + cap_duration_ms;
+          cap_push_isr(0u, dir_from_hw(), 0u, enc_read_AB() & 3u, now_ms, CAP_F_Z);
+        }
+
+        Diag_NotifyZAccepted(now_ms);
+
+#if ENC_ZSTAMP_DEBUG
+        ENC_DEBUG_PRINTF("Z_ISR accept @%lu ms, epoch=%lu, gap=%lu\n",
+                         (unsigned long)now_ms, (unsigned long)z_epoch_isr,
+                         (unsigned long)z_last_gap_edges_isr);
+#endif
+      }
+    }
+#endif
+
+    sr = TIM1->SR;
+
+    /* --- CC1 (A) --- */
+    if (sr & TIM_SR_CC1IF) {
+      const uint16_t c1 = (uint16_t)TIM1->CCR1;
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_CC1);
+      const uint8_t ab  = enc_read_AB() & 0x3u;
+      const int8_t  dir = dir_from_hw();
+      enc_latched_dir   = dir;
+
+      const uint32_t tms = HAL_GetTick();
+
+      if (cap_active) {
+        cap_push_isr(1u, dir, c1, ab, tms, 0u);
+        if ((int32_t)(tms - cap_end_ms) >= 0) { cap_active = 0u; cap_done = 1u; }
+      }
+#if !CAPTURE_STEALS_EVENTS
+      push_event_isr(1u, dir, c1, ab);
+#else
+      if (!cap_active) push_event_isr(1u, dir, c1, ab);
+#endif
+
+#if DIAG_NOTIFY_AB_IN_ISR
+      Diag_NotifyABEdgeAt(tms);
+#endif
+
+      /* “since Z” counters (always in ISR) */
+      ab_edges_since_z_isr++;
+      z_diag_ab_since_isr = ab_edges_since_z_isr;
+      z_diag_steps_x4     = ab_edges_since_z_isr * STEPS_PER_AB_EVENT;
+      continue;
+    }
+
+    /* --- CC2 (B) --- */
+    if (sr & TIM_SR_CC2IF) {
+      const uint16_t c2 = (uint16_t)TIM1->CCR2;
+      __HAL_TIM_CLEAR_IT(&htim1, TIM_IT_CC2);
+      const uint8_t ab  = enc_read_AB() & 0x3u;
+      const int8_t  dir = dir_from_hw();
+      enc_latched_dir   = dir;
+
+      const uint32_t tms = HAL_GetTick();
+
+      if (cap_active) {
+        cap_push_isr(2u, dir, c2, ab, tms, 0u);
+        if ((int32_t)(tms - cap_end_ms) >= 0) { cap_active = 0u; cap_done = 1u; }
+      }
+#if !CAPTURE_STEALS_EVENTS
+      push_event_isr(2u, dir, c2, ab);
+#else
+      if (!cap_active) push_event_isr(2u, dir, c2, ab);
+#endif
+
+#if DIAG_NOTIFY_AB_IN_ISR
+      Diag_NotifyABEdgeAt(tms);
+#endif
+
+      ab_edges_since_z_isr++;
+      z_diag_ab_since_isr = ab_edges_since_z_isr;
+      z_diag_steps_x4     = ab_edges_since_z_isr * STEPS_PER_AB_EVENT;
+      continue;
+    }
+
+#ifdef TIM_SR_TERRF
+    if (sr & TIM_SR_TERRF) { __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_TERRF); }
+#endif
+#ifdef TIM_SR_IERRF
+    if (sr & TIM_SR_IERRF) { __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_IERRF); }
+#endif
+  }
+
+  {
+    const uint32_t level = (event_write - event_read) & EVENT_IDX_MASK;
+    Diag_ObserveEventBufLevel(level);
+  }
+
+  DiagTiming_Stop(DIAG_T_ISR_TOTAL);
+  HAL_GPIO_WritePin(INT_PIN_GPIO_Port, INT_PIN_Pin, GPIO_PIN_RESET);
+  __DSB();
+}
+
+/* ============================ (Replay removed) ========================= */
+/* If main still references these, keep tiny stubs temporarily. */
+static inline void EncSampler_ReplayStart(void) {}
+static inline int  EncSampler_ReplayStep(uint32_t max_events) { (void)max_events; return 0; }
+uint8_t EncSampler_ReplayActive(void) { return 0u; }
+
+/* ============================ Public API =============================== */
+
+void EncSampler_Init(void) {
+  memset(&enc_state, 0, sizeof(enc_state));
+  enc_state.baseline_interval = 10.0f;
+
+  enc_state.last_AB_state = (enc_read_AB() & 0x3u);
+  synth_ring_idx = gray_to_ring_idx(enc_state.last_AB_state);
+  synth_gray     = enc_state.last_AB_state;
+
+  __disable_irq();
+  wf_w = wf_r = 0; wf_count = 0; win_row = 0;
+  win_ready = 0; win_total = 0;
+  __enable_irq();
+
+  z_epoch_seen_main = z_epoch_isr;
+
+  __disable_irq();
+  /* capture state */
+  cap_armed = cap_active = cap_done = 0u;
+  cap_w = cap_r = cap_count = cap_drops = 0u;
+  cap_start_ms = cap_end_ms = cap_duration_ms = 0u;
+
+  z_last_gap_edges_isr = 0u;
+  __enable_irq();
+
+  /* Seed/ECC-init the NOLOAD buffers once */
+  memset((void*)win_ring,     0, sizeof(win_ring));
+  memset((void*)flags_ring,   0, sizeof(flags_ring));
+  memset((void*)event_buffer, 0, sizeof(event_buffer));
+  memset((void*)cap_buf,      0, sizeof(cap_buf));
+
+  EncSampler_ConfigIRQs();
+  __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_TIF | TIM_SR_COMIF);
+}
+
+void EncSampler_Process(void) {
+  /* LIVE processing only (no replay pump) */
+
+  static uint32_t last_ms = 0;
+  static uint32_t gray_skip2   = 0;
+  static uint8_t  last_src     = 0;
+  static int32_t  dir_sum      = 0;
+  static uint32_t rule_flags_live = 0;
+  static uint8_t  had_z_in_win = 0;
+
+  /* adjacency computed on the same gray the model sees */
+  static uint8_t  last_model_gray = 0;
+  static uint8_t  have_last_model_gray = 0;
+  /* Stream-aligned counters/markers (no races with ISR) */
+  static uint32_t ab_since_z_soft = 0;        /* #AB events since last stamped Z (aligned to processed events) */
+  static uint16_t z_row_this_window = 0xFFFF; /* first row in this window where we stamped Z, or 0xFFFF */
+  static uint32_t z_epoch_for_this_window = 0;/* epoch value when that Z was stamped (0 if none) */
+
+
+  if (cap_active) {
+    uint32_t now = HAL_GetTick();
+    if ((int32_t)(now - cap_end_ms) >= 0) {
+      __disable_irq();
+      cap_active = 0u;
+      cap_done   = 1u;
+      __enable_irq();
+    }
+  }
+
+  while (event_read != event_write) {
+    encoder_event_t evt = event_buffer[event_read];
+    event_read = (event_read + 1u) & EVENT_IDX_MASK;
+
+    /* keep public Z time fresh for UI */
+    z_diag_last_z_ms = z_last_ms_isr;
+
+#if ENABLE_TRACE_WIN
+    if (win_row == 0) memset(trace_z, 0, SEQ_LEN);
+#endif
+    if (win_row == 0) {
+      had_z_in_win = 0;
+      DiagTiming_Start(DIAG_T_E2E_WINDOW);
+    }
+
+    const uint8_t current_gray = (evt.ab_state & 0x3u);
+    const int8_t  dir = evt.dir;
+    const uint8_t dir_fwd = (dir > 0);
+    const uint8_t dir_bwd = (dir < 0);
+    if (dir_fwd) dir_sum++; else if (dir_bwd) dir_sum--;
+
+    /* --- timing features --- */
+    const uint32_t now_ms = evt.timestamp_ms;
+    int32_t dms = (int32_t)(now_ms - last_ms);
+    if (dms <= 0) dms = 1;
+    const float dt_ms = (float)dms;
+    if (enc_state.baseline_interval < 1.0f) enc_state.baseline_interval = dt_ms;
+    const float ratio = dt_ms / enc_state.baseline_interval;
+    enc_state.speed_change_rate = fabsf(ratio - 1.0f);
+    enc_state.baseline_interval = 0.9f * enc_state.baseline_interval + 0.1f * dt_ms;
+    last_ms = now_ms;
+
+    /* canonical counter from ISR (rising-only edges) */
+    const uint32_t ab_since_z = ab_edges_since_z_isr;
+
+    /* ---- Z one-shot stamp using the epoch ---- */
+    uint8_t packZ = 0u;
+    uint32_t gap_before = 0u;
+    if (z_epoch_isr != z_epoch_seen_main) {
+      packZ = 1u;
+      z_epoch_seen_main = z_epoch_isr;
+      had_z_in_win = 1u;
+
+      /* use latched gap from ISR for double/miss detection */
+      gap_before = z_last_gap_edges_isr;
+
+#if ENC_ZSTAMP_DEBUG
+      ENC_DEBUG_PRINTF("Z_STAMP row=%u at t=%lu ms, pre_gap=%lu\n",
+                       (unsigned)win_row, (unsigned long)now_ms, (unsigned long)gap_before);
+#endif
+      /* phase-lock the synthetic gray to the **actual** AB at Z */
+      synth_ring_idx = gray_to_ring_idx(current_gray & 3u);
+      synth_gray     = GRAY_RING[synth_ring_idx];
+      /* reset adjacency history to avoid a false non-adjacent on first step */
+      have_last_model_gray = 0;
+    }
+
+    /* flags: double/miss */
+    if (packZ && (gap_before < Z_MIN_GAP_EDGES)) rule_flags_live |= WR_ZDOUBLE;
+    if (ab_since_z > Z_MISS_EDGE_LIMIT)          rule_flags_live |= WR_ZMISS;
+
+    /* === advance synthetic gray one step PER EDGE (fills falling edges) === */
+    {
+      const uint8_t expect_src = (dir > 0)
+                                 ? ((synth_ring_idx & 1u) ? 1u : 2u)
+                                 : ((synth_ring_idx & 1u) ? 2u : 1u);
+      if (evt.src != expect_src) {
+        /* desync -> snap to the real pins, then continue stepping */
+        synth_ring_idx = gray_to_ring_idx(current_gray);
+      }
+      /* model_gray = state AT this edge (after possible snap) */
+      synth_gray = GRAY_RING[synth_ring_idx];
+
+      /* step for NEXT edge */
+      if (dir > 0) synth_ring_idx = (synth_ring_idx + 1) & 3u;
+      else         synth_ring_idx = (synth_ring_idx + 3) & 3u;
+    }
+
+    /* === features packed for the model (use FILLED gray!) === */
+    DiagTiming_Start(DIAG_T_PACK_AB);
+
+    float *slot = &win_ring[wf_w][0];
+    float *f    = slot + ((uint32_t)win_row * FEAT_DIM);
+
+    const uint8_t src_A = (evt.src == 1u);
+    const uint8_t src_B = (evt.src == 2u);
+    const uint8_t is_same_src = (last_src && (evt.src == last_src)) ? 1u : 0u;
+
+    const uint8_t model_gray = (synth_gray & 0x3u);
+
+    /* adjacency based on what the MODEL sees */
+    uint8_t adjacent = 1u;
+    if (have_last_model_gray) {
+      const uint8_t diff_bits = (last_model_gray ^ model_gray) & 3u;
+      adjacent = (diff_bits == 1u) || (diff_bits == 2u);
+    } else {
+      have_last_model_gray = 1u;
+    }
+    last_model_gray = model_gray;
+
+#if MODEL_FEEDS_X4
+    const uint32_t ab_for_model = ab_since_z * STEPS_PER_AB_EVENT;  /* x4 */
+#else
+    const uint32_t ab_for_model = ab_since_z;                        /* x2 */
+#endif
+
+    f[0] = scale_feat(0, (float)model_gray);               /* FILLED gray */
+    f[1] = scale_feat(1, (float)src_A);
+    f[2] = scale_feat(2, (float)src_B);
+    f[3] = scale_feat(3, (float)dir_fwd);
+    f[4] = scale_feat(4, (float)dir_bwd);
+    f[5] = scale_feat(5, enc_state.speed_change_rate);
+    f[6] = scale_feat(6, (float)packZ);
+    f[7] = scale_feat(7, (float)ab_for_model);
+    f[8] = scale_feat(8, (float)is_same_src);
+    f[9] = scale_feat(9, (float)adjacent);
+
+    DiagTiming_Stop(DIAG_T_PACK_AB);
+
+#if ENABLE_TRACE_WIN
+    trace_ab[win_row]  = model_gray;  /* for prints: show what model sees */
+    trace_src[win_row] = evt.src;
+    trace_z[win_row]   = packZ;
+#endif
+
+
+    if (is_same_src) gray_skip2++;
+    last_src = evt.src;
+
+    /* keep raw pin state separately if you still want it for debug */
+    enc_state.last_AB_state = current_gray;
+
+    /* advance row, publish if full */
+    win_row++;
+
+    if (win_row >= SEQ_LEN) {
+      uint32_t flags = rule_flags_live;
+      if (gray_skip2 >= 2) flags |= WR_SKIP2;
+      if (had_z_in_win)    flags |= WR_ZINWIN;
+      enc_rule_flags = flags;
+
+      if (dir_sum > 0)      last_window_dir = +1;
+      else if (dir_sum < 0) last_window_dir = -1;
+      else                  last_window_dir = enc_latched_dir;
+
+      dir_sum = 0;
+
+      DiagTiming_Stop(DIAG_T_E2E_WINDOW);
+      DiagTiming_Start(DIAG_T_WIN_PUBLISH);
+
+      flags_ring[wf_w] = flags;
+
+      __disable_irq();
+      wf_w = (uint16_t)((wf_w + 1u) & WINMASK);
+      if (wf_count < WINFIFO) {
+        wf_count++;
+      } else {
+        wf_r = (uint16_t)((wf_r + 1u) & WINMASK);
+      }
+      win_ready = wf_count;
+#if ENABLE_TRACE_WIN
+      memcpy(last_trace_ab,  trace_ab,  SEQ_LEN);
+      memcpy(last_trace_src, trace_src, SEQ_LEN);
+      memcpy(last_trace_z,   trace_z,   SEQ_LEN);
+      memset(trace_z, 0, SEQ_LEN);
+#endif
+      __enable_irq();
+
+      Diag_ObserveWinFifoLevel(wf_count);
+      win_total++;
+
+      DiagTiming_Stop(DIAG_T_WIN_PUBLISH);
+      Diag_NotifyWindowPublished();
+
+      /* reset window accumulators */
+      win_row = 0;
+      gray_skip2 = 0;
+      rule_flags_live = 0;
+      last_src = 0;
+      had_z_in_win = 0;
+      /* keep last_model_gray & have_last_model_gray across windows */
+    }
+  }
+}
+
+/* =============================== Copy ================================== */
+
+int EncSampler_CopyWindowLinear(float *dst, uint32_t *out_flags) {
+  uint16_t r;
+  uint32_t flags;
+
+  __disable_irq();
+  if (wf_count == 0) { __enable_irq(); return -1; }
+  r     = wf_r;
+  flags = flags_ring[r];
+  wf_r  = (uint16_t)((wf_r + 1u) & WINMASK);
+  wf_count--;
+  win_ready = wf_count;
+  __enable_irq();
+
+  memcpy(dst, win_ring[r], sizeof(win_ring[0]));
+  win_rule_flags = flags;
+  if (out_flags) *out_flags = flags;
+
+  return 0;
+}
+
+/* =============================== Stop / Flush =========================== */
+
+void EncSampler_StopHardware(void) {
+  __disable_irq();
+
+  if (htim1.Instance) {
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_CC1 | TIM_IT_CC2 | TIM_IT_UPDATE | TIM_IT_TRIGGER | TIM_IT_COM);
+#ifdef TIM_IT_IDX
+    __HAL_TIM_DISABLE_IT(&htim1, TIM_IT_IDX);
+#endif
+    __HAL_TIM_DISABLE(&htim1);
+
+    __HAL_TIM_CLEAR_FLAG(&htim1,
+      TIM_SR_CC1IF | TIM_SR_CC1OF |
+      TIM_SR_CC2IF | TIM_SR_CC2OF |
+      TIM_SR_UIF   | TIM_SR_TIF   | TIM_SR_COMIF);
+#ifdef TIM_SR_IDXF
+    __HAL_TIM_CLEAR_FLAG(&htim1, TIM_SR_IDXF);
+#endif
+  }
+
+#ifdef TIM1_CC_IRQn
+  NVIC_DisableIRQ(TIM1_CC_IRQn);
+#endif
+#if defined(TIM1_TRG_CCU_IRQn)
+  NVIC_DisableIRQ(TIM1_TRG_CCU_IRQn);
+#elif defined(TIM1_TRG_COM_IRQn)
+  NVIC_DisableIRQ(TIM1_TRG_COM_IRQn);
+#endif
+
+  ab_irqs_on = 0;
+  __enable_irq();
+}
+
+void EncSampler_FlushWindows(void) {
+  __disable_irq();
+
+  wf_w = wf_r = 0; wf_count = 0;
+  win_ready = 0; win_total = 0;
+  win_row = 0;
+
+  event_read = event_write = 0; event_drops = 0;
+
+  z_last_ms_isr = 0;
+  ab_edges_since_z_isr = 0;
+  z_last_gap_edges_isr = 0;
+  z_diag_isr_seen = 0;
+  z_diag_isr_accepted = 0;
+  z_diag_ab_since_isr = 0;
+  z_diag_steps_x4 = 0;
+  z_diag_last_z_ms = 0;
+
+  z_epoch_isr = 0;
+  z_epoch_seen_main = 0;
+
+  cap_armed = 0u; cap_active = 0u; cap_done = 0u;
+  cap_w = cap_r = cap_count = cap_drops = 0u;
+  cap_start_ms = cap_end_ms = cap_duration_ms = 0u;
+
+  __enable_irq();
+}
+
+/* ============================ Capture API ============================== */
+
+void EncSampler_CaptureArmOnNextZ(uint32_t duration_ms)
+{
+  __disable_irq();
+  cap_duration_ms = duration_ms ? duration_ms : 1000u;
+  cap_armed  = 1u;
+  cap_active = 0u;
+  cap_done   = 0u;
+  cap_reset_locked();
+  __enable_irq();
+}
+
+void EncSampler_CaptureCancel(void)
+{
+  __disable_irq();
+  cap_armed  = 0u;
+  cap_active = 0u;
+  __enable_irq();
+}
+
+bool     EncSampler_CaptureActive(void) { return cap_active != 0u; }
+bool     EncSampler_CaptureDone(void)   { return cap_done   != 0u; }
+uint32_t EncSampler_CaptureCount(void)  { return cap_count; }
+uint32_t EncSampler_CaptureDrops(void)  { return cap_drops; }
+
+uint32_t EncSampler_CaptureRead(enc_capture_evt_t *dst, uint32_t max)
+{
+  if (!dst || !max) return 0u;
+  uint32_t copied = 0;
+  __disable_irq();
+  while ((copied < max) && (cap_r != cap_w)) {
+    dst[copied++] = cap_buf[cap_r];
+    cap_r = (cap_r + 1u);
+    if (cap_r >= CAPTURE_MAX_EVENTS) cap_r = 0u;
+  }
+  __enable_irq();
+  return copied;
+}
+
+void EncSampler_GetLastCaptureStats(uint32_t* edges, uint32_t* dur_ms,
+                                    uint32_t* first_ms, uint32_t* last_ms,
+                                    uint32_t* z_marks)
+{
+  uint32_t e=0, f=0, l=0, z=0;
+
+  __disable_irq();
+  /* You can accumulate edges/marks inline where you need them if desired. */
+  /* For now these are not auto-maintained; compute later from cap_buf if needed. */
+  __enable_irq();
+
+  if (edges)    *edges    = e;
+  if (dur_ms)   *dur_ms   = (f && l && l >= f) ? (l - f) : 0u;
+  if (first_ms) *first_ms = f;
+  if (last_ms)  *last_ms  = l;
+  if (z_marks)  *z_marks  = z;
+}
+
+void EncSampler_CaptureForceStopFromISR(void)
+{
+  if (cap_active) {
+    __disable_irq();
+    EncSampler_StopHardware();
+    printf("Capture stopped at %lu ms\n", HAL_GetTick());
+    cap_active = 0u;
+    cap_done = 1u;
+    __enable_irq();
+  }
+}
+
+/* ============================== Trace API ============================== */
+#if ENABLE_TRACE_WIN
+void EncSampler_DebugGetLastTrace(uint8_t *ab, uint8_t *src, uint8_t *z) {
+  if (ab)  memcpy(ab,  last_trace_ab,  SEQ_LEN);
+  if (src) memcpy(src, last_trace_src, SEQ_LEN);
+  if (z)   memcpy(z,   last_trace_z,   SEQ_LEN);
+}
+#else
+void EncSampler_DebugGetLastTrace(uint8_t *ab, uint8_t *src, uint8_t *z) {
+  if (ab)  memset(ab,  0, SEQ_LEN);
+  if (src) memset(src, 0, SEQ_LEN);
+  if (z)   memset(z,   0, SEQ_LEN);
+}
+#endif

@@ -1,0 +1,133 @@
+#ifndef DIAG_TIMING_H
+#define DIAG_TIMING_H
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "stm32n6xx_hal.h"
+#include "main.h"   /* for INT_PIN_Pin / MODEL_PIN_Pin ports/pins */
+
+/* ========= Scope pins (oscilloscope) ========= */
+#define DIAG_INT_PIN_SET()    HAL_GPIO_WritePin(INT_PIN_GPIO_Port,   INT_PIN_Pin,   GPIO_PIN_SET)
+#define DIAG_INT_PIN_CLR()    HAL_GPIO_WritePin(INT_PIN_GPIO_Port,   INT_PIN_Pin,   GPIO_PIN_RESET)
+#define DIAG_MODEL_PIN_SET()  HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_SET)
+#define DIAG_MODEL_PIN_CLR()  HAL_GPIO_WritePin(MODEL_PIN_GPIO_Port, MODEL_PIN_Pin, GPIO_PIN_RESET)
+
+/* ========= Timers you can measure ========= */
+typedef enum {
+  DIAG_T_ISR_TOTAL = 0,     /* whole encoder IRQ service */
+  DIAG_T_ISR_Z,             /* (optional) Z branch inside IRQ */
+  DIAG_T_ISR_AB,            /* (optional) CC1/CC2 branch inside IRQ */
+  DIAG_T_PACK_AB,           /* AB event -> features packing (main loop) */
+  DIAG_T_WIN_PUBLISH,       /* full window publish (flags/memcpy/indices) */
+  DIAG_T_MODEL,             /* ai_run wall time */
+  DIAG_T_E2E_WINDOW,        /* first-row-in-window -> classification ready */
+  DIAG_T__COUNT
+} diag_timer_id_t;
+
+/* One timer's stats (in CPU cycles) */
+typedef struct {
+  uint32_t count;
+  uint64_t sum_cycles;
+  uint32_t min_cycles;
+  uint32_t max_cycles;
+} diag_timer_stat_t;
+
+/* Aggregate snapshot (timers + health) */
+typedef struct {
+  diag_timer_stat_t timers[DIAG_T__COUNT];
+
+  /* health / saturation (copy in from your app when you dump) */
+  uint32_t event_buf_cap;
+  uint32_t event_buf_hwm;     /* high-water mark observed */
+  uint32_t event_drops;
+
+  uint32_t winfifo_cap;
+  uint32_t winfifo_hwm;
+
+  /* optional: model count in this reporting period */
+  uint32_t inferences;
+} diag_snapshot_t;
+
+/* ========= 1-second trial capture (arm after next Z) ========= */
+#ifndef DIAG_MAX_CLASSES
+#define DIAG_MAX_CLASSES  8u
+#endif
+
+typedef struct {
+  bool     armed_after_z;   /* waiting for next Z to start */
+  bool     running;         /* inside the trial window */
+  bool     done;            /* finished & latched until fetch */
+  uint32_t duration_ms;     /* target duration, e.g. 1000 */
+  uint32_t t_start_ms;
+  uint32_t t_end_ms;
+
+  /* counters collected while running */
+  uint32_t ab_edges;
+  uint32_t windows;
+  uint32_t inferences;
+  uint32_t class_hist[DIAG_MAX_CLASSES];
+} diag_trial_t;
+
+typedef struct {
+  volatile uint32_t last_z_ms;   /* last accepted Z timestamp */
+  volatile uint32_t period_ms;   /* most recent Z-to-Z period (ms) */
+  volatile float    rps_inst;    /* 1000 / period_ms */
+  volatile float    rps_ewma;    /* smoothed */
+  volatile float    rpm_inst;    /* rps_inst * 60 */
+  volatile float    rpm_ewma;    /* rps_ewma * 60 */
+} td_speed_t;
+
+
+/* ========= Public API ========= */
+
+/* Enable cycle counter, reset stats. Call once in main() after HAL init/clock. */
+void DiagTiming_Init(void);
+
+/* Reset all timer stats (does not touch trial state) */
+void DiagTiming_ResetTimers(void);
+
+/* Start/stop a timer (stores cycles internally). Not re-entrant per id. */
+void DiagTiming_Start(diag_timer_id_t id);
+void DiagTiming_Stop(diag_timer_id_t id);
+
+/* Convert cycles to time units (uses SystemCoreClock) */
+static inline uint32_t Diag_CyclesToNs(uint32_t cycles) {
+  /* cycles / (Hz) = seconds -> *1e9 for ns */
+  /* To keep it simple and fast, do (cycles * 1000) / (SystemCoreClock/1000000) for ns */
+  return (uint32_t)((((uint64_t)cycles) * 1000000000ull) / (uint64_t)SystemCoreClock);
+}
+static inline uint32_t Diag_CyclesToUs(uint32_t cycles) {
+  return (uint32_t)((((uint64_t)cycles) * 1000000ull) / (uint64_t)SystemCoreClock);
+}
+
+/* Update health/watermarks (call from your app periodically) */
+void Diag_SetEventBufCaps(uint32_t capacity);
+void Diag_ObserveEventBufLevel(uint32_t level);
+void Diag_AddEventDrops(uint32_t drops);   /* additive; pass your event_drops delta or absolute */
+void Diag_SetWinFifoCaps(uint32_t capacity);
+void Diag_ObserveWinFifoLevel(uint32_t level);
+void Diag_IncInferenceCount(void);
+
+/* Take a snapshot (copy out + zero the incremental counters for next period) */
+void Diag_GetAndResetSnapshot(diag_snapshot_t *out);
+
+/* ========= Trial control ========= */
+void Diag_TrialReset(void);                               /* clears all state */
+void Diag_ArmTrialAfterNextZ(uint32_t duration_ms);       /* e.g., 1000 */
+void Diag_NotifyZAccepted(uint32_t now_ms);               /* call in Z-accept ISR */
+void Diag_NotifyWindowPublished(void);                    /* call once per published window */
+void Diag_NotifyInferenceTop(uint32_t top_class_index);   /* call after each ai_run */
+void Diag_GetRps(float *rps_inst, float *rps_avg);
+
+void Diag_NotifyABEdgeAt(uint32_t event_ms);
+static inline void Diag_NotifyABEdge(void) { Diag_NotifyABEdgeAt(HAL_GetTick()); }
+/* Query trial result; if done==true, you may copy it then call Diag_TrialReset() */
+const diag_trial_t* Diag_TrialPeek(void);
+void Diag_PrintSnapshot(const diag_snapshot_t* snap);
+
+void TD_Speed_Reset(void);
+void TD_Speed_OnZ(uint32_t now_ms);
+void TD_Speed_Get(float *rps_inst, float *rps_avg,
+                  float *rpm_inst, float *rpm_avg);
+
+#endif /* DIAG_TIMING_H */

@@ -1,0 +1,79 @@
+// Auto-generated from training notebook — DO NOT EDIT BY HAND
+#pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define MODEL_SEQ_LEN 20
+#define MODEL_FEAT_DIM 10
+#define MODEL_NUM_CLASSES 3
+#define MODEL_HAS_THRESHOLDS 1
+
+static const char* const MODEL_FEATURES[MODEL_FEAT_DIM] = {
+  "AB_State",
+  "SRC_A",
+  "SRC_B",
+  "dir_fwd",
+  "dir_bwd",
+  "SCR",
+  "Z",
+  "SSZ",
+  "same_src",
+  "adjacent",
+};
+
+static const char* const MODEL_CLASSES[MODEL_NUM_CLASSES] = {
+  "missing_step",
+  "normal",
+  "z_index",
+};
+
+static const float MODEL_FEAT_MIN[MODEL_FEAT_DIM] = {
+  0.0f,
+  0.0f,
+  0.0f,
+  0.0f,
+  0.0f,
+  0.0f,
+  0.0f,
+  1.0f,
+  0.0f,
+  0.0f
+};
+
+static const float MODEL_FEAT_SCALE[MODEL_FEAT_DIM] = {
+  0.33333334f,
+  1.0f,
+  1.0f,
+  1.0f,
+  1.0f,
+  0.90193528f,
+  1.0f,
+  0.000481f,
+  1.0f,
+  1.0f
+};
+
+// Optional operating thresholds (same order as MODEL_CLASSES)
+static const float OP_THRESH[MODEL_NUM_CLASSES] = {
+  0.1f,
+  0.57456976f,
+  0.1f
+};
+
+// Policy parameters (mirror Python eval)
+#define OP_Z_HI 0.950000f
+#define OP_Z_LO 0.760000f
+#define OP_MS_TAU 0.500000f
+#define OP_MS_MARGIN 0.080000f
+#define OP_SSZ_MIN_RAW 2000.0f
+#define OP_SSZ_MIN_NORM 0.961520f
+#define OP_USE_HASZ_GATE 1
+define OP_Z_MARGIN 0.10f
+#define MODEL_FEAT_IDX_SSZ 7
+#define MODEL_FEAT_IDX_Z 6
+
+#ifdef __cplusplus
+}
+#endif

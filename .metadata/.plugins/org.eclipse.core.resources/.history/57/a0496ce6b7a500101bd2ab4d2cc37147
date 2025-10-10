@@ -1,0 +1,27 @@
+#pragma once
+#include <stddef.h>
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Call once very early (before enabling interrupts) to paint the MSP area */
+void MemDiag_Init(void);
+
+/* One-shot print of current + HWM stats; safe to call anytime */
+void MemDiag_PrintSummary(void);
+
+/* If you want programmatic access instead of prints */
+typedef struct {
+  size_t stack_total, stack_used_now, stack_free_now, stack_hwm;
+  size_t heap_total,  heap_used_now,  heap_free_now;
+  size_t data_size,   bss_size;
+  size_t heap_free_plus_stack_free_now; /* quick “RAM free now” estimator */
+} MemDiag_Stats;
+
+void MemDiag_Get(MemDiag_Stats* out);
+
+#ifdef __cplusplus
+}
+#endif

@@ -28,6 +28,23 @@ extern "C" {
 void MX_X_CUBE_AI_Init(void);
 void MX_X_CUBE_AI_Process(void);
 /* USER CODE BEGIN includes */
+/**
+ * @brief Get POLICY decision totals since boot.
+ * @param[out] normal  Total decisions classified as NORMAL by the policy layer.
+ * @param[out] missing Total decisions classified as MISSING_STEP by the policy layer.
+ * @param[out] zindex  Total decisions classified as Z_INDEX by the policy layer.
+ */
+void Model_GetTotals(uint32_t *normal, uint32_t *missing, uint32_t *zindex);
+
+/**
+ * @brief Get RAW (pre-policy) argmax totals since boot.
+ * @param[out] normal  Total RAW argmax counts for NORMAL.
+ * @param[out] missing Total RAW argmax counts for MISSING_STEP.
+ * @param[out] zindex  Total RAW argmax counts for Z_INDEX.
+ * @note These counters reflect the network’s direct argmax before any
+ *       deployment policy is applied.
+ */
+void Model_GetTotalsRaw(uint32_t *normal, uint32_t *missing, uint32_t *zindex);
 /* USER CODE END includes */
 #ifdef __cplusplus
 }

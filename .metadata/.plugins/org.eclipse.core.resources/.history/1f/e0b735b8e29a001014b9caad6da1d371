@@ -1,0 +1,101 @@
+#ifndef INC_ENC_SAMPLER_H_
+#define INC_ENC_SAMPLER_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+#include "model_meta.h"   // MODEL_SEQ_LEN / MODEL_FEAT_DIM
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* ========= Public constants ========= */
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Attribute helpers (safe in headers) */
+#ifndef ENC_SECTION
+#define ENC_SECTION(name) __attribute__((section(name), aligned(32)))
+#endif
+#ifndef ENC_USED
+#define ENC_USED __attribute__((used))
+#endif
+
+/* Enable per-window AB/SRC/Z trace (last-window snapshot API stays available). */
+#ifndef ENABLE_TRACE_WIN
+#define ENABLE_TRACE_WIN 1
+#endif
+
+#ifndef WINFIFO
+#define WINFIFO 3800u
+#endif
+
+#ifndef EVENT_BUF_BITS
+#define EVENT_BUF_BITS    16             /* 65536 live events */
+#endif
+#define EVENT_BUFFER_SIZE (1u << EVENT_BUF_BITS)
+#define EVENT_IDX_MASK    (EVENT_BUFFER_SIZE - 1u)
+
+#define RF_TRIAL (1u << 0)
+
+/* ========= Public state (read-only to app) ========= */
+extern volatile uint32_t enc_rule_flags;   /* rolling/live flags */
+extern volatile uint32_t win_rule_flags;   /* flags for last window */
+
+/* FIFO flow control */
+extern volatile uint32_t win_ready;        /* # of windows available */
+extern volatile uint32_t win_total;        /* total produced windows */
+extern volatile uint32_t event_drops;      /* overcapture / ring overflow */
+
+/* Z-path diagnostics consumed by the app logger */
+extern volatile uint32_t z_diag_isr_seen;
+extern volatile uint32_t z_diag_isr_accepted;
+extern volatile uint32_t z_diag_ab_since_isr;
+extern volatile uint32_t z_diag_steps_x4;
+extern volatile uint32_t z_diag_last_z_ms;
+
+/* Window stamps exported to app_x-cube-ai */
+extern volatile uint32_t win_stamp_ab_start_x4;
+extern volatile uint32_t win_stamp_ab_end_x4;
+extern volatile uint32_t win_stamp_ab_delta_x4;
+extern volatile uint32_t win_stamp_z_epoch;
+extern volatile int16_t  win_stamp_z_row;
+extern volatile uint32_t win_stamp_z_seq_end;
+
+/* ========= API ========= */
+void EncSampler_Init(void);
+void EncSampler_StopHardware(void);
+void EncSampler_FlushWindows(void);
+
+void EncSampler_SetABIrqs(uint8_t on);
+
+/* IRQ drain (call from TIM1 CC and/or TRG/COM ISRs) */
+void EncSampler_EncoderIRQ_Drain(void);
+
+/* Run in main loop to consume events and build windows */
+void EncSampler_Process(void);
+
+/* Direction helpers */
+int8_t EncSampler_GetLatchedDir(void);
+int8_t EncSampler_GetLastWindowDir(void);
+
+/* Copy the oldest ready window (SEQ_LEN*FEAT_DIM floats).
+   Returns 0 on success, -1 if no window available.
+   win_rule_flags is updated; optionally echoed via out_flags. */
+int EncSampler_CopyWindowLinear(float *dst, uint32_t *out_flags);
+
+/* Last-window trace (implemented as no-op when tracing is disabled) */
+void EncSampler_DebugGetLastTrace(uint8_t *ab, uint8_t *src, uint8_t *z);
+
+/* Utility */
+uint8_t EncSampler_HasPending(void);
+
+uint32_t EncSampler_GetEventRingHWM(void);
+uint32_t EncSampler_GetWinFifoHWM(void);
+void EncSampler_OnTrialArm(void);
+
+
+#ifdef __cplusplus
+}
+#endif
+#endif /* INC_ENC_SAMPLER_H_ */

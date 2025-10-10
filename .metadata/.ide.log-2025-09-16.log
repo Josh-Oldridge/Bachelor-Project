@@ -1,0 +1,507 @@
+2025-09-17 09:36:57,365 [INFO] WebApp:191 - Connection restablished
+2025-09-17 21:05:42,056 [WARN] IP:2250 - RefParam_XIP_memory not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Size not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_FreqMax not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_ReadReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_WriteReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_RegSize not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_RegDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_WriteCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_WriteDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_ReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_WrapReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_ReadDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_NumberOfConfig not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_Instance not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_ConfigType not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_Size not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_FreqMax not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_ReadReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_WriteReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_RegSize not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_RegDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_WriteCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_WriteDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_ReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_WrapReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_ReadDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_NumberOfConfig not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,062 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,072 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,072 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,072 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,073 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,073 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:05:42,073 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:06:04,440 [INFO] AI:955 - getUI adding AI com.st.microxplorer.plugins.ip.ai.AI@2ed8584a on STMicroelectronics.X-CUBE-AI.10.2.0_Appli
+2025-09-17 21:06:15,245 [INFO] AIModelDetailledView:2380 - Analysis status: -
+2025-09-17 21:06:35,063 [INFO] AInterface:259 - ModelName:network; files:[C:\Users\ZOJOLDRI\OneDrive - Carl Zeiss AG\Dokumente\Zeiss\SMT\Bachelor\AB Encoder Model\AB_Encoder_Synthetic_Data\lstm_ab_encoder.h5]; type:Keras; compression:None
+2025-09-17 21:06:35,066 [INFO] AInterface:526 - workspaceTempDir: C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace23703755870483003825701252439412360
+2025-09-17 21:06:35,071 [INFO] AInterface:1176 - Setting Env: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows
+2025-09-17 21:06:35,090 [INFO] STM32CubeIDEBuilder:265 - Looking for gnu-tools-for-stm32 tools/bin/arm-none-eabi-gcc.exe in C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE
+2025-09-17 21:06:35,098 [INFO] STM32CubeIDEBuilder:294 - checking C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:06:35,099 [INFO] STM32CubeIDEBuilder:297 - ret=C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:06:35,099 [INFO] STM32CubeIDEBuilder:311 - returning C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:06:35,100 [INFO] AInterface:1233 - Custom PATH variable: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows;C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/mingw64/bin;C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/mingw64/libexec/gcc/x86_64-w64-mingw32/7.3.0;;C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin
+2025-09-17 21:06:35,114 [INFO] CmdLine:115 - Command: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/stedgeai.exe analyze --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace23703755870483003825701252439412360 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
+2025-09-17 21:06:35,134 [INFO] AIModelDetailledView:2380 - Analysis status: pending
+2025-09-17 21:06:41,832 [INFO] CmdLine:76 - ST Edge AI Core v2.2.0-20266 2adc00962
+2025-09-17 21:07:51,443 [INFO] CmdLine:76 - Creating c (debug) info json file C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_c_info.json
+2025-09-17 21:07:51,476 [INFO] CmdLine:76 -  
+2025-09-17 21:07:51,477 [INFO] CmdLine:76 -  Exec/report summary (analyze)
+2025-09-17 21:07:51,477 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:07:51,477 [INFO] CmdLine:76 -  model file         :   C:\Users\ZOJOLDRI\OneDrive - Carl Zeiss AG\Dokumente\Zeiss\SMT\Bachelor\AB Encoder Model\AB_Encoder_Synthetic_Data\lstm_ab_encoder.h5   
+2025-09-17 21:07:51,477 [INFO] CmdLine:76 -  type               :   keras                                                                                                                                   
+2025-09-17 21:07:51,477 [INFO] CmdLine:76 -  c_name             :   network                                                                                                                                 
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  compression        :   none                                                                                                                                    
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  options            :   allocate-inputs, allocate-outputs                                                                                                       
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  optimization       :   balanced                                                                                                                                
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  target/series      :   stm32n6                                                                                                                                 
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace23703755870483003825701252439412360                                                  
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  output dir         :   C:\Users\ZOJOLDRI\.stm32cubemx\network_output                                                                                           
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  model_fmt          :   float                                                                                                                                   
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  model_name         :   lstm_ab_encoder                                                                                                                         
+2025-09-17 21:07:51,478 [INFO] CmdLine:76 -  model_hash         :   0x47cb01c18b0bb5796310c5f9b1cddd71                                                                                                      
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  params #           :   6,083 items (23.76 KiB)                                                                                                                 
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  input 1/1          :   'input_0', f32(1x20x10), 800 Bytes, activations                                                                                         
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  output 1/1         :   'output', f32(1x3), 12 Bytes, activations                                                                                               
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  macc               :   111,360                                                                                                                                 
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  weights (ro)       :   24,716 B (24.14 KiB) (1 segment) / +384(+1.6%) vs float model                                                                           
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  activations (rw)   :   1,824 B (1.78 KiB) (1 segment) *                                                                                                        
+2025-09-17 21:07:51,479 [INFO] CmdLine:76 -  ram (total)        :   1,824 B (1.78 KiB) = 1,824 + 0 + 0                                                                                                      
+2025-09-17 21:07:51,480 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:07:51,480 [INFO] CmdLine:76 -  (*) 'input'/'output' buffers are allocated in the activations buffer
+2025-09-17 21:07:51,480 [INFO] CmdLine:76 - Computing AI RT data/code size (target=stm32n6)..
+2025-09-17 21:07:55,341 [INFO] CmdLine:76 -  Model name - lstm_ab_encoder
+2025-09-17 21:07:55,341 [INFO] CmdLine:76 -  ------ ----------------------- ----------------- -------------- --------- ---------------
+2025-09-17 21:07:55,343 [INFO] CmdLine:76 -  m_id   layer (original)        oshape            param/size          macc    connected to
+2025-09-17 21:07:55,344 [INFO] CmdLine:76 -  ------ ----------------------- ----------------- -------------- --------- ---------------
+2025-09-17 21:07:55,344 [INFO] CmdLine:76 -  0      input_0 (None)          [b:1,h:20,c:10]
+2025-09-17 21:07:55,344 [INFO] CmdLine:76 -         lstm_1 (LSTM)           [b:1,c:32]        5,504/22,016     110,720         input_0
+2025-09-17 21:07:55,345 [INFO] CmdLine:76 -  ------ ----------------------- ----------------- -------------- --------- ---------------
+2025-09-17 21:07:55,345 [INFO] CmdLine:76 -  2      dense_1_dense (Dense)   [b:1,c:16]        528/2,112            528          lstm_1
+2025-09-17 21:07:55,345 [INFO] CmdLine:76 -         dense_1 (Dense)         [b:1,c:16]                              16   dense_1_dense
+2025-09-17 21:07:55,345 [INFO] CmdLine:76 -  ------ ----------------------- ----------------- -------------- --------- ---------------
+2025-09-17 21:07:55,346 [INFO] CmdLine:76 -  4      output_dense (Dense)    [b:1,c:3]         51/204                51         dense_1
+2025-09-17 21:07:55,346 [INFO] CmdLine:76 -         output (Dense)          [b:1,c:3]                               45    output_dense
+2025-09-17 21:07:55,346 [INFO] CmdLine:76 -  ------ ----------------------- ----------------- -------------- --------- ---------------
+2025-09-17 21:07:55,346 [INFO] CmdLine:76 -  model: macc=111,360 weights=24,332 activations=-- io=--
+2025-09-17 21:07:55,346 [INFO] CmdLine:76 -  Number of operations per c-layer
+2025-09-17 21:07:55,347 [INFO] CmdLine:76 -  ------- ------ ------------------------ --------- --------------
+2025-09-17 21:07:55,347 [INFO] CmdLine:76 -  c_id    m_id   name (type)                    #op           type
+2025-09-17 21:07:55,347 [INFO] CmdLine:76 -  ------- ------ ------------------------ --------- --------------
+2025-09-17 21:07:55,347 [INFO] CmdLine:76 -  0       0      lstm_1 (LSTM)              110,720   smul_f32_f32
+2025-09-17 21:07:55,348 [INFO] CmdLine:76 -  1       2      dense_1_dense (Dense)          528   smul_f32_f32
+2025-09-17 21:07:55,348 [INFO] CmdLine:76 -  2       2      dense_1 (Nonlinearity)          16     op_f32_f32
+2025-09-17 21:07:55,348 [INFO] CmdLine:76 -  3       4      output_dense (Dense)            51   smul_f32_f32
+2025-09-17 21:07:55,349 [INFO] CmdLine:76 -  4       4      output (Nonlinearity)           45     op_f32_f32
+2025-09-17 21:07:55,349 [INFO] CmdLine:76 -  ------- ------ ------------------------ --------- --------------
+2025-09-17 21:07:55,349 [INFO] CmdLine:76 -  total                                     111,360
+2025-09-17 21:07:55,350 [INFO] CmdLine:76 -  Number of operation types
+2025-09-17 21:07:55,350 [INFO] CmdLine:76 -  ---------------- --------- -----------
+2025-09-17 21:07:55,350 [INFO] CmdLine:76 -  operation type           #           %
+2025-09-17 21:07:55,351 [INFO] CmdLine:76 -  ---------------- --------- -----------
+2025-09-17 21:07:55,351 [INFO] CmdLine:76 -  smul_f32_f32       111,299       99.9%
+2025-09-17 21:07:55,351 [INFO] CmdLine:76 -  op_f32_f32              61        0.1%
+2025-09-17 21:07:55,352 [INFO] CmdLine:76 -  Complexity report (model)
+2025-09-17 21:07:55,352 [INFO] CmdLine:76 -  ------ --------------- ------------------------- ------------------------- --------
+2025-09-17 21:07:55,353 [INFO] CmdLine:76 -  m_id   name            c_macc                    c_rom                     c_id
+2025-09-17 21:07:55,353 [INFO] CmdLine:76 -  ------ --------------- ------------------------- ------------------------- --------
+2025-09-17 21:07:55,354 [INFO] CmdLine:76 -  0      input_0         ||||||||||||||||  99.4%   ||||||||||||||||  90.6%   [0]
+2025-09-17 21:07:55,355 [INFO] CmdLine:76 -  2      dense_1_dense   |                  0.5%   ||                 8.5%   [1, 2]
+2025-09-17 21:07:55,355 [INFO] CmdLine:76 -  4      output_dense    |                  0.1%   |                  0.8%   [3, 4]
+2025-09-17 21:07:55,355 [INFO] CmdLine:76 -  ------ --------------- ------------------------- ------------------------- --------
+2025-09-17 21:07:55,356 [INFO] CmdLine:76 -  macc=111,360 weights=24,716 act=1,824 ram_io=0
+2025-09-17 21:07:55,356 [INFO] CmdLine:76 -  Requested memory size by section - "stm32n6" target
+2025-09-17 21:07:55,357 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,357 [INFO] CmdLine:76 -  module                              text   rodata    data     bss
+2025-09-17 21:07:55,357 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,360 [INFO] CmdLine:76 -  NetworkRuntime1020_CM55_GCC.a     15,800       32       0       0
+2025-09-17 21:07:55,360 [INFO] CmdLine:76 -  network.o                            592       40   1,888     136
+2025-09-17 21:07:55,360 [INFO] CmdLine:76 -  network_data.o                        48       16      88       0
+2025-09-17 21:07:55,360 [INFO] CmdLine:76 -  lib (toolchain)*                   1,132      340       0       0
+2025-09-17 21:07:55,360 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  RT total**                        17,572      428   1,976     136
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  weights                                0   24,720       0       0
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  activations                            0        0       0   1,824
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  io                                     0        0       0       0
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,361 [INFO] CmdLine:76 -  TOTAL                             17,572   25,148   1,976   1,960
+2025-09-17 21:07:55,362 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:07:55,362 [INFO] CmdLine:76 -  *  toolchain objects (libm/libgcc*)
+2025-09-17 21:07:55,362 [INFO] CmdLine:76 -  ** RT AI runtime objects (kernels+infrastructure)
+2025-09-17 21:07:55,362 [INFO] CmdLine:76 -   Summary - "stm32n6" target
+2025-09-17 21:07:55,362 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -                FLASH (ro)      %*   RAM (rw)       %
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   RT total         19,976   44.7%      2,112   53.7%
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   TOTAL            44,696              3,936
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:07:55,363 [INFO] CmdLine:76 -   *  rt/total
+2025-09-17 21:07:55,364 [INFO] CmdLine:76 - Creating txt report file C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_analyze_report.txt
+2025-09-17 21:07:59,161 [INFO] CmdLine:76 - elapsed time (analyze): 77.329s
+2025-09-17 21:07:59,603 [INFO] CmdLine:148 - stedgeai exit with status: 0
+2025-09-17 21:07:59,620 [INFO] AIModelDetailledView:1184 - Model file:      lstm_ab_encoder.h5
+2025-09-17 21:07:59,620 [INFO] AIModelDetailledView:1184 - Total Flash:     44692 B (43.64 KiB)
+2025-09-17 21:07:59,622 [INFO] AIModelDetailledView:1184 -     Weights:     24716 B (24.14 KiB)
+2025-09-17 21:07:59,624 [INFO] AIModelDetailledView:1184 -     Library:     19976 B (19.51 KiB)
+2025-09-17 21:07:59,624 [INFO] AIModelDetailledView:1184 - Total Ram:       3936 B (3.84 KiB)
+2025-09-17 21:07:59,624 [INFO] AIModelDetailledView:1184 -     Activations: 1824 B (1.78 KiB)
+2025-09-17 21:07:59,625 [INFO] AIModelDetailledView:1184 -     Library:     2112 B (2.06 KiB)
+2025-09-17 21:07:59,625 [INFO] AIModelDetailledView:1184 -     Input:       800 B (included in Activations)
+2025-09-17 21:07:59,625 [INFO] AIModelDetailledView:1184 -     Output:      12 B (included in Activations)
+2025-09-17 21:07:59,625 [INFO] AIModelDetailledView:1184 - Done
+2025-09-17 21:07:59,625 [INFO] AIModelDetailledView:2715 - Analyze complete on AI model
+2025-09-17 21:07:59,634 [INFO] AIModelDetailledView:2380 - Analysis status: done
+2025-09-17 21:08:04,496 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 956545776 Bytes (1073741824)
+2025-09-17 21:08:05,843 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 994294512 Bytes (1073741824)
+2025-09-17 21:08:11,467 [INFO] UtilMem:75 - End SaveConfig() Used Memory: 981274336 Bytes (1073741824)
+2025-09-17 21:08:12,455 [ERROR] IocParser:95 - Exception caught: null
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: EXTMEM_MANAGER
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RAMCFG
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RCC
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CORTEX_M55_FSBL
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: XSPIM
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: STMicroelectronics.X-CUBE-AI.10.2.0
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: XSPI
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NUCLEO-N657X0-Q
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: TIM1_8N6
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: CACHEAXI
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: BSEC
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: LPUART
+2025-09-17 21:08:12,882 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC
+2025-09-17 21:08:12,883 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: GPIO
+2025-09-17 21:08:12,883 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: RIF
+2025-09-17 21:08:12,883 [INFO] BlockDiagram:2775 - set Specific Code input for plugin: NVIC1
+2025-09-17 21:08:12,885 [INFO] CodeGenerator:892 - code generatio: config db path: C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.common.mx_6.15.0.202507011659\\db\
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_XIP_memory not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_Size not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_FreqMax not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_ReadReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_WriteReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_RegSize not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_RegDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_WriteCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_WriteDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_ReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_WrapReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_ReadDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_NumberOfConfig not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,899 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config1_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config2_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_1_Config3_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Instance not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_ConfigType not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Size not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_FreqMax not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_ReadReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_WriteReg not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_RegSize not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_RegDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_WriteCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_WriteDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_ReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_WrapReadCommand not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_ReadDummyCycle not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_NumberOfConfig not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config1_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config2_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_WriteMask not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_WriteValue not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:12,900 [WARN] IP:2250 - RefParam_MEMORY_2_Config3_RegAddress not found: check if there is a RefParameter without a condition.
+2025-09-17 21:08:13,019 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,020 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,023 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,024 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,025 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,025 [INFO] IP:3329 - RTE Config file name : RTE_Component
+2025-09-17 21:08:13,025 [INFO] IP:3347 - RTE template : RTE_Components.ftl
+2025-09-17 21:08:13,027 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,028 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,030 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:13,030 [INFO] CodeGenerator:1619 - *******************Project context FSBL selected
+2025-09-17 21:08:13,107 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\MXTmpFiles\license.tmp_save
+2025-09-17 21:08:13,499 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\MXTmpFiles\license.tmp
+2025-09-17 21:08:13,568 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\gpio.tmp_save
+2025-09-17 21:08:13,815 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\gpio.tmp
+2025-09-17 21:08:14,013 [WARN] IPConfigManager:103 - WARNING: Missing Config File for XSPIM ip!!
+2025-09-17 21:08:14,086 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:14,096 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\boot_code.tmp_save
+2025-09-17 21:08:14,285 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\boot_code.tmp
+2025-09-17 21:08:14,311 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\cortex.tmp_save
+2025-09-17 21:08:14,474 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\cortex.tmp
+2025-09-17 21:08:14,496 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:14,512 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\extmem_manager.h_save
+2025-09-17 21:08:14,723 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\extmem_manager.h
+2025-09-17 21:08:14,738 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\extmem_manager.c_save
+2025-09-17 21:08:14,988 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\extmem_manager.c
+2025-09-17 21:08:15,000 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32_extmem_conf.h_save
+2025-09-17 21:08:15,166 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32_extmem_conf.h
+2025-09-17 21:08:15,177 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\boot_code.tmp_save
+2025-09-17 21:08:15,245 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\boot_code.tmp
+2025-09-17 21:08:15,297 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\stm32n6xx_it.c_save
+2025-09-17 21:08:15,680 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\stm32n6xx_it.c
+2025-09-17 21:08:15,690 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32n6xx_it.h_save
+2025-09-17 21:08:15,785 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32n6xx_it.h
+2025-09-17 21:08:15,912 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\stm32n6xx_hal_msp.c_save
+2025-09-17 21:08:16,194 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\stm32n6xx_hal_msp.c
+2025-09-17 21:08:16,211 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\system.tmp_save
+2025-09-17 21:08:16,281 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\MXTmpFiles\system.tmp
+2025-09-17 21:08:16,317 [INFO] CodeEngine:321 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32n6xx_hal_conf.h_save
+2025-09-17 21:08:16,558 [INFO] CodeEngine:345 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\stm32n6xx_hal_conf.h
+2025-09-17 21:08:16,581 [WARN] IPConfigManager:3238 - Warning: the RefConfig RCC_ConfigVoltageScaling is not available in your config.xml file
+2025-09-17 21:08:16,585 [WARN] IPConfigManager:3238 - Warning: the RefConfig RCC_RTC_HSEDIV is not available in your config.xml file
+2025-09-17 21:08:16,597 [ERROR] ApiDbMcu:560 - Cannot parse XSPIM_Config file : file do not exist
+2025-09-17 21:08:16,616 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\main.h_save
+2025-09-17 21:08:16,825 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Inc\main.h
+2025-09-17 21:08:16,835 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\main.c_save
+2025-09-17 21:08:17,040 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\FSBL\Core\Src\main.c
+2025-09-17 21:08:17,121 [INFO] CodeGenerator:1619 - *******************Project context Appli selected
+2025-09-17 21:08:17,183 [INFO] IP:3329 - RTE Config file name : RTE_Component
+2025-09-17 21:08:17,183 [INFO] IP:3347 - RTE template : RTE_Components.ftl
+2025-09-17 21:08:17,197 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\MXTmpFiles\license.tmp_save
+2025-09-17 21:08:17,355 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\MXTmpFiles\license.tmp
+2025-09-17 21:08:17,397 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\gpio.tmp_save
+2025-09-17 21:08:17,560 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\gpio.tmp
+2025-09-17 21:08:17,678 [WARN] IPConfigManager:103 - WARNING: Missing Config File for NVIC ip!!
+2025-09-17 21:08:17,805 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:17,806 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:17,806 [INFO] IP:3329 - RTE Config file name : RTE_Component
+2025-09-17 21:08:17,806 [INFO] IP:3347 - RTE template : RTE_Components.ftl
+2025-09-17 21:08:17,817 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\cortex.tmp_save
+2025-09-17 21:08:17,942 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\cortex.tmp
+2025-09-17 21:08:17,981 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_nucleo_conf.h_save
+2025-09-17 21:08:18,185 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_nucleo_conf.h
+2025-09-17 21:08:18,194 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_inc.tmp_save
+2025-09-17 21:08:18,247 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_inc.tmp
+2025-09-17 21:08:18,264 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_vars.tmp_save
+2025-09-17 21:08:18,310 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_vars.tmp
+2025-09-17 21:08:18,316 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_init.tmp_save
+2025-09-17 21:08:18,377 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_init.tmp
+2025-09-17 21:08:18,395 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_before_while.tmp_save
+2025-09-17 21:08:18,434 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_before_while.tmp
+2025-09-17 21:08:18,439 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_inside_while.tmp_save
+2025-09-17 21:08:18,481 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_inside_while.tmp
+2025-09-17 21:08:18,485 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_fct.tmp_save
+2025-09-17 21:08:18,524 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\bsp_common_demo_fct.tmp
+2025-09-17 21:08:18,530 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:18,530 [INFO] Middleware:1452 - No code input for Bsp Dependency
+2025-09-17 21:08:18,530 [INFO] IP:3329 - RTE Config file name : RTE_Component
+2025-09-17 21:08:18,530 [INFO] IP:3347 - RTE template : RTE_Components.ftl
+2025-09-17 21:08:18,539 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\App\app_x-cube-ai.h_save
+2025-09-17 21:08:18,692 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\App\app_x-cube-ai.h
+2025-09-17 21:08:18,700 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\constants_ai.h_save
+2025-09-17 21:08:18,782 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\constants_ai.h
+2025-09-17 21:08:18,791 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\App\app_x-cube-ai.c_save
+2025-09-17 21:08:18,898 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\X-CUBE-AI\App\app_x-cube-ai.c
+2025-09-17 21:08:18,932 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\stm32n6xx_it.c_save
+2025-09-17 21:08:19,173 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\stm32n6xx_it.c
+2025-09-17 21:08:19,179 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_it.h_save
+2025-09-17 21:08:19,264 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_it.h
+2025-09-17 21:08:19,268 [INFO] IP:3329 - RTE Config file name : RTE_Component
+2025-09-17 21:08:19,268 [INFO] IP:3347 - RTE template : RTE_Components.ftl
+2025-09-17 21:08:19,268 [INFO] CodeGenerator:2312 - Add RTE Code Input 
+2025-09-17 21:08:19,278 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\RTE_Components.h_save
+2025-09-17 21:08:19,420 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\RTE_Components.h
+2025-09-17 21:08:19,433 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\RIFInit.tmp_save
+2025-09-17 21:08:19,549 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\RIFInit.tmp
+2025-09-17 21:08:19,639 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\stm32n6xx_hal_msp.c_save
+2025-09-17 21:08:19,943 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\stm32n6xx_hal_msp.c
+2025-09-17 21:08:19,949 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\system.tmp_save
+2025-09-17 21:08:19,999 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\MXTmpFiles\system.tmp
+2025-09-17 21:08:20,014 [INFO] CodeEngine:321 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_hal_conf.h_save
+2025-09-17 21:08:20,158 [INFO] CodeEngine:345 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\stm32n6xx_hal_conf.h
+2025-09-17 21:08:20,172 [WARN] IPConfigManager:3238 - Warning: the RefConfig RCC_ConfigVoltageScaling is not available in your config.xml file
+2025-09-17 21:08:20,173 [WARN] IPConfigManager:3238 - Warning: the RefConfig RCC_RTC_HSEDIV is not available in your config.xml file
+2025-09-17 21:08:20,185 [WARN] IPConfigManager:3811 - IP not found : TIM
+2025-09-17 21:08:20,186 [WARN] CodeGenerator:4259 - IP not found : null
+2025-09-17 21:08:20,196 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\main.h_save
+2025-09-17 21:08:20,409 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\main.h
+2025-09-17 21:08:20,421 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\main.c_save
+2025-09-17 21:08:20,633 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\main.c
+2025-09-17 21:08:20,651 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\secure_nsc.c_save
+2025-09-17 21:08:20,828 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Src\secure_nsc.c
+2025-09-17 21:08:20,837 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\partition_stm32n657xx.h_save
+2025-09-17 21:08:20,940 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Appli\Core\Inc\partition_stm32n657xx.h
+2025-09-17 21:08:20,952 [INFO] CodeEngine:265 - oldGeneratedFile, C:\ST\AB_LSTM\AB_LSTM\Secure_nsclib\secure_nsc.h_save
+2025-09-17 21:08:21,041 [INFO] CodeEngine:289 - Generated code: C:\ST\AB_LSTM\AB_LSTM\Secure_nsclib\secure_nsc.h
+2025-09-17 21:08:21,074 [INFO] CodeGenerator:1707 - *******************Project context ExtMemLoader Not selected
+2025-09-17 21:08:22,243 [INFO] AInterface:322 - ModelName:network; files:[C:\Users\ZOJOLDRI\OneDrive - Carl Zeiss AG\Dokumente\Zeiss\SMT\Bachelor\AB Encoder Model\AB_Encoder_Synthetic_Data\lstm_ab_encoder.h5]; type:Keras; compression:None
+2025-09-17 21:08:22,244 [INFO] AInterface:526 - workspaceTempDir: C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace23704827657824001584660676982196836
+2025-09-17 21:08:22,245 [INFO] AInterface:1176 - Setting Env: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows
+2025-09-17 21:08:22,257 [INFO] STM32CubeIDEBuilder:265 - Looking for gnu-tools-for-stm32 tools/bin/arm-none-eabi-gcc.exe in C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE
+2025-09-17 21:08:22,259 [INFO] STM32CubeIDEBuilder:294 - checking C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:08:22,260 [INFO] STM32CubeIDEBuilder:297 - ret=C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:08:22,260 [INFO] STM32CubeIDEBuilder:311 - returning C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin\arm-none-eabi-gcc.exe
+2025-09-17 21:08:22,260 [INFO] AInterface:1233 - Custom PATH variable: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows;C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/mingw64/bin;C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/mingw64/libexec/gcc/x86_64-w64-mingw32/7.3.0;;C:\ST\STM32CubeIDE_1.19.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.13.3.rel1.win32_1.0.0.202411081344\tools\bin
+2025-09-17 21:08:22,266 [INFO] CmdLine:115 - Command: C:/Users/ZOJOLDRI/STM32Cube/Repository/Packs/STMicroelectronics/X-CUBE-AI/10.2.0/Utilities/windows/stedgeai.exe generate --target stm32n6 --name network -m C:/Users/ZOJOLDRI/OneDrive - Carl Zeiss AG/Dokumente/Zeiss/SMT/Bachelor/AB Encoder Model/AB_Encoder_Synthetic_Data/lstm_ab_encoder.h5 --compression none --verbosity 1 --workspace C:/Users/ZOJOLDRI/AppData/Local/Temp/mxAI_workspace23704827657824001584660676982196836 --output C:/Users/ZOJOLDRI/.stm32cubemx/network_output
+2025-09-17 21:08:22,268 [INFO] AIModelDetailledView:2380 - Analysis status: pending
+2025-09-17 21:08:23,004 [INFO] CmdLine:76 - ST Edge AI Core v2.2.0-20266 2adc00962
+2025-09-17 21:08:28,492 [INFO] CmdLine:76 - Creating c (debug) info json file C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_c_info.json
+2025-09-17 21:08:28,507 [INFO] CmdLine:76 -  
+2025-09-17 21:08:28,508 [INFO] CmdLine:76 -  Exec/report summary (generate)
+2025-09-17 21:08:28,509 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:08:28,509 [INFO] CmdLine:76 -  model file         :   C:\Users\ZOJOLDRI\OneDrive - Carl Zeiss AG\Dokumente\Zeiss\SMT\Bachelor\AB Encoder Model\AB_Encoder_Synthetic_Data\lstm_ab_encoder.h5   
+2025-09-17 21:08:28,510 [INFO] CmdLine:76 -  type               :   keras                                                                                                                                   
+2025-09-17 21:08:28,510 [INFO] CmdLine:76 -  c_name             :   network                                                                                                                                 
+2025-09-17 21:08:28,511 [INFO] CmdLine:76 -  compression        :   none                                                                                                                                    
+2025-09-17 21:08:28,511 [INFO] CmdLine:76 -  options            :   allocate-inputs, allocate-outputs                                                                                                       
+2025-09-17 21:08:28,512 [INFO] CmdLine:76 -  optimization       :   balanced                                                                                                                                
+2025-09-17 21:08:28,512 [INFO] CmdLine:76 -  target/series      :   stm32n6                                                                                                                                 
+2025-09-17 21:08:28,513 [INFO] CmdLine:76 -  workspace dir      :   C:\Users\ZOJOLDRI\AppData\Local\Temp\mxAI_workspace23704827657824001584660676982196836                                                  
+2025-09-17 21:08:28,513 [INFO] CmdLine:76 -  output dir         :   C:\Users\ZOJOLDRI\.stm32cubemx\network_output                                                                                           
+2025-09-17 21:08:28,514 [INFO] CmdLine:76 -  model_fmt          :   float                                                                                                                                   
+2025-09-17 21:08:28,514 [INFO] CmdLine:76 -  model_name         :   lstm_ab_encoder                                                                                                                         
+2025-09-17 21:08:28,515 [INFO] CmdLine:76 -  model_hash         :   0x47cb01c18b0bb5796310c5f9b1cddd71                                                                                                      
+2025-09-17 21:08:28,515 [INFO] CmdLine:76 -  params #           :   6,083 items (23.76 KiB)                                                                                                                 
+2025-09-17 21:08:28,515 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:08:28,516 [INFO] CmdLine:76 -  input 1/1          :   'input_0', f32(1x20x10), 800 Bytes, activations                                                                                         
+2025-09-17 21:08:28,516 [INFO] CmdLine:76 -  output 1/1         :   'output', f32(1x3), 12 Bytes, activations                                                                                               
+2025-09-17 21:08:28,516 [INFO] CmdLine:76 -  macc               :   111,360                                                                                                                                 
+2025-09-17 21:08:28,517 [INFO] CmdLine:76 -  weights (ro)       :   24,716 B (24.14 KiB) (1 segment) / +384(+1.6%) vs float model                                                                           
+2025-09-17 21:08:28,517 [INFO] CmdLine:76 -  activations (rw)   :   1,824 B (1.78 KiB) (1 segment) *                                                                                                        
+2025-09-17 21:08:28,517 [INFO] CmdLine:76 -  ram (total)        :   1,824 B (1.78 KiB) = 1,824 + 0 + 0                                                                                                      
+2025-09-17 21:08:28,517 [INFO] CmdLine:76 -  ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+2025-09-17 21:08:28,517 [INFO] CmdLine:76 -  (*) 'input'/'output' buffers are allocated in the activations buffer
+2025-09-17 21:08:28,518 [INFO] CmdLine:76 - Computing AI RT data/code size (target=stm32n6)..
+2025-09-17 21:08:30,753 [INFO] CmdLine:76 -  Requested memory size by section - "stm32n6" target
+2025-09-17 21:08:30,755 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,756 [INFO] CmdLine:76 -  module                              text   rodata    data     bss
+2025-09-17 21:08:30,757 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,758 [INFO] CmdLine:76 -  NetworkRuntime1020_CM55_GCC.a     15,800       32       0       0
+2025-09-17 21:08:30,758 [INFO] CmdLine:76 -  network.o                            592       40   1,888     136
+2025-09-17 21:08:30,759 [INFO] CmdLine:76 -  network_data.o                        48       16      88       0
+2025-09-17 21:08:30,759 [INFO] CmdLine:76 -  lib (toolchain)*                   1,132      340       0       0
+2025-09-17 21:08:30,759 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,759 [INFO] CmdLine:76 -  RT total**                        17,572      428   1,976     136
+2025-09-17 21:08:30,760 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,760 [INFO] CmdLine:76 -  weights                                0   24,720       0       0
+2025-09-17 21:08:30,761 [INFO] CmdLine:76 -  activations                            0        0       0   1,824
+2025-09-17 21:08:30,761 [INFO] CmdLine:76 -  io                                     0        0       0       0
+2025-09-17 21:08:30,762 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,762 [INFO] CmdLine:76 -  TOTAL                             17,572   25,148   1,976   1,960
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -  ------------------------------- -------- -------- ------- -------
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -  *  toolchain objects (libm/libgcc*)
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -  ** RT AI runtime objects (kernels+infrastructure)
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -   Summary - "stm32n6" target
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -                FLASH (ro)      %*   RAM (rw)       %
+2025-09-17 21:08:30,763 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:08:30,764 [INFO] CmdLine:76 -   RT total         19,976   44.7%      2,112   53.7%
+2025-09-17 21:08:30,764 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:08:30,764 [INFO] CmdLine:76 -   TOTAL            44,696              3,936
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -   ---------------------------------------------------
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -   *  rt/total
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -  Generated files (7)
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -  ---------------------------------------------------------------------
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_data_params.h
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_data_params.c
+2025-09-17 21:08:30,765 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_data.h
+2025-09-17 21:08:30,766 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_data.c
+2025-09-17 21:08:30,766 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_config.h
+2025-09-17 21:08:30,766 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network.h
+2025-09-17 21:08:30,766 [INFO] CmdLine:76 -  C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network.c
+2025-09-17 21:08:30,766 [INFO] CmdLine:76 - Creating txt report file C:\Users\ZOJOLDRI\.stm32cubemx\network_output\network_generate_report.txt
+2025-09-17 21:08:34,260 [INFO] CmdLine:76 - elapsed time (generate): 11.256s
+2025-09-17 21:08:34,659 [INFO] CmdLine:148 - stedgeai exit with status: 0
+2025-09-17 21:08:34,671 [INFO] AIModelDetailledView:2380 - Analysis status: done
+2025-09-17 21:08:36,199 [INFO] ProjectBuilder:3606 - Time for Copy HAL[1] : 761mS.
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,199 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,200 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,201 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,201 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,201 [ERROR] Middleware:2950 - Invalid RefComponent list
+2025-09-17 21:08:36,220 [INFO] ProjectBuilder:5216 - Project Generator version: 4.7.0-B52
+2025-09-17 21:08:36,285 [INFO] ConfigFileManager:1595 - The Die is : DIE486
+2025-09-17 21:08:51,799 [INFO] ProjectBuilder:5056 - Time for Generating toolchain IDE Files: 15579mS.
+2025-09-17 21:08:51,802 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 1mS.
+2025-09-17 21:08:51,818 [INFO] ProjectBuilder:3463 - Time for Copy CMSIS : 1mS.

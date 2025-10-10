@@ -1,0 +1,86 @@
+#ifndef INC_ENC_SAMPLER_H_
+#define INC_ENC_SAMPLER_H_
+
+#pragma once
+#include <stdint.h>
+#include "main.h"
+#include "model_meta.h"   // MODEL_SEQ_LEN / MODEL_FEAT_DIM
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* ================= Public constants & feature sizes ================== */
+#define SEQ_LEN   (MODEL_SEQ_LEN)
+#define FEAT_DIM  (MODEL_FEAT_DIM)
+
+/* Enable per-window trace capture (WIN AB / SRC / Z lines) */
+#ifndef ENABLE_TRACE_WIN
+#define ENABLE_TRACE_WIN 1
+#endif
+
+/* Live sampling vs synthetic generator */
+#ifndef ENC_IS_LIVE
+#define ENC_IS_LIVE 0
+#endif
+
+/* (Legacy) rule flags kept for compatibility; not used by the new sampler.
+   Live per-window flags are exported via win_rule_flags / enc_rule_flags. */
+enum {
+  RS_A_STUCK  = 1u << 0,
+  RS_B_STUCK  = 1u << 1,
+  RS_QUAD_BAD = 1u << 2,
+  RS_Z_MISSED = 1u << 3,
+};
+
+/* ================== Exposed telemetry / flags ======================== */
+/* Live rule flags
+   - enc_rule_flags: most recently computed (rolling) flags
+   - win_rule_flags: flags aligned to the window handed to the NN */
+extern volatile uint32_t enc_rule_flags;
+extern volatile uint32_t win_rule_flags;
+
+/* Rates / counters */
+extern volatile uint32_t tim7_ticks;
+extern volatile uint32_t win_ready;        // # of windows available in FIFO
+extern volatile uint32_t win_total;        // produced windows (cumulative)
+
+/* Optional model-output telemetry provided by the AI app */
+extern volatile float    last_y[];         // final (post-processed)
+extern volatile uint32_t inf_total;        // # of inferences run (cumulative)
+
+/* Z-path diagnostics (filled by enc_sampler.c) */
+extern volatile uint32_t z_diag_isr_seen;         // total IDXF hits seen in ISR
+extern volatile uint32_t z_diag_isr_accepted;     // IDXF accepted after debounce/spacing
+extern volatile uint32_t z_diag_ab_since_isr;     // AB edges since last accepted Z (ISR side)
+extern volatile uint32_t z_diag_steps_since_main; // steps_since_z as packed into features
+extern volatile uint32_t z_diag_last_z_ms;        // ms timestamp (main side) of last consumed Z
+
+#if ENABLE_TRACE_WIN
+void EncSampler_DebugGetLastTrace(uint8_t* ab, uint8_t* src, uint8_t* z);
+#endif
+
+/* ========================== API ====================================== */
+void EncSampler_Init(void);
+void EncSampler_Start(void);
+void EncSampler_StopHardware(void);
+void EncSampler_FlushWindows(void);
+
+void EncSampler_EncoderIRQ_Drain(void);
+void EncSampler_EncoderChangeCallback(void);
+
+/* Hook these from Cube/HAL */
+void EncSampler_TIM7_Callback(void);
+void EncSampler_Process(void);
+
+int8_t EncSampler_GetLatchedDir(void);
+/* Copy window into linear buffer (oldest->newest). Returns 0 on success.
+   Flags for this same window are published to win_rule_flags. */
+int EncSampler_CopyWindowLinear(float* dst, uint32_t* out_flags);
+
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* INC_ENC_SAMPLER_H_ */

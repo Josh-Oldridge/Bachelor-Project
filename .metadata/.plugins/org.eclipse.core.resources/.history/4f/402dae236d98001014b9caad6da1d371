@@ -1,0 +1,338 @@
+#include "diag_timing.h"
+#include <string.h>
+#include <stdio.h>
+
+#ifndef CPR
+#define CPR 500u
+#endif
+#ifndef DIAG_EDGES_PER_REV
+#define DIAG_EDGES_PER_REV (2u * CPR)
+#endif
+
+/* ====== DWT Cycle Counter ====== */
+static inline void dwt_enable(void) {
+	/* Enable DWT CYCCNT on Cortex-M55 (non-secure ok if allowed by secure) */
+	CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+	DWT->CYCCNT = 0;
+	DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
+
+static inline uint32_t cycles_now(void) {
+	return DWT->CYCCNT;
+}
+
+/* ====== Timer book-keeping ====== */
+typedef struct {
+	uint32_t t0; /* last start cycles */
+	uint8_t running; /* simple guard */
+	diag_timer_stat_t stat;
+} diag_timer_t;
+
+static diag_timer_t g_timers[DIAG_T__COUNT];
+
+/* health */
+static uint32_t g_event_buf_cap = 0, g_event_buf_hwm = 0, g_event_drops = 0;
+static uint32_t g_winfifo_cap = 0, g_winfifo_hwm = 0;
+static uint32_t g_inferences = 0;
+static uint32_t g_win_overwrites = 0;
+
+/* trial */
+static diag_trial_t g_trial;
+
+static td_speed_t g_sz;
+
+static inline uint32_t cycles_to_ns(uint32_t cyc) {
+	return (uint32_t) ((uint64_t) cyc * 1000000000ull
+			/ (uint64_t) SystemCoreClock);
+}
+
+static inline uint32_t cycles_to_us_uint(uint32_t cyc) {
+	return (uint32_t) ((uint64_t) cyc * 1000000ull / (uint64_t) SystemCoreClock);
+}
+
+/* cyc -> "xx ns" (<1ms) or "m.mm ms" (>=1ms), no long long printf needed */
+static inline void fmt_cycles_smart(char *buf, size_t n, uint32_t cyc) {
+    /* Do math in 64-bit but print with %lu */
+    const uint64_t ns64 = ((uint64_t)cyc * 1000000000ull) / (uint64_t)SystemCoreClock;
+
+    if (ns64 < 1000000ull) {
+        /* < 1 ms: show integer ns */
+        const unsigned long ns = (unsigned long)ns64;  /* safe on 32-bit (fits < 4e9) */
+        snprintf(buf, n, "%lu ns", ns);
+    } else {
+        /* >= 1 ms: show truncated 2 decimals in ms */
+        const uint64_t ms_x100 = ns64 / 10000ull;      /* hundredths of ms, truncated */
+        const unsigned long ms_int = (unsigned long)(ms_x100 / 100ull);
+        const unsigned long ms_fr2 = (unsigned long)(ms_x100 % 100ull);
+        snprintf(buf, n, "%lu.%02lu ms", ms_int, ms_fr2);
+    }
+}
+
+
+static inline uint32_t avg_cyc(uint64_t sum, uint32_t cnt) {
+    return cnt ? (uint32_t)(sum / cnt) : 0u;
+}
+
+
+/* ====== API ====== */
+
+void TD_Speed_Reset(void) {
+  g_sz.last_z_ms = 0; g_sz.period_ms = 0;
+  g_sz.rps_inst = g_sz.rps_ewma = 0.f;
+  g_sz.rpm_inst = g_sz.rpm_ewma = 0.f;
+}
+
+void TD_Speed_OnZ(uint32_t now_ms) {
+  uint32_t prev = g_sz.last_z_ms;
+  g_sz.last_z_ms = now_ms;
+  if (prev == 0) return;                // first Z: no period yet
+  uint32_t dms = now_ms - prev;         // wrap-safe
+  if (dms == 0) return;
+
+  g_sz.period_ms = dms;
+  float rps = 1000.0f / (float)dms;     // Z-to-Z mechanical RPS
+  g_sz.rps_inst = rps;
+  g_sz.rpm_inst = rps * 60.0f;
+
+  const float a = 0.2f;                 // EWMA smoothing
+  g_sz.rps_ewma = (g_sz.rps_ewma == 0.f) ? rps : (1.f - a)*g_sz.rps_ewma + a*rps;
+  g_sz.rpm_ewma = g_sz.rps_ewma * 60.0f;
+}
+
+void TD_Speed_Get(float *rps_inst, float *rps_avg, float *rpm_inst, float *rpm_avg) {
+  if (rps_inst) *rps_inst = g_sz.rps_inst;
+  if (rps_avg)  *rps_avg  = g_sz.rps_ewma;
+  if (rpm_inst) *rpm_inst = g_sz.rpm_inst;
+  if (rpm_avg)  *rpm_avg  = g_sz.rpm_ewma;
+}
+
+void DiagTiming_Init(void) {
+	SystemCoreClockUpdate();
+	dwt_enable();
+	DiagTiming_ResetTimers();
+	Diag_TrialReset();
+	TD_Speed_Reset();
+}
+
+void DiagTiming_ResetTimers(void) {
+	memset(g_timers, 0, sizeof(g_timers));
+}
+
+static inline void stat_accum(diag_timer_stat_t *s, uint32_t delta) {
+	s->count++;
+	s->sum_cycles += (uint64_t) delta;
+	if (s->count == 1) {
+		s->min_cycles = delta;
+		s->max_cycles = delta;
+	} else {
+		if (delta < s->min_cycles)
+			s->min_cycles = delta;
+		if (delta > s->max_cycles)
+			s->max_cycles = delta;
+	}
+}
+
+void DiagTiming_Start(diag_timer_id_t id) {
+	if (id >= DIAG_T__COUNT)
+		return;
+	diag_timer_t *t = &g_timers[id];
+	t->t0 = cycles_now();
+	t->running = 1u;
+}
+
+void DiagTiming_Stop(diag_timer_id_t id) {
+	if (id >= DIAG_T__COUNT)
+		return;
+	diag_timer_t *t = &g_timers[id];
+	if (!t->running)
+		return;
+	uint32_t t1 = cycles_now();
+	uint32_t delta = t1 - t->t0; /* wrap-safe for 32b counter */
+	stat_accum(&t->stat, delta);
+	t->running = 0u;
+}
+
+/* ====== Health ====== */
+
+void Diag_SetEventBufCaps(uint32_t capacity) {
+	g_event_buf_cap = capacity;
+}
+void Diag_ObserveEventBufLevel(uint32_t level) {
+	if (level > g_event_buf_hwm)
+		g_event_buf_hwm = level;
+}
+void Diag_AddEventDrops(uint32_t drops) {
+	/* If you pass absolute 'event_drops', convert to delta in caller; here we just accumulate */
+	g_event_drops += drops;
+}
+void Diag_SetWinFifoCaps(uint32_t capacity) {
+	g_winfifo_cap = capacity;
+}
+void Diag_ObserveWinFifoLevel(uint32_t level) {
+	if (level > g_winfifo_hwm)
+		g_winfifo_hwm = level;
+}
+void Diag_IncInferenceCount(void) {
+	g_inferences++;
+}
+
+/* ====== Snapshot ====== */
+
+void Diag_GetAndResetSnapshot(diag_snapshot_t *out) {
+	if (!out)
+		return;
+	memset(out, 0, sizeof(*out));
+	for (int i = 0; i < DIAG_T__COUNT; ++i) {
+		out->timers[i] = g_timers[i].stat;
+		/* leave running states alone */
+	}
+
+	out->event_buf_cap = g_event_buf_cap;
+	out->event_buf_hwm = g_event_buf_hwm;
+	out->event_drops = g_event_drops;
+
+	out->winfifo_cap = g_winfifo_cap;
+	out->winfifo_hwm = g_winfifo_hwm;
+
+	out->inferences = g_inferences;
+
+	/* reset incremental health counters for next period */
+	for (int i = 0; i < DIAG_T__COUNT; ++i) {
+		g_timers[i].stat.count = 0;
+		g_timers[i].stat.sum_cycles = 0;
+		g_timers[i].stat.min_cycles = 0;
+		g_timers[i].stat.max_cycles = 0;
+	}
+	g_event_buf_hwm = 0;
+	g_event_drops = 0;
+	g_winfifo_hwm = 0;
+	g_inferences = 0;
+}
+
+/* ====== Trial (1 second after next Z) ====== */
+
+void Diag_TrialReset(void) {
+	memset(&g_trial, 0, sizeof(g_trial));
+}
+
+void Diag_ArmTrialAfterNextZ(uint32_t duration_ms) {
+	g_trial.duration_ms = (duration_ms == 0 ? 1000u : duration_ms);
+	g_trial.armed_after_z = true;
+	g_trial.running = false;
+	g_trial.done = false;
+	g_trial.ab_edges = 0;
+	g_trial.windows = 0;
+	g_trial.inferences = 0;
+	memset(g_trial.class_hist, 0, sizeof(g_trial.class_hist));
+}
+
+/* Call from your Z-accept path (ISR). now_ms = HAL_GetTick() */
+void Diag_NotifyZAccepted(uint32_t now_ms) {
+    if (g_trial.done) return;
+
+    if (g_trial.armed_after_z && !g_trial.running) {
+        g_trial.t_start_ms = now_ms;
+        g_trial.t_end_ms   = now_ms + g_trial.duration_ms;
+        g_trial.running    = true;
+        g_trial.armed_after_z = false;
+    }
+
+    TD_Speed_OnZ(now_ms);      // <-- add this line
+}
+
+/* Internal helper: check stop condition. Call from any Notify* invoked frequently. */
+static inline void trial_maybe_stop(uint32_t now_ms) {
+	if (g_trial.running && (int32_t) (now_ms - g_trial.t_end_ms) >= 0) {
+		g_trial.running = false;
+		g_trial.done = true;
+	}
+}
+
+void Diag_NotifyABEdgeAt(uint32_t now_ms) {
+	if (!g_trial.running)
+		return;
+	g_trial.ab_edges++;
+	trial_maybe_stop(now_ms);  // use the *event’s* ms, not current wall time
+}
+
+/* Call once per published window */
+void Diag_NotifyWindowPublished(void) {
+	if (!g_trial.running)
+		return;
+	g_trial.windows++;
+	trial_maybe_stop(HAL_GetTick());
+}
+
+/* Call after each ai_run when you know the top class index */
+void Diag_NotifyInferenceTop(uint32_t top_class_index) {
+	if (!g_trial.running)
+		return;
+	g_trial.inferences++;
+	if (top_class_index < DIAG_MAX_CLASSES) {
+		g_trial.class_hist[top_class_index]++;
+	}
+	trial_maybe_stop(HAL_GetTick());
+}
+
+const diag_trial_t* Diag_TrialPeek(void) {
+	return &g_trial;
+}
+
+void Diag_GetRps(float *rps_inst, float *rps_avg) {
+	float rps = 0.0f;
+	// Decide the time base: if still running, use elapsed; if done, use the fixed duration.
+	uint32_t t0 = g_trial.t_start_ms;
+	uint32_t tend = g_trial.running ? HAL_GetTick() : g_trial.t_end_ms;
+	if (g_trial.running || g_trial.done) {
+		uint32_t dms = (tend >= t0) ? (tend - t0) : 0u;
+		if (dms > 0u && DIAG_EDGES_PER_REV > 0u) {
+			float secs = (float) dms / 1000.0f;
+			float edges_per_sec = (float) g_trial.ab_edges / secs;
+			rps = edges_per_sec / (float) DIAG_EDGES_PER_REV;
+		}
+	}
+	if (rps_inst)
+		*rps_inst = rps;
+	if (rps_avg)
+		*rps_avg = rps;
+}
+void Diag_AddWinOverwrites(uint32_t n) { g_win_overwrites += n; }
+
+static void print_timer_line(const char *name, const diag_timer_stat_t *s) {
+    const uint32_t avg = avg_cyc(s->sum_cycles, (uint32_t)s->count);
+
+    char minb[24], avgb[24], maxb[24];
+    fmt_cycles_smart(minb, sizeof minb, s->min_cycles);
+    fmt_cycles_smart(avgb, sizeof avgb, avg);
+    fmt_cycles_smart(maxb, sizeof maxb, s->max_cycles);
+
+    printf("%s: n=%lu  min=%lu cyc (%s)  avg=%lu cyc (%s)  max=%lu cyc (%s)\n",
+           name,
+           (unsigned long)s->count,
+           (unsigned long)s->min_cycles, minb,
+           (unsigned long)avg,           avgb,
+           (unsigned long)s->max_cycles, maxb);
+}
+/* Call this right after Diag_GetAndResetSnapshot(&snap) wherever you’re logging stats */
+void Diag_PrintSnapshot(const diag_snapshot_t *snap) {
+	if (!snap)
+		return;
+
+	print_timer_line("ISR_TOTAL", &snap->timers[DIAG_T_ISR_TOTAL]);
+	print_timer_line("PACK_AB", &snap->timers[DIAG_T_PACK_AB]);
+	print_timer_line("WIN_PUBLISH", &snap->timers[DIAG_T_WIN_PUBLISH]);
+	print_timer_line("MODEL", &snap->timers[DIAG_T_MODEL]);
+	print_timer_line("E2E_WINDOW", &snap->timers[DIAG_T_E2E_WINDOW]);
+
+	printf(
+			"HEALTH: event_buf: hwm=%lu/%lu  drops+=%lu ; winfifo: hwm=%lu/%lu ; inferences=%lu\n",
+			(unsigned long) snap->event_buf_hwm,
+			(unsigned long) snap->event_buf_cap,
+			(unsigned long) snap->event_drops,
+			(unsigned long) snap->winfifo_hwm,
+			(unsigned long) snap->winfifo_cap,
+			(unsigned long) snap->inferences);
+}
+
+
+

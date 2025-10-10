@@ -6,4 +6,4 @@
 ../Core/Src/stm32n6xx_hal_msp.c:225:6:HAL_RAMCFG_MspInit	1
 ../Core/Src/stm32n6xx_hal_msp.c:244:6:HAL_RAMCFG_MspDeInit	1
 ../Core/Src/stm32n6xx_hal_msp.c:263:6:HAL_TIM_Encoder_MspInit	2
-../Core/Src/stm32n6xx_hal_msp.c:312:6:HAL_TIM_Encoder_MspDeInit	2
+../Core/Src/stm32n6xx_hal_msp.c:306:6:HAL_TIM_Encoder_MspDeInit	2

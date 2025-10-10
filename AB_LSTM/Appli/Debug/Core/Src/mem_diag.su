@@ -1,0 +1,3 @@
+../Core/Src/mem_diag.c:58:6:MemDiag_Init	4	static,ignoring_inline_asm
+../Core/Src/mem_diag.c:143:6:MemDiag_Get	72	static,ignoring_inline_asm
+../Core/Src/mem_diag.c:175:6:MemDiag_PrintSummary	88	static,ignoring_inline_asm

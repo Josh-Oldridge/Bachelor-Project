@@ -1,2 +1,5 @@
-../X-CUBE-AI/App/app_x-cube-ai.c:553:6:MX_X_CUBE_AI_Init	6
-../X-CUBE-AI/App/app_x-cube-ai.c:597:6:MX_X_CUBE_AI_Process	6
+../X-CUBE-AI/App/app_x-cube-ai.c:141:14:ai_log	4
+../X-CUBE-AI/App/app_x-cube-ai.c:694:6:Model_GetTotals	4
+../X-CUBE-AI/App/app_x-cube-ai.c:706:6:Model_GetTotalsRaw	4
+../X-CUBE-AI/App/app_x-cube-ai.c:716:6:MX_X_CUBE_AI_Init	8
+../X-CUBE-AI/App/app_x-cube-ai.c:756:6:MX_X_CUBE_AI_Process	49
