@@ -1,3 +1,0 @@
-../Core/Src/mem_diag.c:58:6:MemDiag_Init	3
-../Core/Src/mem_diag.c:143:6:MemDiag_Get	8
-../Core/Src/mem_diag.c:175:6:MemDiag_PrintSummary	13

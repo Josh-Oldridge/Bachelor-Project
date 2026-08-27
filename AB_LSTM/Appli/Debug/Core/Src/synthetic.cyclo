@@ -1,8 +1,0 @@
-../Core/Src/synthetic.c:45:13:emit_row.constprop	10
-../Core/Src/synthetic.c:45:13:emit_row.constprop	11
-../Core/Src/synthetic.c:21:14:EncSynth_GetFlat	1
-../Core/Src/synthetic.c:23:6:EncSynth_DebugPrint	5
-../Core/Src/synthetic.c:127:6:EncSynth_MakeNormalWindow	12
-../Core/Src/synthetic.c:170:6:EncSynth_MakeBounceWindow	48
-../Core/Src/synthetic.c:263:6:EncSynth_MakeMissingStepWindow	69
-../Core/Src/synthetic.c:344:6:EncSynth_MakeZIndexWindow	12

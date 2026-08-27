@@ -1,5 +1,0 @@
-../X-CUBE-AI/App/app_x-cube-ai.c:141:14:ai_log	272	static
-../X-CUBE-AI/App/app_x-cube-ai.c:694:6:Model_GetTotals	0	static
-../X-CUBE-AI/App/app_x-cube-ai.c:706:6:Model_GetTotalsRaw	0	static
-../X-CUBE-AI/App/app_x-cube-ai.c:716:6:MX_X_CUBE_AI_Init	72	static
-../X-CUBE-AI/App/app_x-cube-ai.c:756:6:MX_X_CUBE_AI_Process	264	static
